@@ -7,6 +7,9 @@
 
 # Format: <Minecraft IGN><Contribution><X, Y, Z> # Yes, with the "<" and ">"
 # Example: <Notch><Creator of Minecraft><150, 64, 150>
+donations:
+  authToken: ""
+  campaignId: ""
 contributors:
   - "<Notch><Creator of Minecraft><563.5, 105, 554.5>"
   - "<stxphen><Event Host><559.5, 105, 554.5>"
