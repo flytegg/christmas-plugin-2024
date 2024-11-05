@@ -3,6 +3,7 @@ package gg.flyte.christmas
 import com.github.retrooper.packetevents.PacketEvents
 import dev.shreyasayyengar.menuapi.menu.MenuManager
 import gg.flyte.christmas.commands.EventCommand
+import gg.flyte.christmas.donate.DonationListener
 import gg.flyte.christmas.listeners.HousekeepingEventListener
 import gg.flyte.christmas.minigame.engine.EventController
 import gg.flyte.christmas.minigame.engine.GameConfig
@@ -58,6 +59,7 @@ class ChristmasEventPlugin : JavaPlugin() {
         registerCommands()
         registerEvents()
         registerPacketAPI()
+        registerDonations()
         loadContributorNPCs()
     }
 
@@ -88,6 +90,10 @@ class ChristmasEventPlugin : JavaPlugin() {
 
     private fun registerPacketAPI() {
         PacketEvents.getAPI().init()
+    }
+
+    private fun registerDonations() {
+        DonationListener(config.getString("donations.campaignId")?: "", config.getString("donations.authToken")?: "") //TODO: Change this up however you want
     }
 
     private fun loadContributorNPCs() {
