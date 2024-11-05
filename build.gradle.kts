@@ -20,8 +20,6 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.3.61")
-    implementation("io.ktor:ktor-client-core:3.0.0")
-    implementation("io.ktor:ktor-client-cio:3.0.0")
 
     paperweight.paperDevBundle("1.21.1-R0.1-SNAPSHOT")
 
