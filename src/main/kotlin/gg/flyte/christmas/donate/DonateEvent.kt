@@ -4,7 +4,7 @@ import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 
 /**
- * Represents a donation event which contains details about a specific donation.
+ * Called when a donation is made through the Tiltify API with a predetermined `campaignId`
  *
  * @property donorName The name of the donor.
  * @property comment Any comment made by the donor.
