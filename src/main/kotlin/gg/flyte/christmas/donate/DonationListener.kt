@@ -18,8 +18,8 @@ import java.net.URI
 import java.net.URL
 
 class DonationListener(campaignId: String, authToken: String) {
-
     private val url: URL
+    
     init {
         if (campaignId.isEmpty() || authToken.isEmpty()) throw IllegalArgumentException("Campaign ID and auth token must be set!")
         url = URI.create("https://v5api.tiltify.com/api/public/campaigns/$campaignId/donations").toURL()
