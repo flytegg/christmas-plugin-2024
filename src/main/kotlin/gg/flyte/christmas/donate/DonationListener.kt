@@ -32,7 +32,7 @@ class DonationListener(campaignId: String, authToken: String) {
      * Continuously fetches donation data for a specified campaign at a 10-second interval.
      *
      * @param campaignId The ID of the campaign for which donations are being fetched.
-     * @param authToken The authorization token required to access the donation data.
+     * @param authToken The authorisation token required to access the donation data.
      */
     @OptIn(DelicateCoroutinesApi::class)
     private fun fetchDonations(authToken: String) {
