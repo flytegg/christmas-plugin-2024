@@ -50,7 +50,7 @@ class DonationListener(campaignId: String, authToken: String) {
     }
 
     /**
-     * Makes a GET request to fetch the donation data from the tiltify API.
+     * Makes a GET request to fetch the donation data from the Tiltify API.
      *
      * @param authToken The authorisation token to access the resource.
      * @return The JSON response as a JsonObject.
