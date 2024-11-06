@@ -73,7 +73,7 @@ class DonationListener(campaignId: String, authToken: String) {
     }
 
     /**
-     * Handles the donation data received by processing each donation and triggers a `DonateEvent` for each unique donation.
+     * Handles the donation data received by processing each donation and fires a [DonateEvent] for each unique donation.
      * @param donationsData A JsonObject containing an array of donation data.
      */
     private fun donationHandler(donationsData: JsonObject) {
