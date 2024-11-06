@@ -4,6 +4,7 @@ import com.github.retrooper.packetevents.PacketEvents
 import dev.shreyasayyengar.menuapi.menu.MenuManager
 import gg.flyte.christmas.commands.EventCommand
 import gg.flyte.christmas.donate.DonationListener
+import gg.flyte.christmas.donate.RefreshToken
 import gg.flyte.christmas.listeners.HousekeepingEventListener
 import gg.flyte.christmas.minigame.engine.EventController
 import gg.flyte.christmas.minigame.engine.GameConfig
@@ -59,7 +60,7 @@ class ChristmasEventPlugin : JavaPlugin() {
         registerCommands()
         registerEvents()
         registerPacketAPI()
-        registerDonations()
+        refreshAccessToken()
         loadContributorNPCs()
     }
 
@@ -86,14 +87,15 @@ class ChristmasEventPlugin : JavaPlugin() {
 
     private fun registerEvents() {
         HousekeepingEventListener()
+        DonationListener(config.getString("donations.campaignId")?: throw IllegalArgumentException("campaignId cannot be empty"))
     }
 
     private fun registerPacketAPI() {
         PacketEvents.getAPI().init()
     }
-
-    private fun registerDonations() {
-        DonationListener(config.getString("donations.campaignId")?: "", config.getString("donations.authToken")?: "") //TODO: Change this up however you want
+    private fun refreshAccessToken() {
+        RefreshToken(config.getString("donations.clientId")?: throw IllegalArgumentException("clientId cannot be empty"),
+                    config.getString("donations.clientSecret")?: throw IllegalArgumentException("clientSecret cannot be empty"))
     }
 
     private fun loadContributorNPCs() {

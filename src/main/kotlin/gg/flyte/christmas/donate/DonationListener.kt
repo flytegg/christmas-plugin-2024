@@ -4,6 +4,7 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import gg.flyte.christmas.ChristmasEventPlugin
+import gg.flyte.christmas.donate.RefreshToken.Companion.accessToken
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -17,14 +18,10 @@ import java.net.HttpURLConnection
 import java.net.URI
 import java.net.URL
 
-class DonationListener(campaignId: String, authToken: String) {
-    private val url: URL
-    
-    init {
-        if (campaignId.isEmpty() || authToken.isEmpty()) throw IllegalArgumentException("Campaign ID and auth token must be set!")
-        url = URI.create("https://v5api.tiltify.com/api/public/campaigns/$campaignId/donations").toURL()
-        fetchDonations(authToken)
-    }
+class DonationListener(private val campaignId: String) {
+    private val url: URL = URI.create("https://v5api.tiltify.com/api/public/campaigns/$campaignId/donations").toURL()
+
+    init { fetchDonations() }
 
     private val processedDonations = mutableSetOf<String>()
 
@@ -32,14 +29,13 @@ class DonationListener(campaignId: String, authToken: String) {
      * Continuously fetches donation data for a specified campaign at a 10-second interval.
      *
      * @param campaignId The ID of the campaign for which donations are being fetched.
-     * @param authToken The authorisation token required to access the donation data.
      */
     @OptIn(DelicateCoroutinesApi::class)
-    private fun fetchDonations(authToken: String) {
+    private fun fetchDonations() {
         GlobalScope.launch {
             while (isActive) {
                 try {
-                    val donationsData = requestJson(authToken)
+                    val donationsData = requestJson()
                     donationHandler(donationsData)
                 } catch (e: Exception) {
                     ChristmasEventPlugin.instance.logger.severe("Failed to fetch donations: ${e.message}")
@@ -52,15 +48,14 @@ class DonationListener(campaignId: String, authToken: String) {
     /**
      * Makes a GET request to fetch the donation data from the Tiltify API.
      *
-     * @param authToken The authorisation token to access the resource.
      * @return The JSON response as a JsonObject.
      * @throws IOException If an input or output exception occurred while reading from the connection stream.
      */
     @Throws(IOException::class)
-    private fun requestJson(authToken: String): JsonObject {
+    private fun requestJson(): JsonObject {
         val conn = url.openConnection() as HttpURLConnection
         conn.requestMethod = "GET"
-        conn.setRequestProperty("Authorization", "Bearer $authToken")
+        conn.setRequestProperty("Authorization", "Bearer $accessToken")
         conn.setRequestProperty("Content-Type", "application/json")
 
         val data: JsonElement
