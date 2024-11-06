@@ -12,7 +12,6 @@ contributors:
   - "<stxphen><Event Host><559.5, 105, 554.5>"
 
 # Donation Auth
-# Token will be requested periodically using the client ID and secret, which don't expire
 donations:
   clientId: ""
   clientSecret: ""

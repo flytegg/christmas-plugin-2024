@@ -60,7 +60,7 @@ class ChristmasEventPlugin : JavaPlugin() {
         registerCommands()
         registerEvents()
         registerPacketAPI()
-        refreshAccessToken()
+        handleDonations()
         loadContributorNPCs()
     }
 
@@ -87,15 +87,15 @@ class ChristmasEventPlugin : JavaPlugin() {
 
     private fun registerEvents() {
         HousekeepingEventListener()
-        DonationListener(config.getString("donations.campaignId")?: throw IllegalArgumentException("campaignId cannot be empty"))
     }
 
     private fun registerPacketAPI() {
         PacketEvents.getAPI().init()
     }
-    private fun refreshAccessToken() {
+    private fun handleDonations() {
         RefreshToken(config.getString("donations.clientId")?: throw IllegalArgumentException("clientId cannot be empty"),
                     config.getString("donations.clientSecret")?: throw IllegalArgumentException("clientSecret cannot be empty"))
+        DonationListener(config.getString("donations.campaignId")?: throw IllegalArgumentException("campaignId cannot be empty"))
     }
 
     private fun loadContributorNPCs() {
