@@ -38,6 +38,7 @@ import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Material
+import org.bukkit.Particle
 import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.entity.Snowball
@@ -108,27 +109,24 @@ class HousekeepingEventListener : Listener, PacketListener {
 
         event<PlayerInteractEvent> {
             val player = this.player
-            if (!shouldProcessSnowballEvent(player)) return@event
-
             val clickedBlock = clickedBlock ?: return@event
-            if (clickedBlock.type != Material.SNOW && clickedBlock.type != Material.SNOW_BLOCK) return@event
 
-            // Define the function here
-            fun playSnowCollectionEffects(player: Player, location: org.bukkit.Location) {
-                player.playSound(location, Sound.BLOCK_SNOW_BREAK, 1f, 1.5f)
-                player.playSound(location, Sound.BLOCK_SNOW_STEP, 0.5f, 2f)
-
-                location.world.spawnParticle(
-                    org.bukkit.Particle.SNOWFLAKE,
-                    location.add(0.5, 0.5, 0.5),
-                    8, 0.2, 0.2, 0.2, 0.1
-                )
+            if (eventController().currentGame != null ||
+                (clickedBlock.type != Material.SNOW && clickedBlock.type != Material.SNOW_BLOCK)) {
+                return@event
             }
 
-            if (player.inventory.firstEmpty() != -1) {
-                player.inventory.addItem(ItemStack(Material.SNOWBALL, 1))
-                playSnowCollectionEffects(player, clickedBlock.location)
-            }
+            if (player.inventory.firstEmpty() == -1) return@event
+
+            player.inventory.addItem(ItemStack(Material.SNOWBALL, 1))
+            player.playSound(clickedBlock.location, Sound.BLOCK_SNOW_BREAK, 1f, 1.5f)
+            player.playSound(clickedBlock.location, Sound.BLOCK_SNOW_STEP, 0.5f, 2f)
+
+            clickedBlock.location.world.spawnParticle(
+                Particle.SNOWFLAKE,
+                clickedBlock.location.clone().add(0.5, 0.5, 0.5),
+                8, 0.2, 0.2, 0.2, 0.1
+            )
         }
 
 
