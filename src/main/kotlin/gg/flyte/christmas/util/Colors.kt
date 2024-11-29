@@ -6,7 +6,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 
 object Colors {
     val WHITE: TextColor = TextColor.color(0xF3F7F0)
-    val RED: TextColor = TextColor.color(0xDA2C38)
+    val RED: TextColor = TextColor.color(0xF23A3A)
     val GOLD: TextColor = TextColor.color(0xFF9800)
     val YELLOW: TextColor = TextColor.color(0xFFEE63)
     val ORANGE: TextColor = TextColor.color(0xF19C79)

@@ -94,7 +94,7 @@ class SidebarManager {
 
         val uniqueIdAtPosition = getUUIDByPlacement(position)
         val nameComponent = when (uniqueIdAtPosition) {
-            player.uniqueId -> "<pink><b>ʏᴏᴜ <reset><grey>(${dataSupplier[player.uniqueId]})".style()
+            player.uniqueId -> "<red><b>ʏᴏᴜ <reset><grey>(${dataSupplier[player.uniqueId]})".style()
             null -> "<white>ɴᴏɴᴇ".style()
             else -> "<colour:#f5d6ff>${Bukkit.getOfflinePlayer(uniqueIdAtPosition).name ?: "Unknown"} <reset><colour:#fcb3b3>(${dataSupplier[uniqueIdAtPosition]})".style()
         }
