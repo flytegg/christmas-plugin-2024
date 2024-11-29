@@ -113,13 +113,23 @@ class HousekeepingEventListener : Listener, PacketListener {
             val clickedBlock = clickedBlock ?: return@event
             if (clickedBlock.type != Material.SNOW && clickedBlock.type != Material.SNOW_BLOCK) return@event
 
+            // Define the function here
+            fun playSnowCollectionEffects(player: Player, location: org.bukkit.Location) {
+                player.playSound(location, Sound.BLOCK_SNOW_BREAK, 1f, 1.5f)
+                player.playSound(location, Sound.BLOCK_SNOW_STEP, 0.5f, 2f)
+
+                location.world.spawnParticle(
+                    org.bukkit.Particle.SNOWFLAKE,
+                    location.add(0.5, 0.5, 0.5),
+                    8, 0.2, 0.2, 0.2, 0.1
+                )
+            }
+
             if (player.inventory.firstEmpty() != -1) {
                 player.inventory.addItem(ItemStack(Material.SNOWBALL, 1))
                 playSnowCollectionEffects(player, clickedBlock.location)
             }
         }
-
-
 
 
         event<PlayerJoinEvent>(priority = EventPriority.LOWEST) {
@@ -344,14 +354,4 @@ class HousekeepingEventListener : Listener, PacketListener {
                 player.gameMode == GameMode.ADVENTURE
     }
 
-    private fun playSnowCollectionEffects(player: Player, location: org.bukkit.Location) {
-        player.playSound(location, Sound.BLOCK_SNOW_BREAK, 1f, 1.5f)
-        player.playSound(location, Sound.BLOCK_SNOW_STEP, 0.5f, 2f)
-
-        location.world.spawnParticle(
-            org.bukkit.Particle.SNOWFLAKE,
-            location.add(0.5, 0.5, 0.5),
-            8, 0.2, 0.2, 0.2, 0.1
-        )
-    }
 }
