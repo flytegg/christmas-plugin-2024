@@ -48,7 +48,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
         var stick = ItemStack(Material.STICK).apply {
             itemMeta = itemMeta.apply {
-                displayName("<!i><game_colour>Knockback Stick!".style())
+                displayName("<!i><game_colour>ᴋɴᴏᴄᴋʙᴀᴄᴋ ѕᴛɪᴄᴋ!".style())
             }
 
             addUnsafeEnchantment(Enchantment.KNOCKBACK, 5)
@@ -62,7 +62,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             pvpEnabled = true
             Util.runAction(PlayerType.PARTICIPANT) {
                 it.title(
-                    Component.empty(), "<game_colour>PVP Enabled!".style(),
+                    Component.empty(), "<game_colour>ᴘᴠᴘ ᴇɴᴀʙʟᴇᴅ!".style(),
                     titleTimes(Duration.ZERO, Duration.ofSeconds(2), Duration.ofMillis(300))
                 )
             }
@@ -72,7 +72,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                     if (hillRegion.contains(it.location)) {
                         timeOnHill[it.uniqueId] = timeOnHill[it.uniqueId]!! + 1
                         it.playSound(Sound.ENTITY_ITEM_PICKUP)
-                        it.sendMessage("<green>+1 second".style())
+                        it.sendMessage("<green>+1 ѕᴇᴄᴏɴᴅ".style())
                     }
                 }
                 gameTime--
@@ -95,10 +95,12 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         val (first) = timeOnHill.entries
             .sortedByDescending { it.value }
             .take(3)
-            .also { it.forEach { formattedWinners.put(it.key, it.value.toString() + " second${if (it.value > 1) "s" else ""}") } }
+            .also { it.forEach { entry ->
+                formattedWinners[entry.key] = entry.value.toString() + " ѕᴇᴄᴏɴᴅ${if (entry.value > 1) "ѕ" else ""}"
+            } }
 
         var yaw = 0F
-        ChristmasEventPlugin.instance.serverWorld.spawn(MapSinglePoint(827.5, 105, 630.5, 0, 0), ItemDisplay::class.java) {
+        ChristmasEventPlugin.INSTANCE.serverWorld.spawn(MapSinglePoint(827.5, 105, 630.5, 0, 0), ItemDisplay::class.java) {
             it.setItemStack(ItemStack(Material.PLAYER_HEAD).apply {
                 val meta = itemMeta as SkullMeta
                 meta.owningPlayer = Bukkit.getOfflinePlayer(first.key)

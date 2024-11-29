@@ -45,9 +45,6 @@ class RefreshToken(private val clientId: String, private val clientSecret: Strin
             val responseJson = JsonParser.parseReader(InputStreamReader(connection.inputStream)).asJsonObject
             accessToken = responseJson.get("access_token").asString
             true
-        } else {
-            throw IllegalStateException("Failed to get access token: ${connection.responseCode}")
-            false
-        }
+        } else throw IllegalStateException("Failed to get access token: ${connection.responseCode}")
     }
 }

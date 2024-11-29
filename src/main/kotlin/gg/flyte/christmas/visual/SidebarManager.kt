@@ -87,16 +87,16 @@ class SidebarManager {
         Preconditions.checkArgument(position in 0..2, "Position must be between 0 and 2")
 
         val placeDefaultComponent = mapOf(
-            0 to "<colour:#ffcb1a>➊<grey>:",
-            1 to "<colour:#d0d0d0>➋<grey>:",
-            2 to "<colour:#a39341>➌<grey>:"
+            0 to "<gold>➊<grey>:",
+            1 to "<orange>➋<grey>:",
+            2 to "<yellow>➌<grey>:"
         )
 
         val uniqueIdAtPosition = getUUIDByPlacement(position)
         val nameComponent = when (uniqueIdAtPosition) {
             player.uniqueId -> "<red><b>ʏᴏᴜ <reset><grey>(${dataSupplier[player.uniqueId]})".style()
             null -> "<white>ɴᴏɴᴇ".style()
-            else -> "<colour:#f5d6ff>${Bukkit.getOfflinePlayer(uniqueIdAtPosition).name ?: "Unknown"} <reset><colour:#fcb3b3>(${dataSupplier[uniqueIdAtPosition]})".style()
+            else -> "<pink>${Bukkit.getOfflinePlayer(uniqueIdAtPosition).name ?: "ᴜɴᴋɴᴏᴡɴ"} <reset><red>(${dataSupplier[uniqueIdAtPosition]})".style()
         }
 
         return "${placeDefaultComponent[position]!!} <0>".style(nameComponent)

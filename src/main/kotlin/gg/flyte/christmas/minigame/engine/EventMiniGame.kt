@@ -49,7 +49,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
      */
     init {
         for ((index, point) in gameConfig.spectatorCameraLocations.withIndex()) {
-            spectateEntities[index] = ChristmasEventPlugin.instance.serverWorld.spawn(point, ItemDisplay::class.java) {
+            spectateEntities[index] = ChristmasEventPlugin.INSTANCE.serverWorld.spawn(point, ItemDisplay::class.java) {
                 it.setItemStack(ItemStack(Material.AIR))
             }
         }
@@ -142,9 +142,9 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
             // spectate item
             ItemStack(Material.RECOVERY_COMPASS).apply {
                 itemMeta = itemMeta.apply {
-                    displayName("<!i><white>Spectate".style())
+                    displayName("<!i><white>ѕᴘᴇᴄᴛᴀᴛᴇ".style())
                     editMeta {
-                        lore(listOf("<grey>Click to Spectate!".style()))
+                        lore(listOf("<grey>ᴄʟɪᴄᴋ ᴛᴏ ѕᴘᴇᴄᴛᴀᴛᴇ!".style()))
                     }
                 }
             }.also { player.inventory.setItem(8, it) }
@@ -210,9 +210,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
      * @see [GameConfig.eliminateOnLeave]
      */
     fun onPlayerQuit(player: Player) {
-        if (state == GameState.LIVE) {
-            if (gameConfig.eliminateOnLeave) eliminate(player, EliminationReason.EXPIRED_SESSION)
-        }
+        if (state == GameState.LIVE && gameConfig.eliminateOnLeave) eliminate(player, EliminationReason.EXPIRED_SESSION)
     }
 
     /**
@@ -248,9 +246,8 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
     /**
      * @return A list of players who have not been eliminated from the game.
      */
-    fun remainingPlayers(): List<Player> {
-        return Util.runAction(PlayerType.PARTICIPANT) {}.filter { !(eliminatedPlayers.contains(it.uniqueId)) }
-    }
+    fun remainingPlayers(): List<Player> =
+        Util.runAction(PlayerType.PARTICIPANT) {}.filter { !(eliminatedPlayers.contains(it.uniqueId)) }
 
     /**
      * Renders a cinematic sequence of the game results with the temporary podium NPCs.
@@ -263,10 +260,10 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
             val displays = mutableListOf<TextDisplay>()
             val descendingColour = listOf("a", "c", "9")
             formattedWinners.entries.take(3).reversed().forEachIndexed { index, keyValuePair ->
-                var uniqueId = keyValuePair.key
-                var value = keyValuePair.value
+                val uniqueId = keyValuePair.key
+                val value = keyValuePair.value
                 val displayName = "§${descendingColour[index]}${Bukkit.getPlayer(uniqueId)!!.name}"
-                var placeLocation = Util.getNPCSummaryLocation(index)
+                val placeLocation = Util.getNPCSummaryLocation(index)
                 val animationTasks = mutableListOf<TwilightRunnable>()
 
                 WorldNPC.createFromUniqueId(displayName, uniqueId, placeLocation).also { npc ->
@@ -358,7 +355,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
                 Bukkit.getOnlinePlayers().forEach { loopedPlayer ->
                     loopedPlayer.gameMode = GameMode.ADVENTURE
                     loopedPlayer.formatInventory()
-                    loopedPlayer.teleport(ChristmasEventPlugin.instance.lobbySpawn)
+                    loopedPlayer.teleport(ChristmasEventPlugin.INSTANCE.lobbySpawn)
                     loopedPlayer.clearActivePotionEffects()
                     loopedPlayer.showBossBar(eventController().donationBossBar)
                     npcs.forEach { it.despawnFor(loopedPlayer) }

@@ -95,16 +95,16 @@ class WorldNPC private constructor(displayName: String, textureProperties: List<
             2 to MapSinglePoint(537.5, 104.25, 499.55, -90, 0)
         )
         private val placeDefaultComponent = mapOf(
-            0 to "<colour:#ffcb1a>➊",
-            1 to "<colour:#d0d0d0>➋",
-            2 to "<colour:#a39341>➌"
+            0 to "<gold>➊",
+            1 to "<orange>➋",
+            2 to "<yellow>➌"
         )
 
         /**
          * Refreshes the podium with the current top 3 players in the event.
          */
         fun refreshPodium() {
-            ChristmasEventPlugin.instance.serverWorld.entities.forEach {
+            ChristmasEventPlugin.INSTANCE.serverWorld.entities.forEach {
                 if (it.persistentDataContainer.has(NamespacedKey("christmas", "placeholder"), PersistentDataType.BOOLEAN)) {
                     it.remove()
                 }
@@ -116,11 +116,11 @@ class WorldNPC private constructor(displayName: String, textureProperties: List<
                 .forEachIndexed { index, (uniqueId, points) ->
                     // remove existing leader, if any, and spawn new leader
                     leaderBoardNPCs[index].apply {
-                        ChristmasEventPlugin.instance.worldNPCs.remove(this)
+                        ChristmasEventPlugin.INSTANCE.worldNPCs.remove(this)
                         leaderBoardNPCs[index]?.despawnForAll()
                     }
 
-                    ChristmasEventPlugin.instance.worldNPCs.remove(leaderBoardNPCs[index])
+                    ChristmasEventPlugin.INSTANCE.worldNPCs.remove(leaderBoardNPCs[index])
 
                     async {
                         leaderBoardNPCs[index] = createFromUniqueId("", uniqueId, leaderboardPositionToLocation[index]!!).apply {
@@ -131,7 +131,7 @@ class WorldNPC private constructor(displayName: String, textureProperties: List<
                                 else -> 1.0
                             }
 
-                            ChristmasEventPlugin.instance.worldNPCs += this
+                            ChristmasEventPlugin.INSTANCE.worldNPCs += this
                         }
 
                         sync {
@@ -139,7 +139,7 @@ class WorldNPC private constructor(displayName: String, textureProperties: List<
                         }
                     }
 
-                    ChristmasEventPlugin.instance.serverWorld.spawn(leaderboardPositionToNamePlateLocation[index]!!, TextDisplay::class.java) {
+                    ChristmasEventPlugin.INSTANCE.serverWorld.spawn(leaderboardPositionToNamePlateLocation[index]!!, TextDisplay::class.java) {
                         it.text("${placeDefaultComponent[index]!!} ${Bukkit.getOfflinePlayer(uniqueId).name}\nᴘᴏɪɴᴛs: $points".style())
                         it.transformation = it.transformation.apply { this.scale.mul(1.5F) }
                         it.backgroundColor = Color.fromARGB(0, 0, 0, 0)

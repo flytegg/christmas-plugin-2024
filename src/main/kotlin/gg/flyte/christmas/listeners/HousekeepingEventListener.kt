@@ -34,8 +34,6 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
-import net.kyori.adventure.text.serializer.ansi.ANSIComponentSerializer
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Material
@@ -108,16 +106,16 @@ class HousekeepingEventListener : Listener, PacketListener {
         }
 
         event<PlayerLoginEvent> {
-            if (!ChristmasEventPlugin.instance.canJoin) {
-                kickMessage("<red>You cannot join at the moment! Please wait...".style())
+            if (!ChristmasEventPlugin.INSTANCE.canJoin) {
+                kickMessage("<red>ʏᴏᴜ ᴄᴀɴɴᴏᴛ ᴊᴏɪɴ ᴀᴛ ᴛʜᴇ ᴍᴏᴍᴇɴᴛ! ᴘʟᴇᴀѕᴇ ᴡᴀɪᴛ...".style())
                 result = PlayerLoginEvent.Result.KICK_OTHER
             }
         }
 
         event<PlayerJoinEvent>(priority = EventPriority.LOWEST) {
             fun applyTag(player: Player) {
-                player.scoreboard = ChristmasEventPlugin.instance.scoreBoardTab
-                ChristmasEventPlugin.instance.scoreBoardTab.getTeam(if (player.isOp) "a. staff" else "b. player")?.addEntry(player.name)
+                player.scoreboard = ChristmasEventPlugin.INSTANCE.scoreBoardTab
+                ChristmasEventPlugin.INSTANCE.scoreBoardTab.getTeam(if (player.isOp) "a. staff" else "b. player")?.addEntry(player.name)
             }
             joinMessage(null)
 
@@ -128,7 +126,7 @@ class HousekeepingEventListener : Listener, PacketListener {
                             setResourcePack(this.url, this.hash, true)
                         }
                     } catch (_: Exception) {
-                        sync { kick("<red>Resource pack FAILED to download. Please try joining again.".style()) }
+                        sync { kick("<red>ʀᴇѕᴏᴜʀᴄᴇ ᴘᴀᴄᴋ ꜰᴀɪʟᴇᴅ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ. ᴘʟᴇᴀѕᴇ ᴛʀʏ ᴊᴏɪɴɪɴɢ ᴀɢᴀɪɴ.".style()) }
                     }
                 }
 
@@ -140,7 +138,7 @@ class HousekeepingEventListener : Listener, PacketListener {
                 eventController().onPlayerJoin(this)
                 eventController().songPlayer?.addPlayer(this)
 
-                ChristmasEventPlugin.instance.worldNPCs.forEach { it.spawnFor(this) }
+                ChristmasEventPlugin.INSTANCE.worldNPCs.forEach { it.spawnFor(this) }
 
                 applyTag(this)
             }
@@ -173,7 +171,7 @@ class HousekeepingEventListener : Listener, PacketListener {
         }
 
         event<PlayerMoveEvent> {
-            val worldNPCs = ChristmasEventPlugin.instance.worldNPCs
+            val worldNPCs = ChristmasEventPlugin.INSTANCE.worldNPCs
             val playerLocation = player.location
             val npcLocations = worldNPCs.map { it.npc.location.bukkit() }
 
@@ -185,7 +183,7 @@ class HousekeepingEventListener : Listener, PacketListener {
             worldNPCs.forEach { npc ->
                 val npcLocation = npc.npc.location.bukkit()
                 if (npcLocation.distance(playerLocation) <= 25) {
-                    var location = player.location.apply {
+                    val location = player.location.apply {
 
                         // since the NPCs are scaled, the look vector is not exact at eye level; this corrects it
                         when (npc.scale) {
@@ -210,7 +208,7 @@ class HousekeepingEventListener : Listener, PacketListener {
                 PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED
             )
 
-            if (!goodStatus.contains(status)) player.kick("<red>You <white><u>must<reset> <red>accept the resource pack to play on this server!".style())
+            if (!goodStatus.contains(status)) player.kick("<red>ʏᴏᴜ <white><u>ᴍᴜѕᴛ<reset> <red>ᴀᴄᴄᴇᴘᴛ ᴛʜᴇ ʀᴇѕᴏᴜʀᴄᴇ ᴘᴀᴄᴋ ᴛᴏ ᴘʟᴀʏ ᴏɴ ᴛʜɪѕ ѕᴇʀᴠᴇʀ!".style())
         }
 
         event<PlayerDropItemEvent> { isCancelled = true }
@@ -279,7 +277,7 @@ class HousekeepingEventListener : Listener, PacketListener {
     override fun onPacketReceive(event: PacketReceiveEvent) {
         if (event.packetType != PacketType.Play.Client.INTERACT_ENTITY) return
         WrapperPlayClientInteractEntity(event).apply {
-            ChristmasEventPlugin.instance.worldNPCs.find { it.npc.id == entityId }?.let { clickedNPC ->
+            ChristmasEventPlugin.INSTANCE.worldNPCs.find { it.npc.id == entityId }?.let { clickedNPC ->
 
                 if (action == WrapperPlayClientInteractEntity.InteractAction.ATTACK) {
                     event.user.sendPacket(
@@ -305,15 +303,15 @@ class HousekeepingEventListener : Listener, PacketListener {
     }
 
     private fun openSpectateMenu(player: Player) {
-        var options = eventController().currentGame!!.gameConfig.spectatorCameraLocations.size
-        var standardMenu = StandardMenu("Spectate Map:", ceil(options.div(9.0)).toInt() * 9)
+        val options = eventController().currentGame!!.gameConfig.spectatorCameraLocations.size
+        val standardMenu = StandardMenu("ѕᴘᴇᴄᴛᴀᴛᴇ ᴍᴀᴘ:", ceil(options.div(9.0)).toInt() * 9)
 
         for (i in 0 until options) {
 
             val menuItem = MenuItem(Material.PLAYER_HEAD)
-                .setName("Spectate Point $i")
+                .setName("ѕᴘᴇᴄᴛᴀᴛᴇ ᴘᴏɪɴᴛ $i")
                 .setSkullTexture("66f88107041ff1ad84b0a4ae97298bd3d6b59d0402cbc679bd2f77356d454bc4")
-                .onClick { whoClicked, itemStack, clickType, inventoryClickEvent ->
+                .onClick { whoClicked, _, _, _ ->
                     val requestedCameraEntity = eventController().currentGame!!.spectateEntities[i]
                     whoClicked.gameMode = GameMode.SPECTATOR
                     whoClicked.spectatorTarget = requestedCameraEntity

@@ -43,7 +43,7 @@ class ChristmasEventPlugin : JavaPlugin() {
     var canJoin = false
 
     companion object {
-        val instance: ChristmasEventPlugin by lazy { getPlugin(ChristmasEventPlugin::class.java) }
+        val INSTANCE: ChristmasEventPlugin by lazy { getPlugin(ChristmasEventPlugin::class.java) }
     }
 
     override fun onLoad() {
@@ -127,7 +127,7 @@ class ChristmasEventPlugin : JavaPlugin() {
             contributorNPC.spawnForAll()
 
             location.world.spawn(location.clone().add(0.0, 2.5, 0.0), TextDisplay::class.java).apply {
-                text("<colour:#ffc4ff>$contribution".style())
+                text("<pink>$contribution".style())
                 backgroundColor = Color.fromRGB(84, 72, 84)
                 billboard = Display.Billboard.CENTER
             }

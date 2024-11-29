@@ -5,10 +5,7 @@ import gg.flyte.christmas.minigame.engine.EventMiniGame
 import gg.flyte.christmas.minigame.engine.GameConfig
 import gg.flyte.christmas.minigame.engine.PlayerType
 import gg.flyte.christmas.minigame.world.MapSinglePoint
-import gg.flyte.christmas.util.Util
-import gg.flyte.christmas.util.eventController
-import gg.flyte.christmas.util.formatInventory
-import gg.flyte.christmas.util.style
+import gg.flyte.christmas.util.*
 import gg.flyte.twilight.event.event
 import gg.flyte.twilight.extension.playSound
 import gg.flyte.twilight.scheduler.TwilightRunnable
@@ -106,7 +103,7 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
     }
 
     override fun eliminate(player: Player, reason: EliminationReason) {
-        Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) { it.sendMessage("<red>${player.name} <grey>has been eliminated!".style()) }
+        Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) { it.sendMessage("<red>${player.name.toSmallText()} <grey>ʜᴀѕ ʙᴇᴇɴ ᴇʟɪᴍɪɴᴀᴛᴇᴅ!".style()) }
 
         if (reason == EliminationReason.ELIMINATED) {
             player.world.createExplosion(player.location, 3F, false, false)
@@ -118,12 +115,12 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
         super.eliminate(player, reason)
         when (remainingPlayers().size) {
             1 -> {
-                formattedWinners.put(player.uniqueId, "2nd Place!")
-                formattedWinners.put(remainingPlayers().first().uniqueId, "1st Place!")
+                formattedWinners[player.uniqueId] = "2ѕᴛ ᴘʟᴀᴄᴇ!"
+                formattedWinners[remainingPlayers().first().uniqueId] = "1ѕᴛ ᴘʟᴀᴄᴇ!"
                 endGame()
             }
 
-            2 -> formattedWinners.put(player.uniqueId, "3nd Place!")
+            2 -> formattedWinners[player.uniqueId] = "3ѕᴛ ᴘʟᴀᴄᴇ!"
         }
     }
 
@@ -137,14 +134,14 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
 
         if (oldTagger != null) {
             this.taggedPlayers.remove(oldTagger.uniqueId)
-            oldTagger.sendMessage("<game_colour>You have tagged <red>${newTagger.name}!".style())
+            oldTagger.sendMessage("<game_colour>ʏᴏᴜ ʜᴀᴠᴇ ᴛᴀɢɢᴇᴅ <red>${newTagger.name.toSmallText()}!".style())
             oldTagger.formatInventory()
 
             oldTagger.clearActivePotionEffects()
             oldTagger.addPotionEffect(PotionEffect(PotionEffectType.SPEED, 1000000, 2, false, false, false))
 
-            newTagger.sendMessage("<red>You have been tagged by <game_colour>${oldTagger.name}!".style())
-        } else newTagger.sendMessage("« <red><b>You <game_colour>have started this round being <red>the IT!<reset> »".style())
+            newTagger.sendMessage("<red>ʏᴏᴜ ʜᴀᴠᴇ ʙᴇᴇɴ ᴛᴀɢɢᴇᴅ ʙʏ <game_colour>${oldTagger.name.toSmallText()}!".style())
+        } else newTagger.sendMessage("« <red><b>ʏᴏᴜ <game_colour>ʜᴀᴠᴇ ѕᴛᴀʀᴛᴇᴅ ᴛʜɪѕ ʀᴏᴜɴᴅ ʙᴇɪɴɢ <red>ᴛʜᴇ ɪᴛ!<reset> »".style())
 
         newTagger.playSound(Sound.BLOCK_NOTE_BLOCK_PLING)
         newTagger.formatInventory()
@@ -185,7 +182,7 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
     private fun randomBaubleItem(): ItemStack {
         return MenuItem(ItemStack(Material.PLAYER_HEAD).apply {
             (itemMeta as SkullMeta).apply {
-                displayName("<!i><game_colour><b>Bauble".style())
+                displayName("<!i><game_colour><b>ʙᴀᴜʙʟᴇ".style())
             }
         }).setSkullTexture(baubleTextureURLs.random()).itemStack
     }
@@ -193,7 +190,7 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
     private fun getPointer(): ItemStack {
         return ItemStack(Material.COMPASS).apply {
             itemMeta = (itemMeta as CompassMeta).apply {
-                displayName("<!i><b><game_colour>Player Pointer".style())
+                displayName("<!i><b><game_colour>ᴘʟᴀʏᴇʀ ᴘᴏɪɴᴛᴇʀ".style())
             }
         }
     }
@@ -202,7 +199,7 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
         listeners += event<EntityDamageEvent>(priority = EventPriority.HIGHEST) {
             // return@event -> already cancelled by lower priority [HousekeepingEventListener]
 
-            entity as? Player ?: return@event
+            if (entity !is Player) return@event
             val damager = (this as? EntityDamageByEntityEvent)?.damager as? Player ?: return@event
 
             // allows an actual hit to go happen
