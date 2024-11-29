@@ -20,6 +20,8 @@ import dev.shreyasayyengar.menuapi.menu.MenuItem
 import dev.shreyasayyengar.menuapi.menu.StandardMenu
 import gg.flyte.christmas.ChristmasEventPlugin
 import gg.flyte.christmas.donation.DonateEvent
+import gg.flyte.christmas.minigame.world.MapRegion
+import gg.flyte.christmas.minigame.world.MapSinglePoint
 import gg.flyte.christmas.util.*
 import gg.flyte.christmas.visual.CameraSequence
 import gg.flyte.twilight.event.event
@@ -45,6 +47,7 @@ import org.bukkit.event.entity.EntityCombustEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.FoodLevelChangeEvent
+import org.bukkit.inventory.ItemStack
 import org.bukkit.event.inventory.*
 import org.bukkit.event.player.*
 import org.bukkit.inventory.PlayerInventory
@@ -89,6 +92,7 @@ class HousekeepingEventListener : Listener, PacketListener {
             }
         }
 
+
         event<AsyncChatEvent> {
             renderer(ChatRenderer.viewerUnaware { player, displayName, message ->
                 val finalRender = text()
@@ -101,6 +105,21 @@ class HousekeepingEventListener : Listener, PacketListener {
                     .build()
             })
         }
+
+        event<PlayerInteractEvent> {
+            val player = this.player
+            if (!shouldProcessSnowballEvent(player)) return@event
+
+            val clickedBlock = clickedBlock ?: return@event
+            if (clickedBlock.type != Material.SNOW && clickedBlock.type != Material.SNOW_BLOCK) return@event
+
+            if (player.inventory.firstEmpty() != -1) {
+                player.inventory.addItem(ItemStack(Material.SNOWBALL))
+                playSnowCollectionEffects(player, clickedBlock.location)
+            }
+        }
+
+
 
         event<PlayerJoinEvent>(priority = EventPriority.LOWEST) {
             fun applyTag(player: Player) {
@@ -311,5 +330,27 @@ class HousekeepingEventListener : Listener, PacketListener {
         }
 
         standardMenu.open(false, player)
+    }
+
+    private val lobbyRegion = MapRegion(
+        MapSinglePoint(545, 100, 500),
+        MapSinglePoint(575, 120, 535)
+    )
+
+    private fun shouldProcessSnowballEvent(player: Player): Boolean {
+        return eventController().currentGame == null &&
+                lobbyRegion.contains(player.location) &&
+                player.gameMode == GameMode.ADVENTURE
+    }
+
+    private fun playSnowCollectionEffects(player: Player, location: org.bukkit.Location) {
+        player.playSound(location, Sound.BLOCK_SNOW_BREAK, 1f, 1.5f)
+        player.playSound(location, Sound.BLOCK_SNOW_STEP, 0.5f, 2f)
+
+        location.world.spawnParticle(
+            org.bukkit.Particle.SNOWFLAKE,
+            location.add(0.5, 0.5, 0.5),
+            8, 0.2, 0.2, 0.2, 0.1
+        )
     }
 }
