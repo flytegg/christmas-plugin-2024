@@ -301,7 +301,7 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
 
         groupedSquares.forEachIndexed { index, groupedSquareRegion ->
             val mat: Material = if (index == safeSquare1 || index == safeSquare2) selectedMaterial else colourMap.keys.random()
-            var blockLocations = groupedSquareRegion.toSingleBlockLocations()
+            val blockLocations = groupedSquareRegion.toSingleBlockLocations()
 
             if (mat == selectedMaterial) safeBlocks.addAll(blockLocations)
 
@@ -319,8 +319,8 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
     }
 
     private fun handlePowerUp() {
-        var reducedFrequency = remainingPlayers().size < 4 && roundNumber % 4 == 0 // 4 remaining -> every 4th round
-        var regularPowerUp = remainingPlayers().size > 4 && roundNumber % 2 == 0 // 5+ remaining -> every 2nd round
+        val reducedFrequency = remainingPlayers().size < 4 && roundNumber % 4 == 0 // 4 remaining -> every 4th round
+        val regularPowerUp = remainingPlayers().size > 4 && roundNumber % 2 == 0 // 5+ remaining -> every 2nd round
 
         if (reducedFrequency || regularPowerUp) {
 
@@ -431,7 +431,7 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
         listeners += event<PlayerInteractEvent> {
             if (clickedBlock?.type == Material.BEACON) {
                 clickedBlock?.type = Material.AIR
-                var randomPowerUp = PowerUp.entries.random()
+                val randomPowerUp = PowerUp.entries.random()
 
                 Util.runAction(PlayerType.PARTICIPANT) {
                     if (it == player) {
@@ -446,7 +446,6 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
 
                 when (randomPowerUp) {
                     PowerUp.ENDER_PEARL -> player.inventory.setItem(0, ItemStack(Material.ENDER_PEARL, 1))
-
                     PowerUp.COLOR_BOMB -> {
                         val x = clickedBlock!!.location.blockX
                         val y = clickedBlock!!.location.blockY
@@ -490,19 +489,12 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
 
                         clickedBlock!!.world.playSound(clickedBlock!!.location, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f)
                     }
-
                     PowerUp.JUMP_BOOST -> player.addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, 20 * 8, 3, false, false, false))
-
                     PowerUp.FISHING_ROD -> player.inventory.setItem(0, ItemStack(Material.FISHING_ROD, 1))
-
                     PowerUp.SLOWNESS -> player.addPotionEffect(PotionEffect(PotionEffectType.SLOWNESS, 20 * 10, 2, false, false, false))
-
                     PowerUp.BLINDNESS -> player.addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2, false, false, false))
-
                     PowerUp.RANDOM_TP -> player.teleport(groupedSquares.random().randomLocation().add(0.0, 1.5, 0.0))
-
                     PowerUp.PUSH_SELF -> player.velocity = player.location.direction.multiply(2).add(Vector(0.0, 1.5, 0.0))
-
                     PowerUp.PUSH_RANDOM -> {
                         val eventPlayer = player // prevent shadowing
                         remainingPlayers().random().apply {
@@ -511,7 +503,6 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
                             eventPlayer.sendMessage("<game_colour>ʏᴏᴜ'ᴠᴇ ᴘᴜѕʜᴇᴅ ᴀ ʀᴀɴᴅᴏᴍ ᴘʟᴀʏᴇʀ (${name.toSmallText()}) ᴡɪᴛʜ ᴛʜᴇ ᴘᴏᴡᴇʀ-ᴜᴘ!".style())
                         }
                     }
-
                     PowerUp.DOUBLE_JUMP -> player.allowFlight = true
                 }
             }

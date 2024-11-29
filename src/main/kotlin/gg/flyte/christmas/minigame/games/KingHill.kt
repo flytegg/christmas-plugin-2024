@@ -46,7 +46,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         player.gameMode = GameMode.ADVENTURE
         player.teleport(gameConfig.spawnPoints.random().randomLocation())
 
-        var stick = ItemStack(Material.STICK).apply {
+        val stick = ItemStack(Material.STICK).apply {
             itemMeta = itemMeta.apply {
                 displayName("<!i><game_colour>ᴋɴᴏᴄᴋʙᴀᴄᴋ ѕᴛɪᴄᴋ!".style())
             }

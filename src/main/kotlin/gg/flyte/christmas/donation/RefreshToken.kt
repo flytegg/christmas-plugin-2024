@@ -11,7 +11,7 @@ import java.net.URI
 /**
  * A class that requests a new access token every 7000 seconds.
  */
-class RefreshToken(private val clientId: String, private val clientSecret: String) {
+class RefreshToken(clientId: String, clientSecret: String) {
 
     companion object {
         lateinit var accessToken: String

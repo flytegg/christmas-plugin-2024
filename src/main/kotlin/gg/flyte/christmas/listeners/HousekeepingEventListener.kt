@@ -202,7 +202,7 @@ class HousekeepingEventListener : Listener, PacketListener {
         }
 
         event<PlayerResourcePackStatusEvent> {
-            var goodStatus = listOf(
+            val goodStatus = listOf(
                 PlayerResourcePackStatusEvent.Status.ACCEPTED,
                 PlayerResourcePackStatusEvent.Status.DOWNLOADED,
                 PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED

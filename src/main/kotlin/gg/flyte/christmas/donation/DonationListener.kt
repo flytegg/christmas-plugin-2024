@@ -18,7 +18,7 @@ import kotlin.Throws
 /**
  * A listener that continuously fetches donation data from the Tiltify API and fires a [DonateEvent] for each unique donation.
  */
-class DonationListener(private val campaignId: String) {
+class DonationListener(campaignId: String) {
     private val url: URL = URI.create("https://v5api.tiltify.com/api/public/campaigns/$campaignId/donations").toURL()
     private val processedDonations = mutableSetOf<String>()
 
@@ -28,8 +28,6 @@ class DonationListener(private val campaignId: String) {
 
     /**
      * Continuously fetches donation data for a specified campaign at a 10-second interval.
-     *
-     * @param campaignId The ID of the campaign for which donations are being fetched.
      */
     @OptIn(DelicateCoroutinesApi::class)
     private fun fetchDonations() {

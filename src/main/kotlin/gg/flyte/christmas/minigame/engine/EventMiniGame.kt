@@ -77,7 +77,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
                 )
             }
 
-            var displayComponent = Component.empty()
+            val displayComponent = Component.empty()
                 .append("<st>\n   ".style())
                 .append("> ".style())
                 .append("<b><0>".style(gameConfig.displayName))

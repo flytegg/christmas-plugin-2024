@@ -1,8 +1,6 @@
 package gg.flyte.christmas.donation
 
 import gg.flyte.twilight.event.TwilightEvent
-import org.bukkit.event.Event
-import org.bukkit.event.HandlerList
 
 /**
  * Called when a donation is made through the Tiltify API with a predetermined `campaignId`

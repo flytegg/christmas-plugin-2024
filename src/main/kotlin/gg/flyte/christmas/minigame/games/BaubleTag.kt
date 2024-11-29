@@ -74,7 +74,7 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
 
         tasks += repeatingTask(1, TimeUnit.SECONDS) {
             Bukkit.getOnlinePlayers().forEach {
-                var isTagger = taggedPlayers.contains(it.uniqueId)
+                val isTagger = taggedPlayers.contains(it.uniqueId)
                 eventController().sidebarManager.updateLines(
                     it, listOf(
                         Component.empty(),

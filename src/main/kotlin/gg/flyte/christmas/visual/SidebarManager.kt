@@ -2,7 +2,6 @@ package gg.flyte.christmas.visual
 
 import com.google.common.base.Preconditions
 import fr.mrmicky.fastboard.adventure.FastBoard
-import gg.flyte.christmas.util.Colors
 import gg.flyte.christmas.util.eventController
 import gg.flyte.christmas.util.style
 import net.kyori.adventure.text.Component

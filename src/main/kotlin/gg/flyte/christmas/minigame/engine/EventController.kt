@@ -228,7 +228,7 @@ class EventController {
     fun handleDonation(event: DonateEvent) {
 
         if (event.value == null) return // no clue why this would happen, but just in case
-        var value = event.value.toDouble()
+        val value = event.value.toDouble()
         if (value < 0) return // no negative donations (don't think this is possible)
 
         totalDonations += value.toInt()

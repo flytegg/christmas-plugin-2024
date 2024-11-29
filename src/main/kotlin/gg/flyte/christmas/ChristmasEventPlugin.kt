@@ -110,7 +110,7 @@ class ChristmasEventPlugin : JavaPlugin() {
             val contribution = contributor.contribution
             val location = contributor.location
 
-            var randomColour = mapOf(
+            val randomColour = mapOf(
                 "<dark_red>" to "4",
                 "<red>" to "c",
                 "<gold>" to "6",
@@ -121,7 +121,7 @@ class ChristmasEventPlugin : JavaPlugin() {
 
             val displayName = "§${randomColour.value}${MojangAPIUtil.requestPlayerName(uniqueId)}"
 
-            var contributorNPC = WorldNPC.createFromUniqueId(displayName, uniqueId, location).also { worldNPCs += it }
+            val contributorNPC = WorldNPC.createFromUniqueId(displayName, uniqueId, location).also { worldNPCs += it }
             contributorNPC.npc.prefixName = "${randomColour.key}<obf>W ".style()
             contributorNPC.npc.suffixName = " ${randomColour.key}<obf>W".style()
             contributorNPC.spawnForAll()
@@ -158,7 +158,7 @@ class ChristmasEventPlugin : JavaPlugin() {
             time = 6000
 
             // Create Podium
-            var podiumModel = ItemStack(Material.PAPER).apply {
+            val podiumModel = ItemStack(Material.PAPER).apply {
                 itemMeta = itemMeta?.apply { setCustomModelData(2) }
             }
             spawn(Location(this, 535.5, 105.0, 503.5), ItemDisplay::class.java) {

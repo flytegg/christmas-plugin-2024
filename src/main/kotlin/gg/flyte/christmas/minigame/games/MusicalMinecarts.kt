@@ -70,7 +70,7 @@ class MusicalMinecarts : EventMiniGame(GameConfig.MUSICAL_MINECARTS) {
                     it.velocity = it.velocity.add(
                         Vector(
                             Random.nextDouble(-0.35, 0.35),
-                            Random.nextDouble(0.5, 1.5).toDouble(),
+                            Random.nextDouble(0.5, 1.5),
                             Random.nextDouble(-0.35, 0.35)
                         )
                     )
@@ -285,8 +285,8 @@ class MusicalMinecarts : EventMiniGame(GameConfig.MUSICAL_MINECARTS) {
     }
 
     private fun powerUp() {
-        var reducedFrequency = remainingPlayers().size < 4 && roundNumber % 4 == 0 // 4 remaining -> every 4th round
-        var regularPowerUp = remainingPlayers().size > 4 && roundNumber % 2 == 0 // 5+ remaining -> every 2nd round
+        val reducedFrequency = remainingPlayers().size < 4 && roundNumber % 4 == 0 // 4 remaining -> every 4th round
+        val regularPowerUp = remainingPlayers().size > 4 && roundNumber % 2 == 0 // 5+ remaining -> every 2nd round
 
         if (reducedFrequency || regularPowerUp) {
 
@@ -380,7 +380,7 @@ class MusicalMinecarts : EventMiniGame(GameConfig.MUSICAL_MINECARTS) {
         poweredRails.keys.flatMap { it.toSingleBlockLocations() }.forEachIndexed { index, location ->
             if (index % 6 == 0) {
                 val direction = Vector(0, 0, 0)
-                var value = poweredRails.entries.first { entry -> entry.key.contains(location) }.value
+                val value = poweredRails.entries.first { entry -> entry.key.contains(location) }.value
 
                 direction.apply {
                     if (value.first == Shape.NORTH_SOUTH) {
@@ -469,7 +469,7 @@ class MusicalMinecarts : EventMiniGame(GameConfig.MUSICAL_MINECARTS) {
         listeners += event<PlayerInteractEvent> {
             if (clickedBlock?.type == Material.BEACON) {
                 clickedBlock?.type = Material.AIR
-                var randomPowerUp = PowerUp.entries.random()
+                val randomPowerUp = PowerUp.entries.random()
 
                 Util.runAction(PlayerType.PARTICIPANT) {
                     if (it == player) {

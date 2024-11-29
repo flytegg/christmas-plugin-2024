@@ -27,7 +27,7 @@ private fun parse(fileName: String): Song {
         }
     }
 
-    var file = File(fileName)
+    val file = File(fileName)
     copyInputStreamToFile(ChristmasEventPlugin.INSTANCE.getResource("music/$fileName")!!, file)
 
     return NBSDecoder.parse(file)
