@@ -7,6 +7,7 @@ import gg.flyte.christmas.commands.EventCommand
 import gg.flyte.christmas.donation.DonationListener
 import gg.flyte.christmas.donation.RefreshToken
 import gg.flyte.christmas.listeners.HousekeepingEventListener
+import gg.flyte.christmas.lobby.LobbySnowballs
 import gg.flyte.christmas.minigame.engine.EventController
 import gg.flyte.christmas.minigame.engine.GameConfig
 import gg.flyte.christmas.minigame.world.MapSinglePoint
@@ -52,6 +53,7 @@ class ChristmasEventPlugin : JavaPlugin() {
 
         initDependencies()
         createConfig()
+        LobbySnowballs.initialize()
         configureWorld()
         registerCommands()
         registerEvents()
