@@ -72,7 +72,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                     if (hillRegion.contains(it.location)) {
                         timeOnHill[it.uniqueId] = timeOnHill[it.uniqueId]!! + 1
                         it.playSound(Sound.ENTITY_ITEM_PICKUP)
-                        it.sendMessage("<green>+1 ѕᴇᴄᴏɴᴅ".style())
+                        it.sendActionBar("<green>+1 ѕᴇᴄᴏɴᴅ".style())
                     }
                 }
                 gameTime--
