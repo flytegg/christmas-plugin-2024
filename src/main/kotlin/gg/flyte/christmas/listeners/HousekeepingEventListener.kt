@@ -114,10 +114,11 @@ class HousekeepingEventListener : Listener, PacketListener {
             if (clickedBlock.type != Material.SNOW && clickedBlock.type != Material.SNOW_BLOCK) return@event
 
             if (player.inventory.firstEmpty() != -1) {
-                player.inventory.addItem(ItemStack(Material.SNOWBALL))
+                player.inventory.addItem(ItemStack(Material.SNOWBALL, 1))
                 playSnowCollectionEffects(player, clickedBlock.location)
             }
         }
+
 
 
 
