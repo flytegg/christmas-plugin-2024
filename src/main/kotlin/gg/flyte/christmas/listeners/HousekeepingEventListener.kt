@@ -152,9 +152,9 @@ class HousekeepingEventListener : Listener, PacketListener {
 
             // TODO finish sponsors
             val footer = "<light_purple>\nꜰʟʏᴛᴇ.ɢɢ/ᴅᴏɴᴀᴛᴇ\n\n".style()
-                .append(" <gradient:#ff80e8:#ffffff>ꜰʟʏᴛᴇ.ɢɢ</gradient>".style())
+                .append(" <gradient:${Colors.LIGHT_PURPLE.asHexString()}:${Colors.PINK.asHexString()}>ꜰʟʏᴛᴇ.ɢɢ</gradient>".style())
                 .append("<grey> • ".style())
-                .append("<gradient:#fffdb8:#ffffff>ᴄᴀʀʙᴏɴ.ʜᴏꜱᴛ</gradient>".style())
+                .append("<gradient:#6835cf:#b119c2>ᴄᴀʀʙᴏɴ.ʜᴏѕᴛ</gradient>".style())
                 .append("<grey> • ".style())
                 .append("<gradient:#FF1285:#FA0000>ᴊᴇᴛʙʀ</gradient><gradient:#FA0000:#FF6921>ᴀɪɴs</gradient>".style())
                 .append("<grey> • ".style())

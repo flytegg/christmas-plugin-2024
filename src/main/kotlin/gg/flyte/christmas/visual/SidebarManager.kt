@@ -2,6 +2,7 @@ package gg.flyte.christmas.visual
 
 import com.google.common.base.Preconditions
 import fr.mrmicky.fastboard.adventure.FastBoard
+import gg.flyte.christmas.util.Colors
 import gg.flyte.christmas.util.eventController
 import gg.flyte.christmas.util.style
 import net.kyori.adventure.text.Component
@@ -54,8 +55,8 @@ class SidebarManager {
         if (!isTop3(player)) {
             lines += listOf(
                 Component.empty(),
-                "<colour:#b2ffab>ʏᴏᴜʀ sᴄᴏʀᴇ<grey>: ".style(),
-                "<grey>${getPlacementByUUID(player.uniqueId)}. <colour:#ebadff><b>ʏᴏᴜ <reset><grey>(${dataSupplier[player.uniqueId]})".style()
+                "<green>ʏᴏᴜʀ sᴄᴏʀᴇ<grey>: ".style(),
+                "<grey>${getPlacementByUUID(player.uniqueId)}. <light_purple><b>ʏᴏᴜ <reset><grey>(${dataSupplier[player.uniqueId]})".style()
             )
         }
 
@@ -73,7 +74,7 @@ class SidebarManager {
     /**
      * Returns a string representing the current game line for the sidebar.
      */
-    private fun currentGameLine() = "<aqua>ɢᴀᴍᴇ<grey>: <0>".style(eventController().currentGame?.gameConfig?.smallDisplayName ?: "<grey>ɴᴏɴᴇ".style())
+    private fun currentGameLine() = "<white>ɢᴀᴍᴇ: <0>".style(eventController().currentGame?.gameConfig?.smallDisplayName ?: "<grey>ɴᴏɴᴇ".style())
 
     /**
      * Returns a component representing the player at the provided position.
@@ -93,7 +94,7 @@ class SidebarManager {
 
         val uniqueIdAtPosition = getUUIDByPlacement(position)
         val nameComponent = when (uniqueIdAtPosition) {
-            player.uniqueId -> "<colour:#ebadff><b>ʏᴏᴜ <reset><colour:#fcb3b3>(${dataSupplier[player.uniqueId]})".style()
+            player.uniqueId -> "<pink><b>ʏᴏᴜ <reset><grey>(${dataSupplier[player.uniqueId]})".style()
             null -> "<white>ɴᴏɴᴇ".style()
             else -> "<colour:#f5d6ff>${Bukkit.getOfflinePlayer(uniqueIdAtPosition).name ?: "Unknown"} <reset><colour:#fcb3b3>(${dataSupplier[uniqueIdAtPosition]})".style()
         }
