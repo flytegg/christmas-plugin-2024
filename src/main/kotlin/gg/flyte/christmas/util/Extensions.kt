@@ -36,7 +36,8 @@ fun String.style(vararg placeholders: Component): Component {
         this,
         *components,
         TagResolver.standard(),
-        colourResolver
+        colourResolver,
+        Colors.tagResolver()
     )
 }
 
@@ -95,11 +96,11 @@ fun org.bukkit.Location.packetObj(): com.github.retrooper.packetevents.protocol.
     return SpigotConversionUtil.fromBukkitLocation(this)
 }
 
-fun com.github.retrooper.packetevents.protocol.item.ItemStack.bukkit(): org.bukkit.inventory.ItemStack {
+fun com.github.retrooper.packetevents.protocol.item.ItemStack.bukkit(): ItemStack {
     return SpigotConversionUtil.toBukkitItemStack(this)
 }
 
-fun org.bukkit.inventory.ItemStack.packetObj(): com.github.retrooper.packetevents.protocol.item.ItemStack {
+fun ItemStack.packetObj(): com.github.retrooper.packetevents.protocol.item.ItemStack {
     return SpigotConversionUtil.fromBukkitItemStack(this)
 }
 
