@@ -51,13 +51,13 @@ fun String.colourise(): String {
 
         val builder = StringBuilder()
         replaceSharp.forEach { c ->
-            builder.append("&").append(c)
+            builder.append("§").append(c)
         }
 
         message = message.replace(hexCode, builder.toString())
     }
 
-    return ChatColor.translateAlternateColorCodes('&', message)
+    return ChatColor.translateAlternateColorCodes('§', message)
 }
 
 fun Component.toLegacyString(): String = LegacyComponentSerializer.legacyAmpersand().serialize(this)

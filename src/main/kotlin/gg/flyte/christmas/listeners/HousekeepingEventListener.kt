@@ -33,6 +33,9 @@ import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.format.TextColor
+import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.serializer.ansi.ANSIComponentSerializer
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Material
@@ -62,7 +65,7 @@ class HousekeepingEventListener : Listener, PacketListener {
         event<PaperServerListPingEvent> {
             // TODO finish sponsors
             val footer = text("       ")
-                .append("<gradient:#fffdb8:#ffffff>ᴄᴀʀʙᴏɴ.ʜᴏꜱᴛ</gradient>".style())
+                .append("<gradient:${Colors.PURPLE.asHexString()}:${Colors.MAGENTA.asHexString()}>ᴄᴀʀʙᴏɴ.ʜᴏꜱᴛ".style())
                 .append("<grey> • ".style())
                 .append("<gradient:#FF1285:#FA0000>ᴊᴇᴛʙʀ</gradient><gradient:#FA0000:#FF6921>ᴀɪɴs</gradient>".style())
                 .append("<grey> • ".style())
@@ -70,25 +73,24 @@ class HousekeepingEventListener : Listener, PacketListener {
 
             val motd = Component.empty()
                 .append("<b><obf><white>        ||||||  ".style())
-                .append("<gradient:#F396E1:#FFFFFF>ꜰʟʏᴛ</gradient><gradient:#FFFFFF:#FFFFFF>ᴇ</gradient> ".style())
-                .append("<gradient:#51F651:#FAEDCB>ᴄʜʀɪsᴛᴍ</gradient><gradient:#FAEDCB:#D12020>ᴀs ᴇᴠ</gradient><gradient:#D12020:#D12020>ᴇɴᴛ</gradient>".style())
-                .append("<b><obf><white>  ||||||".style())
-                .append("\n".style())
+                .append("<gradient:${Colors.LIGHT_PURPLE.asHexString()}:${Colors.PINK.asHexString()}>ꜰʟʏᴛᴇ ".style())
+                .append("<gradient:${Colors.ORANGE.asHexString()}:${Colors.RED.asHexString()}>ᴄʜʀɪsᴛᴍᴀs ᴇᴠᴇɴᴛ".style())
+                .append("<b><obf><white>  ||||||\n".style())
                 .append(footer)
 
             motd(motd)
             this.maxPlayers = 1
             this.numPlayers = 1
             this.listedPlayers.clear()
-            listOf(
-                "<st><grey>        <reset> ❆ <bold><light_purple>ꜰʟʏᴛᴇ.ɢɢ <red>ᴄʜʀɪsᴛᴍᴀs <green>ᴇᴠᴇɴᴛ <reset><white>❆ <reset><st><grey>         ".style(),
-                "  <bold><light_purple>ꜰʟʏᴛᴇ.ɢɢ <grey>• <yellow>ᴄᴀʀʙᴏɴ.ʜᴏꜱᴛ <grey>• <blue>ʙᴜɪʟᴛʙʏʙɪᴛ.ᴄᴏᴍ".style(),
-                "".style(),
-                "".style(),
-                "            <gold>Join <green><b>now <reset><gold>to play <aqua>x-mas minigames".style(),
-                "              <gold>and support <red>[charity name]".style() // TODO fill charity name and centre
-            ).forEach {
-                this.listedPlayers.add(PaperServerListPingEvent.ListedPlayerInfo(it.toLegacyString().colourise(), UUID.randomUUID()))
+            val serverListPingText = listOf(
+                "<st><grey>        <reset> ❆ <bold><light_purple>ꜰʟʏᴛᴇ.ɢɢ <red>ᴄʜʀɪsᴛᴍᴀs ᴇᴠᴇɴᴛ <reset><white>❆ <reset><st><grey>         ",
+                "  <bold><light_purple>ꜰʟʏᴛᴇ.ɢɢ <grey>• <yellow>ᴄᴀʀʙᴏɴ.ʜᴏꜱᴛ <grey>• <blue>ʙᴜɪʟᴛʙʏʙɪᴛ.ᴄᴏᴍ",
+                "",
+                "            <gold>ᴊᴏɪɴ <green><b>ɴᴏᴡ <reset><gold>ᴛᴏ ᴘʟᴀʏ <aqua>x-ᴍᴀѕ ᴍɪɴɪɢᴀᴍᴇѕ",
+                "              <gold>ᴀɴᴅ ѕᴜᴘᴘᴏʀᴛ <red>[ᴄʜᴀʀɪᴛʏ ɴᴀᴍᴇ]" // TODO fill charity name and centre
+            )
+            serverListPingText.map { MiniMessage.miniMessage().deserialize(it) }.forEach {
+                this.listedPlayers.add(PaperServerListPingEvent.ListedPlayerInfo(it.toLegacyString().replace('&', '§'), UUID.randomUUID()))
             }
         }
 
@@ -152,7 +154,7 @@ class HousekeepingEventListener : Listener, PacketListener {
 
             // TODO finish sponsors
             val footer = "<light_purple>\nꜰʟʏᴛᴇ.ɢɢ/ᴅᴏɴᴀᴛᴇ\n\n".style()
-                .append(" <gradient:${Colors.LIGHT_PURPLE.asHexString()}:${Colors.PINK.asHexString()}>ꜰʟʏᴛᴇ.ɢɢ</gradient>".style())
+                .append(" <gradient:${Colors.LIGHT_PURPLE.asHexString()}:${Colors.PINK.asHexString()}>ꜰʟʏᴛᴇ.ɢɢ".style())
                 .append("<grey> • ".style())
                 .append("<gradient:#6835cf:#b119c2>ᴄᴀʀʙᴏɴ.ʜᴏѕᴛ</gradient>".style())
                 .append("<grey> • ".style())

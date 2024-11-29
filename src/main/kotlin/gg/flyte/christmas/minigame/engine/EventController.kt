@@ -30,7 +30,7 @@ import kotlin.reflect.full.primaryConstructor
  * The controller for the event, handling the current game (and its state), countdown, player management,
  * and other UI and event-related elements.
  */
-class EventController() {
+class EventController {
     var currentGame: EventMiniGame? = null
     var countdownTask: TwilightRunnable? = null
     val countdownMap = mapOf(
@@ -49,7 +49,7 @@ class EventController() {
     var totalDonations = 0
     var donationGoal = 2000
     var donationBossBar = BossBar.bossBar(
-        "<b><gradient:#7EC1EF:#FA62A3>Donation Goal:</gradient></b> <white><b>$<#7EC1EF>${totalDonations}<grey>/<#FA62A3>${donationGoal}".style(),
+        getBossBarMessage(),
         0F,
         BossBar.Color.GREEN,
         BossBar.Overlay.PROGRESS
@@ -273,8 +273,12 @@ class EventController() {
      * Updates the donation bar with the current total donations and donation goal.
      */
     fun updateDonationBar() {
-        donationBossBar.name("<b><gradient:#7EC1EF:#FA62A3>Donation Goal:</gradient></b> <white><b>$<#7EC1EF>${totalDonations}<grey>/<#FA62A3>${donationGoal}".style())
-        var progress = (totalDonations.toFloat() / donationGoal)
+        donationBossBar.name(getBossBarMessage())
+        val progress = (totalDonations.toFloat() / donationGoal)
         donationBossBar.progress(progress)
     }
+
+    private fun getBossBarMessage(): Component =
+        "<b><gradient:${Colors.LIGHT_PURPLE}:${Colors.MAGENTA}>ᴅᴏɴᴀᴛɪᴏɴ ɢᴏᴀʟ:</gradient></b> <white><b>$<light_purple>${totalDonations}<grey>/<magenta>${donationGoal}".style()
+
 }

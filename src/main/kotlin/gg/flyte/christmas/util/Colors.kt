@@ -5,17 +5,18 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 
 object Colors {
+    val AQUA: TextColor = TextColor.color(0x42D9C8)
     val WHITE: TextColor = TextColor.color(0xF3F7F0)
-    val RED: TextColor = TextColor.color(0xF23A3A)
-    val GOLD: TextColor = TextColor.color(0xFF9800)
     val YELLOW: TextColor = TextColor.color(0xFFEE63)
-    val ORANGE: TextColor = TextColor.color(0xF19C79)
     val GREEN: TextColor = TextColor.color(0xA7C957)
     val DARK_GREEN: TextColor = TextColor.color(0x226F54)
     val BLUE: TextColor = TextColor.color(0x384B70)
-    val AQUA: TextColor = TextColor.color(0x42D9C8)
-    val LIGHT_PURPLE: TextColor = TextColor.color(0xEE57FF)
     val PURPLE: TextColor = TextColor.color(0x6735CE)
+    val MAGENTA: TextColor = TextColor.color(0xB119C2)
+    val LIGHT_PURPLE: TextColor = TextColor.color(0xEE57FF)
+    val RED: TextColor = TextColor.color(0xF23A3A)
+    val GOLD: TextColor = TextColor.color(0xFF9800)
+    val ORANGE: TextColor = TextColor.color(0xF19C79)
     val PINK: TextColor = TextColor.color(0xE89EB8)
 
     fun tagResolver(): TagResolver = TagResolver.builder().resolvers(
@@ -31,6 +32,7 @@ object Colors {
         Placeholder.styling("aqua", AQUA),
         Placeholder.styling("light_purple", LIGHT_PURPLE),
         Placeholder.styling("purple", PURPLE),
+        Placeholder.styling("magenta", MAGENTA),
         Placeholder.styling("pink", PINK),
     ).build()
 }
