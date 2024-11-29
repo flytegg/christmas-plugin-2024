@@ -59,7 +59,7 @@ class ChristmasEventPlugin : JavaPlugin() {
         registerCommands()
         registerEvents()
         registerPacketAPI()
-        handleDonations()
+        if (!config.getBoolean("donations.disabled")) handleDonations()
         loadNPCs()
 
         delay(5, TimeUnit.SECONDS) { canJoin = true }

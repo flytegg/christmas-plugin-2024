@@ -6,3 +6,6 @@ description: Flyte x Carbon Christmas Event Plugin!
 authors: [Shreyas, Stephen, Josh, Kolja]
 website: https://carbon.christmas
 prefix: ChristmasEventPlugin
+depend:
+  - packetevents
+  - NoteBlockAPI

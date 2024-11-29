@@ -19,6 +19,7 @@ contributors:
 
 # Donation Auth
 donations:
+  disabled: false
   clientId: ""
   clientSecret: ""
   campaignId: ""
