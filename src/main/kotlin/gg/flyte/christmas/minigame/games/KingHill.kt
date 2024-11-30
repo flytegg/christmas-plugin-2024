@@ -100,7 +100,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             } }
 
         var yaw = 0F
-        ChristmasEventPlugin.INSTANCE.serverWorld.spawn(MapSinglePoint(827.5, 105, 630.5, 0, 0), ItemDisplay::class.java) {
+        ChristmasEventPlugin.instance.serverWorld.spawn(MapSinglePoint(827.5, 105, 630.5, 0, 0), ItemDisplay::class.java) {
             it.setItemStack(ItemStack(Material.PLAYER_HEAD).apply {
                 val meta = itemMeta as SkullMeta
                 meta.owningPlayer = Bukkit.getOfflinePlayer(first.key)

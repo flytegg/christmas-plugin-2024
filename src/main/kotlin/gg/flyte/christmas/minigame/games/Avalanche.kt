@@ -65,7 +65,7 @@ class Avalanche : EventMiniGame(GameConfig.AVALANCHE) {
     override fun startGameOverview() {
         super.startGameOverview()
 
-        ChristmasEventPlugin.INSTANCE.serverWorld.time = 12750
+        ChristmasEventPlugin.instance.serverWorld.time = 12750
 
         floorRegion.toSingleBlockLocations().forEach { it.block.type = Material.BLUE_ICE }
 
@@ -73,7 +73,7 @@ class Avalanche : EventMiniGame(GameConfig.AVALANCHE) {
             removeSafePoints()
 
             repeat(100) {
-                ChristmasEventPlugin.INSTANCE.serverWorld.spawn(
+                ChristmasEventPlugin.instance.serverWorld.spawn(
                     floorRegion.randomLocation().clone().add(0.0, (25..30).random().toDouble(), 0.0),
                     Snowball::class.java
                 )
@@ -96,7 +96,7 @@ class Avalanche : EventMiniGame(GameConfig.AVALANCHE) {
 
     override fun startGame() {
         overviewTask.cancel()
-        ChristmasEventPlugin.INSTANCE.serverWorld.entities.forEach { if (it is Snowball) it.remove() }
+        ChristmasEventPlugin.instance.serverWorld.entities.forEach { if (it is Snowball) it.remove() }
         simpleCountdown { newRound() }
     }
 
@@ -171,7 +171,7 @@ class Avalanche : EventMiniGame(GameConfig.AVALANCHE) {
                 )
 
                 repeat(1200) {
-                    ChristmasEventPlugin.INSTANCE.serverWorld.spawn(
+                    ChristmasEventPlugin.instance.serverWorld.spawn(
                         slightlyExpandedRegion.randomLocation().clone().add(0.0, (25..30).random().toDouble(), 0.0),
                         Snowball::class.java
                     ) {
@@ -259,7 +259,7 @@ class Avalanche : EventMiniGame(GameConfig.AVALANCHE) {
     override fun endGame() {
         tasks.forEach { it?.cancel() }
         removeSafePoints()
-        ChristmasEventPlugin.INSTANCE.serverWorld.time = 6000
+        ChristmasEventPlugin.instance.serverWorld.time = 6000
 
         Util.runAction(
             PlayerType.PARTICIPANT,
@@ -272,7 +272,7 @@ class Avalanche : EventMiniGame(GameConfig.AVALANCHE) {
 
         tasks += repeatingTask(10) {
             repeat(10) {
-                ChristmasEventPlugin.INSTANCE.serverWorld.spawn(
+                ChristmasEventPlugin.instance.serverWorld.spawn(
                     floorRegion.randomLocation().clone().add(0.0, (25..30).random().toDouble(), 0.0),
                     Snowball::class.java
                 ) { snowBall ->

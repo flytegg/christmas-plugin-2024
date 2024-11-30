@@ -113,8 +113,8 @@ class EventCommand(val menu: StandardMenu = StandardMenu("&c☃ ᴇᴠᴇɴᴛ �
     fun loadCrash(sender: CommandSender) {
         async {
             eventController().points.clear()
-            ChristmasEventPlugin.INSTANCE.config.getConfigurationSection("points")?.getKeys(false)?.forEach {
-                eventController().points[UUID.fromString(it)] = ChristmasEventPlugin.INSTANCE.config.getInt("points.$it")
+            ChristmasEventPlugin.instance.config.getConfigurationSection("points")?.getKeys(false)?.forEach {
+                eventController().points[UUID.fromString(it)] = ChristmasEventPlugin.instance.config.getInt("points.$it")
                 sync {
                     eventController().sidebarManager.update()
                     WorldNPC.refreshPodium()

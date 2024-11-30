@@ -36,7 +36,7 @@ class DonationListener(campaignId: String) {
                 try {
                     submitDataToEventFactory(requestDonationDataAsJson())
                 } catch (e: Exception) {
-                    ChristmasEventPlugin.INSTANCE.logger.severe("Failed to fetch donations: ${e.message}")
+                    ChristmasEventPlugin.instance.logger.severe("Failed to fetch donations: ${e.message}")
                 }
                 delay(10_000) // 10 secs
             }

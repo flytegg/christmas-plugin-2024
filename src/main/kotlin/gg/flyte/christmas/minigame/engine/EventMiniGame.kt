@@ -49,7 +49,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
      */
     init {
         for ((index, point) in gameConfig.spectatorCameraLocations.withIndex()) {
-            spectateEntities[index] = ChristmasEventPlugin.INSTANCE.serverWorld.spawn(point, ItemDisplay::class.java) {
+            spectateEntities[index] = ChristmasEventPlugin.instance.serverWorld.spawn(point, ItemDisplay::class.java) {
                 it.setItemStack(ItemStack(Material.AIR))
             }
         }
@@ -355,7 +355,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
                 Bukkit.getOnlinePlayers().forEach { loopedPlayer ->
                     loopedPlayer.gameMode = GameMode.ADVENTURE
                     loopedPlayer.formatInventory()
-                    loopedPlayer.teleport(ChristmasEventPlugin.INSTANCE.lobbySpawn)
+                    loopedPlayer.teleport(ChristmasEventPlugin.instance.lobbySpawn)
                     loopedPlayer.clearActivePotionEffects()
                     loopedPlayer.showBossBar(eventController().donationBossBar)
                     npcs.forEach { it.despawnFor(loopedPlayer) }

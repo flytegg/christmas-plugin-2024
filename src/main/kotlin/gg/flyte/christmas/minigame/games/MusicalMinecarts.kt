@@ -334,7 +334,7 @@ class MusicalMinecarts : EventMiniGame(GameConfig.MUSICAL_MINECARTS) {
     }
 
     private fun summonMinecart(): Minecart {
-        return ChristmasEventPlugin.INSTANCE.serverWorld.spawn(floorBlocks.random().add(0.0, 1.5, 0.0), Minecart::class.java) {
+        return ChristmasEventPlugin.instance.serverWorld.spawn(floorBlocks.random().add(0.0, 1.5, 0.0), Minecart::class.java) {
             it.isInvulnerable = true
             it.isSlowWhenEmpty = false
             minecarts.add(it)

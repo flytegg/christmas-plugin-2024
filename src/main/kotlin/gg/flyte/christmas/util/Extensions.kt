@@ -18,7 +18,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.time.Duration
 
-fun eventController() = ChristmasEventPlugin.INSTANCE.eventController
+fun eventController() = ChristmasEventPlugin.instance.eventController
 
 var miniMessage = MiniMessage.builder().build()
 fun String.style(vararg placeholders: Component): Component {
@@ -89,7 +89,7 @@ fun Player.formatInventory() {
 }
 
 fun com.github.retrooper.packetevents.protocol.world.Location.bukkit(): org.bukkit.Location {
-    return SpigotConversionUtil.toBukkitLocation(ChristmasEventPlugin.INSTANCE.serverWorld, this)
+    return SpigotConversionUtil.toBukkitLocation(ChristmasEventPlugin.instance.serverWorld, this)
 }
 
 fun org.bukkit.Location.packetObj(): com.github.retrooper.packetevents.protocol.world.Location {

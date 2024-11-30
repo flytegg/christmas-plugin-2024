@@ -125,7 +125,7 @@ class EventController {
     fun onPlayerJoin(player: Player) {
         if (currentGame == null) {
             player.showBossBar(eventController().donationBossBar)
-            player.teleport(ChristmasEventPlugin.INSTANCE.lobbySpawn)
+            player.teleport(ChristmasEventPlugin.instance.lobbySpawn)
         } else {
             if (currentGame!!.state == GameState.WAITING_FOR_PLAYERS) {
                 if (enoughPlayers()) {
@@ -208,10 +208,10 @@ class EventController {
      */
     fun serialisePoints() {
         async {
-            ChristmasEventPlugin.INSTANCE.config.set("points", null)
-            points.forEach { (uuid, points) -> ChristmasEventPlugin.INSTANCE.config.set("points.$uuid", points) }
+            ChristmasEventPlugin.instance.config.set("points", null)
+            points.forEach { (uuid, points) -> ChristmasEventPlugin.instance.config.set("points.$uuid", points) }
 
-            ChristmasEventPlugin.INSTANCE.saveConfig()
+            ChristmasEventPlugin.instance.saveConfig()
         }
     }
 
@@ -234,7 +234,7 @@ class EventController {
 
         Bukkit.getOnlinePlayers().forEach {
             // spawn firework
-            ChristmasEventPlugin.INSTANCE.serverWorld.spawn(it.location, Firework::class.java) {
+            ChristmasEventPlugin.instance.serverWorld.spawn(it.location, Firework::class.java) {
                 it.fireworkMeta = it.fireworkMeta.apply {
                     addEffect(
                         FireworkEffect.builder()
@@ -260,8 +260,8 @@ class EventController {
                 Bukkit.getOfflinePlayer(it).let { donors.add(it.uniqueId) }
             }
 
-            ChristmasEventPlugin.INSTANCE.config.set("donations.totalDonations", totalDonations)
-            ChristmasEventPlugin.INSTANCE.saveConfig()
+            ChristmasEventPlugin.instance.config.set("donations.totalDonations", totalDonations)
+            ChristmasEventPlugin.instance.saveConfig()
         }
 
         currentGame?.handleDonation(DonationTier.getTier(value))

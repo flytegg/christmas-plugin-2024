@@ -21,7 +21,7 @@ object Util {
      * @return A list of contributors to the event.
      */
     fun getEventContributors(): List<Contributor> {
-        val config = ChristmasEventPlugin.INSTANCE.config
+        val config = ChristmasEventPlugin.instance.config
 
         return config.getStringList("contributors").map { contributor ->
             val (ign, contribution, coords) = contributor.substring(1, contributor.length - 1).split("><")
@@ -40,7 +40,7 @@ object Util {
      */
     fun runAction(vararg types: PlayerType, action: (Player) -> Unit): Collection<Player> {
         return Bukkit.getOnlinePlayers().filter { player ->
-            val isCameraPlayer = player.uniqueId == ChristmasEventPlugin.INSTANCE.cameraPlayer
+            val isCameraPlayer = player.uniqueId == ChristmasEventPlugin.instance.cameraPlayer
             val isOptOut = eventController().optOut.contains(player.uniqueId)
 
             when {
@@ -92,7 +92,7 @@ object Util {
     fun fillArena(atLevel: Int, material: Material): List<MapSinglePoint> {
         val locations = mutableListOf<MapSinglePoint>()
 
-        val world = ChristmasEventPlugin.INSTANCE.serverWorld
+        val world = ChristmasEventPlugin.instance.serverWorld
         val centreX = 616
         val centreZ = 800
         val radius = 28

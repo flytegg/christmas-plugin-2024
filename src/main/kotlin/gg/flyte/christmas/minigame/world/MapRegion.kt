@@ -22,7 +22,7 @@ data class MapSinglePoint(
     val z: Number,
     val yaw: Number = 0,
     val pitch: Number = 0
-) : Location(ChristmasEventPlugin.INSTANCE.serverWorld, x.toDouble(), y.toDouble(), z.toDouble(), yaw.toFloat(), pitch.toFloat())
+) : Location(ChristmasEventPlugin.instance.serverWorld, x.toDouble(), y.toDouble(), z.toDouble(), yaw.toFloat(), pitch.toFloat())
 
 /**
  * Represents a region in the map, with the location's world

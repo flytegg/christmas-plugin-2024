@@ -11,7 +11,6 @@ import gg.flyte.christmas.minigame.engine.EventController
 import gg.flyte.christmas.minigame.engine.GameConfig
 import gg.flyte.christmas.minigame.world.MapSinglePoint
 import gg.flyte.christmas.npc.WorldNPC
-import gg.flyte.christmas.util.Colors
 import gg.flyte.christmas.util.Util
 import gg.flyte.christmas.util.eventController
 import gg.flyte.christmas.util.style
@@ -20,7 +19,6 @@ import gg.flyte.twilight.time.TimeUnit
 import gg.flyte.twilight.twilight
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder
 import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.format.TextColor
 import org.bukkit.*
 import org.bukkit.entity.Display
 import org.bukkit.entity.ItemDisplay
@@ -45,7 +43,7 @@ class ChristmasEventPlugin : JavaPlugin() {
     var canJoin = false
 
     companion object {
-        val INSTANCE: ChristmasEventPlugin by lazy { getPlugin(ChristmasEventPlugin::class.java) }
+        val instance: ChristmasEventPlugin by lazy { getPlugin(ChristmasEventPlugin::class.java) }
     }
 
     override fun onLoad() {

@@ -106,7 +106,7 @@ class HousekeepingEventListener : Listener, PacketListener {
         }
 
         event<PlayerLoginEvent> {
-            if (!ChristmasEventPlugin.INSTANCE.canJoin) {
+            if (!ChristmasEventPlugin.instance.canJoin) {
                 kickMessage("<red>ʏᴏᴜ ᴄᴀɴɴᴏᴛ ᴊᴏɪɴ ᴀᴛ ᴛʜᴇ ᴍᴏᴍᴇɴᴛ! ᴘʟᴇᴀѕᴇ ᴡᴀɪᴛ...".style())
                 result = PlayerLoginEvent.Result.KICK_OTHER
             }
@@ -114,8 +114,8 @@ class HousekeepingEventListener : Listener, PacketListener {
 
         event<PlayerJoinEvent>(priority = EventPriority.LOWEST) {
             fun applyTag(player: Player) {
-                player.scoreboard = ChristmasEventPlugin.INSTANCE.scoreBoardTab
-                ChristmasEventPlugin.INSTANCE.scoreBoardTab.getTeam(if (player.isOp) "a. staff" else "b. player")?.addEntry(player.name)
+                player.scoreboard = ChristmasEventPlugin.instance.scoreBoardTab
+                ChristmasEventPlugin.instance.scoreBoardTab.getTeam(if (player.isOp) "a. staff" else "b. player")?.addEntry(player.name)
             }
             joinMessage(null)
 
@@ -138,7 +138,7 @@ class HousekeepingEventListener : Listener, PacketListener {
                 eventController().onPlayerJoin(this)
                 eventController().songPlayer?.addPlayer(this)
 
-                ChristmasEventPlugin.INSTANCE.worldNPCs.forEach { it.spawnFor(this) }
+                ChristmasEventPlugin.instance.worldNPCs.forEach { it.spawnFor(this) }
 
                 applyTag(this)
             }
@@ -171,7 +171,7 @@ class HousekeepingEventListener : Listener, PacketListener {
         }
 
         event<PlayerMoveEvent> {
-            val worldNPCs = ChristmasEventPlugin.INSTANCE.worldNPCs
+            val worldNPCs = ChristmasEventPlugin.instance.worldNPCs
             val playerLocation = player.location
             val npcLocations = worldNPCs.map { it.npc.location.bukkit() }
 
@@ -277,7 +277,7 @@ class HousekeepingEventListener : Listener, PacketListener {
     override fun onPacketReceive(event: PacketReceiveEvent) {
         if (event.packetType != PacketType.Play.Client.INTERACT_ENTITY) return
         WrapperPlayClientInteractEntity(event).apply {
-            ChristmasEventPlugin.INSTANCE.worldNPCs.find { it.npc.id == entityId }?.let { clickedNPC ->
+            ChristmasEventPlugin.instance.worldNPCs.find { it.npc.id == entityId }?.let { clickedNPC ->
 
                 if (action == WrapperPlayClientInteractEntity.InteractAction.ATTACK) {
                     event.user.sendPacket(

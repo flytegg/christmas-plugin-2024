@@ -38,7 +38,7 @@ class CameraSlide(slideTo: MapSinglePoint, onComplete: (() -> Unit)? = null) {
                             onComplete?.invoke()
                             hasCompleted = true // Mark as called to prevent further executions
                         }
-                    }.runTaskTimer(ChristmasEventPlugin.INSTANCE, 0, 1)
+                    }.runTaskTimer(ChristmasEventPlugin.instance, 0, 1)
                 }
             }
         }
