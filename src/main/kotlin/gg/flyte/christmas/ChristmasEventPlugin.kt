@@ -14,8 +14,6 @@ import gg.flyte.christmas.npc.WorldNPC
 import gg.flyte.christmas.util.Util
 import gg.flyte.christmas.util.eventController
 import gg.flyte.christmas.util.style
-import gg.flyte.twilight.scheduler.delay
-import gg.flyte.twilight.time.TimeUnit
 import gg.flyte.twilight.twilight
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder
 import net.kyori.adventure.text.format.NamedTextColor
@@ -40,7 +38,6 @@ class ChristmasEventPlugin : JavaPlugin() {
     var cameraPlayer: UUID = UUID.fromString("a008c892-e7e1-48e1-8235-8aa389318b7a") // "devous" | Josh
     var eventController: EventController = EventController()
     var worldNPCs: MutableSet<WorldNPC> = HashSet()
-    var canJoin = false
 
     companion object {
         val instance: ChristmasEventPlugin by lazy { getPlugin(ChristmasEventPlugin::class.java) }
@@ -61,8 +58,6 @@ class ChristmasEventPlugin : JavaPlugin() {
         registerPacketAPI()
         if (!config.getBoolean("donations.disabled")) handleDonations()
         loadNPCs()
-
-        delay(5, TimeUnit.SECONDS) { canJoin = true }
     }
 
     override fun onDisable() {

@@ -302,6 +302,7 @@ class Avalanche : EventMiniGame(GameConfig.AVALANCHE) {
 
         delay(15, TimeUnit.SECONDS) {
             winnerNPCs.forEach { it.despawnForAll() }
+            floorRegion.toSingleBlockLocations().forEach { it.block.type = Material.AIR }
             super.endGame()
         }
     }

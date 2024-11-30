@@ -28,9 +28,9 @@ import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.*
-import org.bukkit.entity.Firework
-import org.bukkit.entity.ItemDisplay
-import org.bukkit.entity.Player
+import org.bukkit.entity.*
+import org.bukkit.event.block.BlockExplodeEvent
+import org.bukkit.event.entity.EntityExplodeEvent
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerMoveEvent
@@ -311,11 +311,6 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
         bombedSquares.forEach { it.block.type = selectedMaterial } // if colour bombs used, change those squares to safe.
 
         Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) { it.playSound(Sound.BLOCK_BEACON_ACTIVATE) }
-        Util.runAction(PlayerType.PARTICIPANT) {
-            for (itemStack in it.inventory.storageContents) {
-                if (itemStack?.type == selectedMaterial) itemStack.type = Material.AIR // ensure no power-up items are removed
-            }
-        }
     }
 
     private fun handlePowerUp() {
@@ -344,6 +339,18 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
             Util.runAction(PlayerType.PARTICIPANT) {
                 it.sendMessage("<grey>ꜰɪɴᴅ ᴛʜᴇ ʙᴇᴀᴄᴏɴ ᴏɴ ᴛʜᴇ ᴍᴀᴘ ᴛᴏ ᴜɴʟᴏᴄᴋ ɪᴛ!".style())
                 it.playSound(Sound.BLOCK_NOTE_BLOCK_PLING)
+            }
+        }
+    }
+
+    private fun setNextAvailableSlot(player: Player, itemStack: ItemStack) {
+        for ((index, stack) in player.inventory.storageContents.withIndex()) {
+            if (stack == null) {
+                player.inventory.setItem(index, itemStack)
+                break
+            } else if (stack.type == selectedMaterial) {
+                player.inventory.setItem(index, itemStack)
+                break
             }
         }
     }
@@ -445,7 +452,7 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
                 }
 
                 when (randomPowerUp) {
-                    PowerUp.ENDER_PEARL -> player.inventory.setItem(0, ItemStack(Material.ENDER_PEARL, 1))
+                    PowerUp.ENDER_PEARL -> setNextAvailableSlot(player, ItemStack(Material.ENDER_PEARL))
                     PowerUp.COLOR_BOMB -> {
                         val x = clickedBlock!!.location.blockX
                         val y = clickedBlock!!.location.blockY
@@ -490,7 +497,7 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
                         clickedBlock!!.world.playSound(clickedBlock!!.location, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f)
                     }
                     PowerUp.JUMP_BOOST -> player.addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, 20 * 8, 3, false, false, false))
-                    PowerUp.FISHING_ROD -> player.inventory.setItem(0, ItemStack(Material.FISHING_ROD, 1))
+                    PowerUp.FISHING_ROD -> setNextAvailableSlot(player, ItemStack(Material.FISHING_ROD))
                     PowerUp.SLOWNESS -> player.addPotionEffect(PotionEffect(PotionEffectType.SLOWNESS, 20 * 10, 2, false, false, false))
                     PowerUp.BLINDNESS -> player.addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2, false, false, false))
                     PowerUp.RANDOM_TP -> player.teleport(groupedSquares.random().randomLocation().add(0.0, 1.5, 0.0))
@@ -505,7 +512,39 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
                     }
                     PowerUp.DOUBLE_JUMP -> player.allowFlight = true
                 }
+
+                return@event // could be holding fireball. don't wanna trigger both
             }
+
+            if (hasItem()) {
+                if (item?.type == Material.TNT) {
+                    if (clickedBlock?.type!!.name.lowercase().contains("concrete")) {
+                        player.world.spawn(clickedBlock!!.location.clone().add(0.0, 1.0, 0.0), TNTPrimed::class.java) {
+                            it.fuseTicks = 25
+                        }
+                    }
+                    item?.subtract()
+
+                    return@event
+                }
+
+                if (item?.type == Material.FIRE_CHARGE) {
+                    item?.subtract()
+                    player.launchProjectile(Fireball::class.java).also {
+                        it.acceleration.multiply(2)
+                    }
+
+                    return@event
+                }
+            }
+        }
+
+        listeners += event<BlockExplodeEvent> {
+            blockList().removeIf { block -> !block.type.name.lowercase().contains("concrete") }
+        }
+
+        listeners += event<EntityExplodeEvent> {
+            blockList().removeIf { block -> !block.type.name.lowercase().contains("concrete") }
         }
 
         listeners += event<PlayerToggleFlightEvent> {
@@ -520,11 +559,22 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
     }
 
     override fun handleDonation(tier: DonationTier) {
-//        when (tier) {
-//            DonationTier.LOW -> TODO()
-//            DonationTier.MEDIUM -> TODO()
-//            DonationTier.HIGH -> TODO()
-//        }
+        when (tier) {
+            DonationTier.LOW -> {
+                Util.runAction(PlayerType.OPTED_OUT) { it.sendMessage("<game_colour>Everyone has received <aqua>3 snowballs<game_colour>!".style()) }
+                Util.runAction(PlayerType.PARTICIPANT) { setNextAvailableSlot(it, ItemStack(Material.SNOWBALL, 3)) }
+            }
+
+            DonationTier.MEDIUM -> {
+                Util.runAction(PlayerType.OPTED_OUT) { it.sendMessage("<game_colour>Everyone has received a <aqua>fireball<game_colour>!".style()) }
+                Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) { setNextAvailableSlot(it, ItemStack(Material.FIRE_CHARGE)) }
+            }
+
+            DonationTier.HIGH -> {
+                Util.runAction(PlayerType.OPTED_OUT) { it.sendMessage("<game_colour>Everyone has received a <aqua>short-fuse TNT<game_colour>!".style()) }
+                Util.runAction(PlayerType.PARTICIPANT) { setNextAvailableSlot(it, ItemStack(Material.TNT)) }
+            }
+        }
     }
 
     private enum class PowerUp(

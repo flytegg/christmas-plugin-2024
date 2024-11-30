@@ -1,5 +1,5 @@
-
 ### `server.properties`:
+
 ```properties
 accepts-transfers=true
 allow-flight=true
@@ -12,11 +12,25 @@ view-distance=100
 ```
 
 ### `bukkit.yml`:
+
 ```yaml
   connection-throttle: -1
 ```
 
+### `spigot.yml`
+
+```yaml
+world-settings:
+  default:
+    view-distance: 400
+    entity-tracking-range:
+      display: 600
+settings:
+  moved-too-quickly-multiplier: 100.0
+```
+
 ### `paper-global.yml`:
+
 ```yaml
 chunk-loading-advanced:
   auto-config-send-distance: true
@@ -30,13 +44,4 @@ chunk-system:
   gen-parallelism: default
   io-threads: -1
   worker-threads: -1
-```
-
-### `spigot.yml`
-```yaml
-world-settings:
-  default:
-    view-distance: 400
-    entity-tracking-range:
-      display: 600
 ```

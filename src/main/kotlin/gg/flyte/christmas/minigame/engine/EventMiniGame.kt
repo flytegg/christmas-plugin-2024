@@ -254,7 +254,12 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
      */
     fun showGameResults() {
         // slide to post-game podium.
-        CameraSlide(MapSinglePoint(519, 131, 559, 0, 0)) {
+        Bukkit.getOnlinePlayers().forEach {
+            it.hideBossBar(eventController().donationBossBar)
+            eventController().sidebarManager.remove(it) // hide for now
+        }
+
+        CameraSlide(MapSinglePoint(527, 202, 562, 20.373718F, 7.030075F)) {
             // create podium NPCs
             val npcs = mutableListOf<WorldNPC>()
             val displays = mutableListOf<TextDisplay>()
@@ -327,28 +332,23 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
 
             // cinematic camera sequence
             val summaryLocations = listOf(
-                MapSinglePoint(519, 131, 559, -144.63538F, -76.47707F),
-                MapSinglePoint(519, 144, 559, -144.63538F, -76.47707F),
-                MapSinglePoint(519, 162, 559, -136.78506F, -68.62731F),
-                MapSinglePoint(519, 184, 559, -106.76083F, -49.52825F),
-                MapSinglePoint(519, 201, 559, -92.1124F, -32.856964F),
-                MapSinglePoint(523, 207, 559, -95.1069F, -10.844507F),
-                MapSinglePoint(527, 212, 559, -101.17685F, 14.971579F),
-                MapSinglePoint(529, 213, 559, -121.2471F, 26.220592F),
-                MapSinglePoint(532, 213, 562, -165.83867F, 25.330376F),
-                MapSinglePoint(537, 213, 558, 103.11706F, 24.278307F),
-                MapSinglePoint(538, 209, 552, 51.32303F, 20.07004F),
-                MapSinglePoint(529, 199, 540, 45.658024F, 16.023605F),
-                MapSinglePoint(521, 209, 539, 37.32238F, 14.971543F),
-                MapSinglePoint(517, 214, 539, 6.1650276F, 26.867983F),
-                MapSinglePoint(512, 214, 540, -64.32342F, 30.26696F),
-                MapSinglePoint(509, 211, 546, -112.96126F, 14.485972F),
-                MapSinglePoint(512, 212, 552, -130.92738F, 12.300918F),
-                MapSinglePoint(517, 217, 555, -134.73099F, 14.243189F),
-                MapSinglePoint(521, 217, 552, -132.38396F, 10.520491F),
-                MapSinglePoint(523, 217, 551, -134.4072F, 13.676693F),
-                MapSinglePoint(523, 217.5, 551, -133.59787F, 18.45147F),
-                MapSinglePoint(515, 217, 558, -135.37837F, 8.416364F),
+                MapSinglePoint(527, 202, 562, 20.373718F, 7.030075F),
+                MapSinglePoint(528, 205, 559, -48.90033F, 4.0357285F),
+                MapSinglePoint(528, 208, 558, -65.81525F, 5.9780083F),
+                MapSinglePoint(529, 211, 557, -65.32965F, 8.891423F),
+                MapSinglePoint(530, 213, 555, -44.6109F, 24.834274F),
+                MapSinglePoint(532, 214, 553, -7.1394653F, 33.81733F),
+                MapSinglePoint(536, 211, 553, 27.337158F, 17.146109F),
+                MapSinglePoint(530, 200, 547, 101.06506F, 18.76465F),
+                MapSinglePoint(517, 215, 546, 168.72296F, 22.16365F),
+                MapSinglePoint(517, 215, 546, -168.53601F, 26.77655F),
+                MapSinglePoint(517, 215, 549, -159.95715F, 28.071411F),
+                MapSinglePoint(517, 215, 551, -138.59094F, 27.42398F),
+                MapSinglePoint(522, 215, 551, -134.54431F, 28.88068F),
+                MapSinglePoint(523, 219, 550, -134.62524F, 48.384426F),
+                MapSinglePoint(523, 219, 550, -134.22058F, 47.170494F),
+                MapSinglePoint(521, 217, 552, -132.44006F, 30.58016F),
+                MapSinglePoint(519, 214, 554, -132.2782F, 8.243982F),
             )
 
             CameraSequence(summaryLocations, Bukkit.getOnlinePlayers(), null, 8) {

@@ -67,7 +67,6 @@ class HousekeepingEventListener : Listener, PacketListener {
                 .append("<grey> • ".style())
                 .append("<gradient:#FF1285:#FA0000>ᴊᴇᴛʙʀ</gradient><gradient:#FA0000:#FF6921>ᴀɪɴs</gradient>".style())
                 .append("<grey> • ".style())
-                .append("<colour:#4885be>ʙᴜɪʟᴛʙʏʙɪᴛ.ᴄᴏᴍ".style())
 
             val motd = Component.empty()
                 .append("<b><obf><white>        ||||||  ".style())
@@ -111,7 +110,6 @@ class HousekeepingEventListener : Listener, PacketListener {
                 result = PlayerLoginEvent.Result.KICK_OTHER
             }
         }
-
         event<PlayerJoinEvent>(priority = EventPriority.LOWEST) {
             fun applyTag(player: Player) {
                 player.scoreboard = ChristmasEventPlugin.instance.scoreBoardTab
@@ -157,8 +155,6 @@ class HousekeepingEventListener : Listener, PacketListener {
                 .append("<gradient:#6835cf:#b119c2>ᴄᴀʀʙᴏɴ.ʜᴏѕᴛ</gradient>".style())
                 .append("<grey> • ".style())
                 .append("<gradient:#FF1285:#FA0000>ᴊᴇᴛʙʀ</gradient><gradient:#FA0000:#FF6921>ᴀɪɴs</gradient>".style())
-                .append("<grey> • ".style())
-                .append("<colour:#4885be>ʙᴜɪʟᴛʙʏʙɪᴛ.ᴄᴏᴍ ".style())
                 .append("\n".style())
             Bukkit.getOnlinePlayers().forEach { it.sendPlayerListHeaderAndFooter(header, footer) }
 
@@ -202,13 +198,14 @@ class HousekeepingEventListener : Listener, PacketListener {
         }
 
         event<PlayerResourcePackStatusEvent> {
-            val goodStatus = listOf(
-                PlayerResourcePackStatusEvent.Status.ACCEPTED,
-                PlayerResourcePackStatusEvent.Status.DOWNLOADED,
-                PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED
-            )
-
-            if (!goodStatus.contains(status)) player.kick("<red>ʏᴏᴜ <white><u>ᴍᴜѕᴛ<reset> <red>ᴀᴄᴄᴇᴘᴛ ᴛʜᴇ ʀᴇѕᴏᴜʀᴄᴇ ᴘᴀᴄᴋ ᴛᴏ ᴘʟᴀʏ ᴏɴ ᴛʜɪѕ ѕᴇʀᴠᴇʀ!".style())
+            when (status) {
+                PlayerResourcePackStatusEvent.Status.DECLINED -> player.kick("<red>You <b>MUST</b> accept the resource pack to play on this server!".style())
+                PlayerResourcePackStatusEvent.Status.FAILED_DOWNLOAD -> player.kick("<red>Resource pack failed to download. Please try joining again.".style())
+                PlayerResourcePackStatusEvent.Status.INVALID_URL -> player.kick("<red>Resource pack failed to download. Please try joining again.".style())
+                PlayerResourcePackStatusEvent.Status.FAILED_RELOAD -> player.kick("<red>Resource pack failed to download. Please try joining again.".style())
+                PlayerResourcePackStatusEvent.Status.DISCARDED -> player.kick("<red>Resource pack failed to download. Please try joining again.".style())
+                else -> {}
+            }
         }
 
         event<PlayerDropItemEvent> { isCancelled = true }

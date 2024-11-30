@@ -1,4 +1,3 @@
-import org.gradle.kotlin.dsl.invoke
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -24,16 +23,16 @@ dependencies {
     implementation("io.ktor:ktor-client-core:3.0.0")
     implementation("io.ktor:ktor-client-cio:3.0.0")
 
-    paperweight.paperDevBundle("1.21.1-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.21.3-R0.1-SNAPSHOT")
 
-    implementation("gg.flyte:twilight:1.1.15")
+    implementation("gg.flyte:twilight:1.1.16")
     implementation("io.github.revxrsal:lamp.common:4.0.0-beta.19")
     implementation("io.github.revxrsal:lamp.bukkit:4.0.0-beta.19")
     implementation("com.github.ShreyasAyyengar:MenuAPI:2.2")
     implementation("fr.mrmicky:fastboard:2.1.3")
 
     compileOnly("com.github.koca2000:NoteBlockAPI:1.6.2")
-    compileOnly("com.github.retrooper:packetevents-spigot:2.5.0")
+    compileOnly("com.github.retrooper:packetevents-spigot:2.6.0")
 }
 
 tasks {

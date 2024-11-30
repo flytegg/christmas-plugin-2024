@@ -118,9 +118,9 @@ class EventCommand(val menu: StandardMenu = StandardMenu("&c☃ ᴇᴠᴇɴᴛ �
                 sync {
                     eventController().sidebarManager.update()
                     WorldNPC.refreshPodium()
-                    sender.sendMessage("<green>ʟᴏᴀᴅᴇᴅ ᴄʀᴀѕʜ ᴅᴀᴛᴀ! ʏᴏᴜʀ ѕᴄᴏʀᴇʙᴏᴀʀᴅ ѕʜᴏᴜʟᴅ ɴᴏᴡ ѕʜᴏᴡ ᴛʜᴇ ᴍᴏѕᴛ ʀᴇᴄᴇɴᴛ ѕᴇʀɪᴀʟɪѕᴇᴅ ᴅᴀᴛᴀ!".style())
                 }
             }
+            sender.sendMessage("<green>ʟᴏᴀᴅᴇᴅ ᴄʀᴀѕʜ ᴅᴀᴛᴀ! ʏᴏᴜʀ ѕᴄᴏʀᴇʙᴏᴀʀᴅ ѕʜᴏᴜʟᴅ ɴᴏᴡ ѕʜᴏᴡ ᴛʜᴇ ᴍᴏѕᴛ ʀᴇᴄᴇɴᴛ ѕᴇʀɪᴀʟɪѕᴇᴅ ᴅᴀᴛᴀ!".style())
         }
     }
 
@@ -128,6 +128,13 @@ class EventCommand(val menu: StandardMenu = StandardMenu("&c☃ ᴇᴠᴇɴᴛ �
     @CommandPermission("event.mockdonation")
     fun mockDonation(player: Player, amount: Double) {
         val donationEvent = DonateEvent(null, null, null, amount.toString(), "USD", "mockDonationId")
+        Bukkit.getPluginManager().callEvent(donationEvent)
+    }
+
+    @Command("event mock-donation-now <amount> <target>")
+    @CommandPermission("event.mockdonation")
+    fun mockDonation(sender: Player, amount: Double, target: Player) {
+        var donationEvent = DonateEvent(target.name, null, null, amount.toString(), "USD", "mockDonationId")
         Bukkit.getPluginManager().callEvent(donationEvent)
     }
 

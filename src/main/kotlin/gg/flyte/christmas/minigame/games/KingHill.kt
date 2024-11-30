@@ -109,6 +109,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             it.interpolationDelay = -1
             it.interpolationDuration = 200
             it.teleportDuration = 15
+            it.isGlowing = true
 
             tasks += delay(1) {
                 it.transformation = it.transformation.apply {
