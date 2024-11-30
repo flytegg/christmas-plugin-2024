@@ -93,7 +93,7 @@ class HousekeepingEventListener : Listener, PacketListener {
         }
 
         event<AsyncChatEvent> {
-            renderer(ChatRenderer.viewerUnaware { player, displayName, message ->
+            renderer(ChatRenderer.viewerUnaware { player, _, _ ->
                 val finalRender = text()
 
                 if (player.isOp) finalRender.append("<red><b>ѕᴛᴀꜰꜰ ".style())

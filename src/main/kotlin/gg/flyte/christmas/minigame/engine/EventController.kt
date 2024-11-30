@@ -155,7 +155,7 @@ class EventController {
 
                         Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) {
                             it.title(
-                                "<dark_red>⦅x⦆".style(), "<red>Waiting for more players...".style(),
+                                "<dark_red>⦅x⦆".style(), "<red>ᴡᴀɪᴛɪɴɢ ꜰᴏʀ ᴍᴏʀᴇ ᴘʟᴀʏᴇʀѕ...".style(),
                                 titleTimes(Duration.ZERO, Duration.ofSeconds(5), Duration.ofSeconds(1))
                             )
                             it.playSound(Sound.BLOCK_NOTE_BLOCK_BASS)
@@ -163,9 +163,7 @@ class EventController {
                     }
                 }
             }
-
             GameState.LIVE -> currentGame!!.onPlayerQuit(player)
-
             else -> return
         }
     }
@@ -254,7 +252,7 @@ class EventController {
             val charitableDonor = event.donorName ?: "mysterious donor"
             val numberValue = event.value
             val currency = event.currency
-            it.sendMessage("<grey><gradient:#A3ADFF:#00FFF4>DONATION MADE ––> Thank you,</gradient><#FF72A6> $charitableDonor<gradient:#00FFF4:#00FFF4>, <gradient:#00FFF4:#A3ADFF>for donating $numberValue $currency.</gradient>".style())
+            it.sendMessage("<grey><gradient:#2c8c99:#42D9C8>ᴅᴏɴᴀᴛɪᴏɴ ᴍᴀᴅᴇ ––> ᴛʜᴀɴᴋ ʏᴏᴜ,<#FF72A6> $charitableDonor<gradient:#00FFF4:#00FFF4>, <gradient:#42D9C8:#2c8c99>ꜰᴏʀ ᴅᴏɴᴀᴛɪɴɢ $numberValue $currency.".style())
         }
 
         async {

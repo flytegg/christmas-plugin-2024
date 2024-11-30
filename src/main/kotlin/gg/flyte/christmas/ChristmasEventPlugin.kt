@@ -11,6 +11,7 @@ import gg.flyte.christmas.minigame.engine.EventController
 import gg.flyte.christmas.minigame.engine.GameConfig
 import gg.flyte.christmas.minigame.world.MapSinglePoint
 import gg.flyte.christmas.npc.WorldNPC
+import gg.flyte.christmas.util.Colors
 import gg.flyte.christmas.util.Util
 import gg.flyte.christmas.util.eventController
 import gg.flyte.christmas.util.style
@@ -19,6 +20,7 @@ import gg.flyte.twilight.time.TimeUnit
 import gg.flyte.twilight.twilight
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder
 import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextColor
 import org.bukkit.*
 import org.bukkit.entity.Display
 import org.bukkit.entity.ItemDisplay
@@ -128,7 +130,7 @@ class ChristmasEventPlugin : JavaPlugin() {
 
             location.world.spawn(location.clone().add(0.0, 2.5, 0.0), TextDisplay::class.java).apply {
                 text("<pink>$contribution".style())
-                backgroundColor = Color.fromRGB(84, 72, 84)
+                backgroundColor = Color.fromARGB(0x1A000000)
                 billboard = Display.Billboard.CENTER
             }
         }
@@ -140,7 +142,7 @@ class ChristmasEventPlugin : JavaPlugin() {
             }
             it.billboard = Display.Billboard.CENTER
             it.isDefaultBackground = false
-            it.backgroundColor = Color.fromRGB(94, 68, 23)
+            it.backgroundColor = Color.fromARGB(0x1A000000)
         }
 
         WorldNPC.refreshPodium()
