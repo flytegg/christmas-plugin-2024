@@ -246,8 +246,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
     /**
      * @return A list of players who have not been eliminated from the game.
      */
-    fun remainingPlayers(): List<Player> =
-        Util.runAction(PlayerType.PARTICIPANT) {}.filter { !(eliminatedPlayers.contains(it.uniqueId)) }
+    fun remainingPlayers(): List<Player> = Util.runAction(PlayerType.PARTICIPANT) {}.filter { !(eliminatedPlayers.contains(it.uniqueId)) }
 
     /**
      * Renders a cinematic sequence of the game results with the temporary podium NPCs.
