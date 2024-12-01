@@ -112,7 +112,17 @@ class HousekeepingEventListener : Listener, PacketListener {
         event<PlayerInteractEvent> {
             val clickedBlock = clickedBlock ?: return@event
             if (eventController().currentGame == null && isSnowVariant(clickedBlock.type)) {
-                processSnowInteraction(player, clickedBlock)
+                if (player.inventory.firstEmpty() == -1) return@event
+
+                player.inventory.addItem(ItemStack(Material.SNOWBALL, 1))
+
+                player.playSound(clickedBlock.location, Sound.BLOCK_SNOW_BREAK, 1f, 1.5f)
+                player.playSound(clickedBlock.location, Sound.BLOCK_SNOW_STEP, 0.5f, 2f)
+                clickedBlock.location.world.spawnParticle(
+                    Particle.SNOWFLAKE,
+                    clickedBlock.location.clone().add(0.5, 0.5, 0.5),
+                    8, 0.2, 0.2, 0.2, 0.1
+                )
             }
         }
 
@@ -308,22 +318,6 @@ class HousekeepingEventListener : Listener, PacketListener {
 
     private fun isSnowVariant(material: Material): Boolean {
         return material == Material.SNOW || material == Material.SNOW_BLOCK
-    }
-
-    private fun processSnowInteraction(player: Player, block: Block) {
-        if (player.inventory.firstEmpty() == -1) return
-        player.inventory.addItem(ItemStack(Material.SNOWBALL, 1))
-        playSnowEffects(player, block.location)
-    }
-
-    private fun playSnowEffects(player: Player, location: Location) {
-        player.playSound(location, Sound.BLOCK_SNOW_BREAK, 1f, 1.5f)
-        player.playSound(location, Sound.BLOCK_SNOW_STEP, 0.5f, 2f)
-        location.world.spawnParticle(
-            Particle.SNOWFLAKE,
-            location.clone().add(0.5, 0.5, 0.5),
-            8, 0.2, 0.2, 0.2, 0.1
-        )
     }
 
     private fun openSpectateMenu(player: Player) {
