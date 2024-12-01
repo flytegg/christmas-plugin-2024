@@ -20,8 +20,6 @@ import dev.shreyasayyengar.menuapi.menu.MenuItem
 import dev.shreyasayyengar.menuapi.menu.StandardMenu
 import gg.flyte.christmas.ChristmasEventPlugin
 import gg.flyte.christmas.donation.DonateEvent
-import gg.flyte.christmas.minigame.world.MapRegion
-import gg.flyte.christmas.minigame.world.MapSinglePoint
 import gg.flyte.christmas.util.*
 import gg.flyte.christmas.visual.CameraSequence
 import gg.flyte.twilight.event.event
@@ -35,13 +33,7 @@ import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.format.TextColor
-import org.bukkit.Bukkit
-import org.bukkit.GameMode
-import org.bukkit.Location
-import org.bukkit.Material
-import org.bukkit.Particle
-import org.bukkit.Sound
-import org.bukkit.block.Block
+import org.bukkit.*
 import org.bukkit.entity.Player
 import org.bukkit.entity.Snowball
 import org.bukkit.event.EventPriority
@@ -50,9 +42,9 @@ import org.bukkit.event.entity.EntityCombustEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.FoodLevelChangeEvent
-import org.bukkit.inventory.ItemStack
 import org.bukkit.event.inventory.*
 import org.bukkit.event.player.*
+import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.PlayerInventory
 import java.util.*
 import kotlin.math.ceil
@@ -95,7 +87,6 @@ class HousekeepingEventListener : Listener, PacketListener {
             }
         }
 
-
         event<AsyncChatEvent> {
             renderer(ChatRenderer.viewerUnaware { player, displayName, message ->
                 val finalRender = text()
@@ -111,21 +102,25 @@ class HousekeepingEventListener : Listener, PacketListener {
 
         event<PlayerInteractEvent> {
             val clickedBlock = clickedBlock ?: return@event
-            if (eventController().currentGame == null && isSnowVariant(clickedBlock.type)) {
-                if (player.inventory.firstEmpty() == -1) return@event
+            if (eventController().currentGame != null) return@event
+            if (!(clickedBlock.type == Material.SNOW || clickedBlock.type == Material.SNOW_BLOCK)) return@event
+            if (Random().nextInt(5) != 0) return@event
 
-                player.inventory.addItem(ItemStack(Material.SNOWBALL, 1))
+            if (player.inventory.firstEmpty() == -1) return@event
+            player.inventory.addItem(ItemStack(Material.SNOWBALL, 1))
 
-                player.playSound(clickedBlock.location, Sound.BLOCK_SNOW_BREAK, 1f, 1.5f)
-                player.playSound(clickedBlock.location, Sound.BLOCK_SNOW_STEP, 0.5f, 2f)
-                clickedBlock.location.world.spawnParticle(
-                    Particle.SNOWFLAKE,
-                    clickedBlock.location.clone().add(0.5, 0.5, 0.5),
-                    8, 0.2, 0.2, 0.2, 0.1
-                )
-            }
+            player.playSound(clickedBlock.location, Sound.BLOCK_SNOW_BREAK, 1f, 1.5f)
+            player.playSound(clickedBlock.location, Sound.BLOCK_SNOW_STEP, 0.5f, 2f)
+            clickedBlock.location.world.spawnParticle(
+                Particle.SNOWFLAKE,
+                clickedBlock.location.clone().add(0.5, 0.5, 0.5),
+                30,
+                0.2,
+                0.2,
+                0.2,
+                0.1
+            )
         }
-
 
         event<PlayerJoinEvent>(priority = EventPriority.LOWEST) {
             fun applyTag(player: Player) {
@@ -316,10 +311,6 @@ class HousekeepingEventListener : Listener, PacketListener {
         }
     }
 
-    private fun isSnowVariant(material: Material): Boolean {
-        return material == Material.SNOW || material == Material.SNOW_BLOCK
-    }
-
     private fun openSpectateMenu(player: Player) {
         var options = eventController().currentGame!!.gameConfig.spectatorCameraLocations.size
         var standardMenu = StandardMenu("Spectate Map:", ceil(options.div(9.0)).toInt() * 9)
@@ -341,16 +332,4 @@ class HousekeepingEventListener : Listener, PacketListener {
 
         standardMenu.open(false, player)
     }
-
-    private val lobbyRegion = MapRegion(
-        MapSinglePoint(545, 100, 500),
-        MapSinglePoint(575, 120, 535)
-    )
-
-    private fun shouldProcessSnowballEvent(player: Player): Boolean {
-        return eventController().currentGame == null &&
-                lobbyRegion.contains(player.location) &&
-                player.gameMode == GameMode.ADVENTURE
-    }
-
 }
