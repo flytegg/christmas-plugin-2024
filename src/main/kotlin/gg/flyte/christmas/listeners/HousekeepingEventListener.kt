@@ -37,9 +37,11 @@ import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Particle
 import org.bukkit.Sound
+import org.bukkit.block.Block
 import org.bukkit.entity.Player
 import org.bukkit.entity.Snowball
 import org.bukkit.event.EventPriority
@@ -108,25 +110,10 @@ class HousekeepingEventListener : Listener, PacketListener {
         }
 
         event<PlayerInteractEvent> {
-            val player = this.player
             val clickedBlock = clickedBlock ?: return@event
-
-            if (eventController().currentGame != null ||
-                (clickedBlock.type != Material.SNOW && clickedBlock.type != Material.SNOW_BLOCK)) {
-                return@event
+            if (eventController().currentGame == null && isSnowVariant(clickedBlock.type)) {
+                processSnowInteraction(player, clickedBlock)
             }
-
-            if (player.inventory.firstEmpty() == -1) return@event
-
-            player.inventory.addItem(ItemStack(Material.SNOWBALL, 1))
-            player.playSound(clickedBlock.location, Sound.BLOCK_SNOW_BREAK, 1f, 1.5f)
-            player.playSound(clickedBlock.location, Sound.BLOCK_SNOW_STEP, 0.5f, 2f)
-
-            clickedBlock.location.world.spawnParticle(
-                Particle.SNOWFLAKE,
-                clickedBlock.location.clone().add(0.5, 0.5, 0.5),
-                8, 0.2, 0.2, 0.2, 0.1
-            )
         }
 
 
@@ -317,6 +304,26 @@ class HousekeepingEventListener : Listener, PacketListener {
                 }
             }
         }
+    }
+
+    private fun isSnowVariant(material: Material): Boolean {
+        return material == Material.SNOW || material == Material.SNOW_BLOCK
+    }
+
+    private fun processSnowInteraction(player: Player, block: Block) {
+        if (player.inventory.firstEmpty() == -1) return
+        player.inventory.addItem(ItemStack(Material.SNOWBALL, 1))
+        playSnowEffects(player, block.location)
+    }
+
+    private fun playSnowEffects(player: Player, location: Location) {
+        player.playSound(location, Sound.BLOCK_SNOW_BREAK, 1f, 1.5f)
+        player.playSound(location, Sound.BLOCK_SNOW_STEP, 0.5f, 2f)
+        location.world.spawnParticle(
+            Particle.SNOWFLAKE,
+            location.clone().add(0.5, 0.5, 0.5),
+            8, 0.2, 0.2, 0.2, 0.1
+        )
     }
 
     private fun openSpectateMenu(player: Player) {
