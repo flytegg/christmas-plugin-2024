@@ -8,15 +8,17 @@
 # Format: <Minecraft IGN><Contribution><X, Y, Z> # Yes, with the "<" and ">"
 # Example: <Notch><Creator of Minecraft><150, 64, 150>
 contributors:
-  - "<69e8f7d5-11f9-4818-a3bb-7f237df32949><Event Host><544.5, 101, 455.5>" # stephen
-  - "<01dabd56-eb00-4823-8e65-87d2e138db97><Production & Plugin\nDeveloper><542.5, 101, 456.5>" # shreyas
-  - "<a008c892-e7e1-48e1-8235-8aa389318b7a><Map Builder\nCamera Feed><546.5, 101, 456.5>" # josh
-  - "<141a2dd1-b4e7-4b77-b071-210590b49a45><Map Builder><540.5, 101, 457.5>" # dombongo
-  - "<efc6c6c6-15db-4dbc-a7ae-17a0e57cf69b><Cinematics\nConsultant><548.5, 101, 457.5>" # larky
-  - "<c4ad9786-2f63-4c47-8854-6985f13ccff2><Plugin Contributor><538.5, 101, 458.5>" # kolja
-  - "<4f8cc0a1-80c6-4e37-8c99-9645ad60836d><Plugin Contributor><550.5, 101, 458.5>" # penguin
-  - "<9cd72c16-b422-4a48-b3ad-1541ee942b86><Resource Pack\nDesigner><536.5, 101, 459.5>" # spaceniklas
-  - "<b81d672f-a9b5-4ec9-be08-7cefb0a02505><Plugin Contributor><552.5, 101, 459.5>" # lutto
+  - "<69e8f7d5-11f9-4818-a3bb-7f237df32949><ᴇᴠᴇɴᴛ ʜᴏsᴛ><544.5, 101, 455.5>" # stephen
+  - "<01dabd56-eb00-4823-8e65-87d2e138db97><ᴘʀᴏᴅᴜᴄᴛɪᴏɴ ﹠ ᴘʟᴜɢɪɴ\nᴅᴇᴠᴇʟᴏᴘᴇʀ><542.5, 101, 456.5>" # shreyas
+  - "<a008c892-e7e1-48e1-8235-8aa389318b7a><ᴍᴀᴘ ʙᴜɪʟᴅᴇʀ\nᴄᴀᴍᴇʀᴀ ꜰᴇᴇᴅ><546.5, 101, 456.5>" # josh
+  - "<141a2dd1-b4e7-4b77-b071-210590b49a45><ᴍᴀᴘ ʙᴜɪʟᴅᴇʀ><540.5, 101, 457.5>" # dombongo
+  - "<efc6c6c6-15db-4dbc-a7ae-17a0e57cf69b><ᴄɪɴᴇᴍᴀᴛɪᴄs\nᴄᴏɴsᴜʟᴛᴀɴᴛ><548.5, 101, 457.5>" # larky
+  - "<9cd72c16-b422-4a48-b3ad-1541ee942b86><ʀᴇsᴏᴜʀᴄᴇ ᴘᴀᴄᴋ\nᴅᴇsɪɢɴᴇʀ><538.5, 101, 458.5>" # spaceniklas
+  - "<c4ad9786-2f63-4c47-8854-6985f13ccff2><ᴘʟᴜɢɪɴ ᴄᴏɴᴛʀɪʙᴜᴛᴏʀ><536.5, 101, 459.5>" # kolja
+  - "<4f8cc0a1-80c6-4e37-8c99-9645ad60836d><ᴘʟᴜɢɪɴ ᴄᴏɴᴛʀɪʙᴜᴛᴏʀ><550.5, 101, 458.5>" # penguin
+  - "<8b5786be-d044-45d8-8a36-450bf0110149><ᴘʟᴜɢɪɴ ᴄᴏɴᴛʀɪʙᴜᴛᴏʀ><552.5, 101, 459.5>" # banker
+  - "<358235d5-ca9f-4db1-8e84-24e7ec04c73b><ᴄᴀʀʙᴏɴ ʜᴏsᴛ ᴛᴇᴀᴍ><554.5, 101, 460.5>" # dawson
+  # atom needed
 
 # Donation Auth
 donations:

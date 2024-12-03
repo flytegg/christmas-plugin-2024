@@ -61,7 +61,9 @@ class ChristmasEventPlugin : JavaPlugin() {
     }
 
     override fun onDisable() {
-        serverWorld.entities.forEach { if (it !is Player) it.remove() } // clean up podium, spectate points, misc entities.
+        serverWorld.entities.forEach {
+            if (it !is Player) it.remove() else it.kick("<red>loddl".style()) // TODO edit kick msg
+        } // clean up podium, spectate points, misc entities.
 
         for (npc in worldNPCs) {
             npc.location.getNearbyEntitiesByType(TextDisplay::class.java, 5.0).forEach { it.remove() }
@@ -92,6 +94,7 @@ class ChristmasEventPlugin : JavaPlugin() {
     }
 
     private fun handleDonations() {
+        if (1 == 1) return // TODO<Final> configure secrets when available.
         RefreshToken(
             config.getString("donations.clientId") ?: throw IllegalArgumentException("clientId cannot be empty"),
             config.getString("donations.clientSecret") ?: throw IllegalArgumentException("clientSecret cannot be empty")
@@ -126,6 +129,16 @@ class ChristmasEventPlugin : JavaPlugin() {
                 backgroundColor = Color.fromARGB(26, 0, 0, 0)
                 billboard = Display.Billboard.CENTER
             }
+        }
+        serverWorld.spawn(MapSinglePoint(544.5, 108, 457.5, 0, 30), TextDisplay::class.java) {
+            it.text("<colour:#d45757>ᴇᴠᴇɴᴛ\nᴄᴏɴᴛʀɪʙᴜᴛᴏʀꜱ".style())
+            it.transformation = it.transformation.apply {
+                this.scale.mul(7F)
+            }
+            it.billboard = Display.Billboard.CENTER
+            it.isDefaultBackground = false
+            it.backgroundColor = Color.fromARGB(255, 255, 207, 207)
+            it.brightness = Display.Brightness(15, 15)
         }
 
         serverWorld.spawn(MapSinglePoint(535.5, 121, 503.5, -90, 0), TextDisplay::class.java) {

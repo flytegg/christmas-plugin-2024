@@ -66,7 +66,7 @@ class CameraSlide(slideTo: MapSinglePoint, onComplete: (() -> Unit)? = null) {
         private val onComplete: (() -> Unit)? = null
     ) : BukkitRunnable() {
         private val destination = location
-        private val highPoint = 250.0
+        private val highPoint = 200.0
         private val duration = 80
         private val epsilon = 0.5
         private var progress = 0.0

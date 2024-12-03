@@ -93,7 +93,7 @@ enum class GameConfig(
                 " • ᴛʜᴇ ʙᴀᴜʙʟᴇѕ ᴡɪʟʟ ѕʜᴀᴛᴛᴇʀ ᴀᴛ ᴛʜᴇ ᴇɴᴅ ᴏꜰ ᴇᴀᴄʜ ʀᴏᴜɴᴅ.\n\n" +
                 " • ᴛᴏ ᴡɪɴ, ѕᴜʀᴠɪᴠᴇ ᴛʜᴇ ᴍᴏѕᴛ ʀᴏᴜɴᴅѕ!",
         2,
-        MapSinglePoint(181.5, 140.0, 300.5, -135, 90),
+        MapSinglePoint(208, 170, 1282, 123, 90),
         listOf(
             MapRegion.single(MapSinglePoint(193, 80, 193, 0, 0)),
             MapRegion.single(MapSinglePoint(207, 82, 221, 0, 0)),
@@ -127,26 +127,32 @@ enum class GameConfig(
             MapRegion.single(MapSinglePoint(114, 86, 215, 0, 0))
         ),
         listOf(
-            MapSinglePoint(173, 99, 307, 175.59639F, 24.933584F),
-            MapSinglePoint(172, 93, 293, 172.44003F, 21.049002F),
-            MapSinglePoint(172, 88, 278, 150.75089F, 10.609256F),
-            MapSinglePoint(166, 86, 264, 148.64664F, 3.6494362F),
-            MapSinglePoint(156, 86, 252, -178.25386F, 1.3834488F),
-            MapSinglePoint(147, 88, 239, -110.35533F, 3.8112924F),
-            MapSinglePoint(151, 93, 226, -85.26666F, 10.4474F),
-            MapSinglePoint(161, 99, 215, -74.25983F, 10.932967F),
-            MapSinglePoint(175, 105, 206, -61.796204F, 15.060287F),
-            MapSinglePoint(190, 109, 204, -24.243927F, 27.28051F),
-            MapSinglePoint(198, 105, 214, -11.05191F, 30.517662F),
-            MapSinglePoint(202, 100, 229, -11.132843F, 25.25729F),
-            MapSinglePoint(206, 94, 245, -13.479889F, 19.349497F),
-            MapSinglePoint(209, 88, 260, -12.2659F, 17.73092F),
-            MapSinglePoint(213, 83, 276, -16.474396F, 14.493787F),
-            MapSinglePoint(218, 77, 292, -21.168488F, 12.065951F),
-            MapSinglePoint(223, 73, 307, -24.32486F, 4.2968564F)
+            MapSinglePoint(227, 158, 1197, 38.048145F, 23.39616F),
+            MapSinglePoint(222, 152, 1202, 38.210003F, 20.806448F),
+            MapSinglePoint(211, 136, 1217, 38.210003F, 20.401806F),
+            MapSinglePoint(199, 132, 1232, 38.776505F, 16.760029F),
+            MapSinglePoint(186, 130, 1243, 35.539356F, 8.748148F),
+            MapSinglePoint(171, 130, 1248, 28.579496F, 5.3491616F),
+            MapSinglePoint(156, 131, 1253, 15.873764F, 2.5976017F),
+            MapSinglePoint(141, 137, 1261, 4.3010345F, 4.9445186F),
+            MapSinglePoint(129, 142, 1272, -15.8500805F, 7.129582F),
+            MapSinglePoint(125, 148, 1285, -40.61413F, 15.546104F),
+            MapSinglePoint(132, 154, 1297, -57.28534F, 21.534805F),
+            MapSinglePoint(145, 159, 1306, -71.69058F, 30.517847F),
+            MapSinglePoint(159, 165, 1313, -83.82982F, 31.569918F),
+            MapSinglePoint(175, 168, 1315, -95.24057F, 33.674065F),
+            MapSinglePoint(191, 168, 1313, -102.68579F, 37.073074F),
+            MapSinglePoint(202, 168, 1304, -87.95693F, 34.72614F),
+            MapSinglePoint(215, 168, 1293, -68.29137F, 33.26942F),
+            MapSinglePoint(222, 168, 1285, -42.71803F, 32.864777F),
+            MapSinglePoint(221, 165, 1279, 10.370855F, 29.223005F),
+            MapSinglePoint(219, 160, 1272, 36.3488F, 24.691021F),
+            MapSinglePoint(221, 154, 1265, 58.118484F, 19.430681F),
+            MapSinglePoint(226, 148, 1260, 71.71439F, 14.81777F),
+            MapSinglePoint(236, 134, 1256, 74.70872F, 10.366721F),
         ),
-        listOf(MapSinglePoint(554, 204, 594, -88.70047F, 88.381485F)),
-        listOf(MapSinglePoint(554, 204, 594, -88.70047F, 88.381485F)),
+        listOf(MapSinglePoint(212, 130, 310)),
+        listOf(MapSinglePoint(212, 130, 310)),
     ),
     //endregion
 
@@ -282,7 +288,7 @@ enum class GameConfig(
             MapSinglePoint(842, 125, 652, 139.14163F, 60.207817F),
         ),
         listOf(
-            MapSinglePoint(810.5, 106, 604.5, -32, 32)
+            MapSinglePoint(212, 130, 310)
         ),
         listOf(
             MapSinglePoint(827, 90, 630, 90, 90),
@@ -489,7 +495,7 @@ enum class GameConfig(
             MapSinglePoint(593, 137, -215, -29.556946F, 33.33473F)
         ),
         listOf(
-            MapSinglePoint(621, 200, -234, 0, 90)
+            MapSinglePoint(629, 197, -92, 0, 90)
         ),
         listOf(
             MapSinglePoint(655, 107, -141, 108.178734F, 30.104355F)
@@ -499,6 +505,50 @@ enum class GameConfig(
     //endregion
 
     //region SLED_RACING, #80ffea
+    SLED_RACING(
+        SledRacing::class,
+        "<colour:#80ffea>Sled Racing".style(),
+        "<colour:#80ffea>ꜱʟᴇᴅ ʀᴀᴄɪɴɢ".style(),
+        ItemStack(Material.PAPER).apply {
+            itemMeta = itemMeta.apply {
+                setCustomModelData(1)
+            }
+        },
+        TextColor.fromHexString("#80ffea")!!,
+        " • Follow the icy path to the end of the map with your sled.\n\n" +
+                " • 3 laps must be completed. To reset, sneak out of your sled.\n\n" +
+                " • To win, be the first player to finish all 3 laps!\n\n" +
+                " • \uD83C\uDFB5 Come on, it's lovely weather for a sleigh ride together with you! \uD83C\uDFB6 🛷",
+        1,
+        MapSinglePoint(523, 207, 1842, 127F, 90F),
+        listOf(
+            MapRegion(MapSinglePoint(671, 149, 1811, 116.8, 0), MapSinglePoint(651, 149, 1791, 116.8, 0))
+        ),
+        listOf(
+            MapSinglePoint(606, 203, 1612, 16.841675F, 29.505898F),
+            MapSinglePoint(577, 126, 1708, 15.384888F, 8.545502F),
+            MapSinglePoint(549, 125, 1808, 15.384888F, 8.545502F),
+            MapSinglePoint(538, 125, 1849, 15.546753F, 8.62643F),
+            MapSinglePoint(528, 107, 1883, 27.038696F, 9.03107F),
+            MapSinglePoint(512, 110, 1914, 44.115112F, 8.5455F),
+            MapSinglePoint(495, 110, 1944, 91.78198F, 27.320837F),
+            MapSinglePoint(480, 110, 1959, 126.41931F, 27.887333F),
+            MapSinglePoint(452, 104, 1946, 146.73242F, 26.26877F),
+            MapSinglePoint(434, 110, 1918, 131.8418F, 25.37856F),
+            MapSinglePoint(410, 95, 1890, 131.8418F, 25.37856F),
+            MapSinglePoint(383, 73, 1869, 121.15906F, 24.731133F),
+            MapSinglePoint(349, 81, 1847, 122.37305F, 22.384212F),
+            MapSinglePoint(320, 87, 1831, 48.08081F, 27.725473F),
+            MapSinglePoint(280, 108, 1828, 10.934692F, 34.118805F),
+            MapSinglePoint(261, 123, 1818, -37.460327F, 33.30953F),
+            MapSinglePoint(249, 133, 1809, -80.02869F, 26.430634F),
+        ),
+        listOf(),
+        listOf(
+            MapSinglePoint(458, 151, 1876, -116.8, 33.3),
+        ),
+        false
+    ),
     //endregion
 
     //region SPLEEF

@@ -1,6 +1,7 @@
 package gg.flyte.christmas.minigame.games
 
 import gg.flyte.christmas.ChristmasEventPlugin
+import gg.flyte.christmas.donation.DonationTier
 import gg.flyte.christmas.minigame.engine.EventMiniGame
 import gg.flyte.christmas.minigame.engine.GameConfig
 import gg.flyte.christmas.minigame.engine.PlayerType
@@ -160,6 +161,14 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                 player.teleport(gameConfig.spawnPoints.random().randomLocation())
                 player.playSound(Sound.ENTITY_PLAYER_TELEPORT)
             }
+        }
+    }
+
+    override fun handleDonation(tier: DonationTier) {
+        when (tier) {
+            DonationTier.LOW -> TODO()
+            DonationTier.MEDIUM -> TODO()
+            DonationTier.HIGH -> TODO()
         }
     }
 }

@@ -2,9 +2,6 @@
 
 ## General:
 
-- After each minigame, commence win animation with text and sponsors in the background.
-- Leaderboard section in the Lobby.
-- Contributors section in the Lobby
 - Add a sled slide in the lobby + carousel for static entertainment while giveaways/game selection is happening.
 - Spawn random snowballs for players to throw (keep this minimal)
 - eliminated players get titles/nudges to donate while they wait (clickable links)
@@ -13,13 +10,7 @@
     - Teleport all players to a “screenie” location. player’s movement is locked and facing forward to facilitate an easy event screenie. (ik stephen
       will love this)
 
-- find out what other textures spaceniklas has made and what they can be used for
-
 ## Game Specific:
-
-### Paintball:
-
-- Integrate more UI elements (sound and particles)
 
 ### Sled Racing:
 
@@ -27,36 +18,76 @@
 - disable two players in one boat
 - Fix interacting bug with boats to respawn at spawn point. (have them sneak out)
 
-### Spleef:
-
-- More layers needed
-- Add X number of double jumps available.
-- Snow blocks must start disappearing if players are on higher levels for too long (also prevents cross-teaming)
-- Snowballs should deal knock back (with cooldown) (EntityDamageByEntityEvent)
-
 ### Tree Decorating:
 
 - Disable fucking explosives and lava.
+    - disable placing lava
+    - disable placing TNt
+    - disable spawning any type of entity
+    - disable placing water
+    - disable flint and steel
+    - disable fire charges
+    - disable firework rockets
+    - disable end_crystals
+    - disable TNT minecarts
 - Autogive players decorations so that their first thought is not to desecrate the tree!
 
 ## Donations:
 
 - Christmas tree that grows with each donation
-- Custom hats to donators (and/or contributors)
 - Donations progress bar somehow.
 - "Chaos" donations -> drop TNT in a spleef game, for example.
-- A firework spawns above everyone after a donation is made.
-- Top Donators NPCs in game
-- Donation broadcasts in the chat
-
 
 ## Stream:
 
 - Drumroll while rolling givaway?H
 
-Play-test Considerations:
+# Things to change:
 
-- Joining & Leaving at various times in the event (overviews, midgame, ending, etc)
-- Making sure opted out players are consistently left out of games.
-    - have playtesters be opted out, players, and also have camera entity to spectate.
-- Join the server as we do map overview. (separate)
+server.properties:
+accepts-transfers=true
+
+bukkit.yml:
+
+shutdown-message: |-
+§2Thank you for joining us!
+§4Merry X-MAS
+
+    §d- Flyte
+
+connection-throttle: -1
+
+paper.yml:
+chunk-loading:
+autoconfig-send-distance: true
+enable-frustum-priority: false
+global-max-chunk-load-rate: -1.0
+global-max-chunk-send-rate: -1.0
+global-max-concurrent-loads: 500.0
+max-concurrent-sends: 2
+min-load-radius: 2
+player-max-chunk-load-rate: -1.0
+player-max-concurrent-loads: 20.0
+target-player-chunk-send-rate: 100.0
+chunk-loading-advanced:
+auto-config-send-distance: true
+player-max-concurrent-chunk-generates: 0
+player-max-concurrent-chunk-loads: 0
+
+# PlayTest Notes:
+
+### Bauble Tag Stuff
+
+- stxphen got eliminated twice in bauble tag (double tag, somehow)
+- eliminate players bauble tag properly
+- being able to tag twice?
+- add remaining players in the sidebar for bauble tag.
+- Shrinking border for Bauble Tag possibly. (probably not if using new/better map)
+
+Extra considerations:
+
+- fix bossbar colours
+- also rework avalanche roof designs/ideas.
+- Remove glowstone from forest map.
+- work out scoring ratio (games like paint wars cant add 4000+ points)
+- fix the END button to be in winner overview as well.
