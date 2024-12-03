@@ -51,7 +51,7 @@ class CameraSequence(
         val position: Vector,
         val pointYaw: Float,
         val pointPitch: Float
-    ) : Location(ChristmasEventPlugin.instance.serverWorld, position.x, position.y, position.z, pointYaw.toFloat(), pointPitch.toFloat())
+    ) : Location(ChristmasEventPlugin.instance.serverWorld, position.x, position.y, position.z, pointYaw, pointPitch)
 
     fun generateSmoothPath(controlPoints: Map<Int, Point>): Map<Int, Point> {
         val sortedPoints = controlPoints.toSortedMap()

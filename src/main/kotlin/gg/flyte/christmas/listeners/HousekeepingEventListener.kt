@@ -60,35 +60,36 @@ class HousekeepingEventListener : Listener, PacketListener {
         event<PaperServerListPingEvent> {
             // TODO finish sponsors
             val footer = text("       ")
-                .append("<gradient:#fffdb8:#ffffff>ᴄᴀʀʙᴏɴ.ʜᴏꜱᴛ</gradient>".style())
+                .append("<gradient:${Colours.PURPLE.asHexString()}:${Colours.MAGENTA.asHexString()}>ᴄᴀʀʙᴏɴ.ʜᴏꜱᴛ".style())
                 .append("<grey> • ".style())
                 .append("<gradient:#FF1285:#FA0000>ᴊᴇᴛʙʀ</gradient><gradient:#FA0000:#FF6921>ᴀɪɴs</gradient>".style())
                 .append("<grey> • ".style())
 
             val motd = Component.empty()
                 .append("<b><obf><white>        ||||||  ".style())
-                .append("<gradient:#F396E1:#FFFFFF>ꜰʟʏᴛ</gradient><gradient:#FFFFFF:#FFFFFF>ᴇ</gradient> ".style())
-                .append("<gradient:#51F651:#FAEDCB>ᴄʜʀɪsᴛᴍ</gradient><gradient:#FAEDCB:#D12020>ᴀs ᴇᴠ</gradient><gradient:#D12020:#D12020>ᴇɴᴛ</gradient>".style())
-                .append("<b><obf><white>  ||||||".style())
-                .append("\n".style())
+                .append("<gradient:${Colours.LIGHT_PURPLE.asHexString()}:${Colours.PINK.asHexString()}>ꜰʟʏᴛᴇ ".style())
+                .append("<gradient:${Colours.ORANGE.asHexString()}:${Colours.RED.asHexString()}>ᴄʜʀɪsᴛᴍᴀs ᴇᴠᴇɴᴛ".style())
+                .append("<b><obf><white>  ||||||\n".style())
                 .append(footer)
 
             motd(motd)
             this.maxPlayers = 1
             this.numPlayers = 1
             this.listedPlayers.clear()
-            listOf(
-                "<st><grey>        <reset> ❆ <bold><light_purple>ꜰʟʏᴛᴇ.ɢɢ <red>ᴄʜʀɪsᴛᴍᴀs <green>ᴇᴠᴇɴᴛ <reset><white>❆ <reset><st><grey>         ".style(),
-                "".style(),
-                "            <gold>Join <green><b>now <reset><gold>to play <aqua>x-mas minigames".style(),
-                "              <gold>and support <red>[charity name]".style() // TODO fill charity name and centre
-            ).forEach {
-                this.listedPlayers.add(PaperServerListPingEvent.ListedPlayerInfo(it.toLegacyString().colourise(), UUID.randomUUID()))
+            val serverListPingText = listOf(
+                "<st><grey>        <reset> ❆ <bold><light_purple>ꜰʟʏᴛᴇ.ɢɢ <red>ᴄʜʀɪsᴛᴍᴀs ᴇᴠᴇɴᴛ <reset><white>❆ <reset><st><grey>         ",
+                "  <bold><light_purple>ꜰʟʏᴛᴇ.ɢɢ <grey>• <yellow>ᴄᴀʀʙᴏɴ.ʜᴏꜱᴛ <grey>• <blue>ʙᴜɪʟᴛʙʏʙɪᴛ.ᴄᴏᴍ",
+                "",
+                "            <gold>ᴊᴏɪɴ <green><b>ɴᴏᴡ <reset><gold>ᴛᴏ ᴘʟᴀʏ <aqua>x-ᴍᴀѕ ᴍɪɴɪɢᴀᴍᴇѕ",
+                "              <gold>ᴀɴᴅ ѕᴜᴘᴘᴏʀᴛ <red>[ᴄʜᴀʀɪᴛʏ ɴᴀᴍᴇ]" // TODO fill charity name and centre
+            )
+            serverListPingText.map { MiniMessage.miniMessage().deserialize(it) }.forEach {
+                this.listedPlayers.add(PaperServerListPingEvent.ListedPlayerInfo(it.toLegacyString(), UUID.randomUUID()))
             }
         }
 
         event<AsyncChatEvent> {
-            renderer(ChatRenderer.viewerUnaware { player, displayName, message ->
+            renderer(ChatRenderer.viewerUnaware { player, _, _ ->
                 val finalRender = text()
 
                 if (player.isOp) finalRender.append("<red><b>ѕᴛᴀꜰꜰ ".style())
@@ -136,7 +137,7 @@ class HousekeepingEventListener : Listener, PacketListener {
                             setResourcePack(this.url, this.hash, true)
                         }
                     } catch (_: Exception) {
-                        sync { kick("<red>Resource pack failed to download. Please try joining again.".style()) }
+                        sync { kick("<red>ʀᴇѕᴏᴜʀᴄᴇ ᴘᴀᴄᴋ ꜰᴀɪʟᴇᴅ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ. ᴘʟᴇᴀѕᴇ ᴛʀʏ ᴊᴏɪɴɪɴɢ ᴀɢᴀɪɴ.".style()) }
                     }
                 }
 
@@ -162,9 +163,9 @@ class HousekeepingEventListener : Listener, PacketListener {
 
             // TODO finish sponsors
             val footer = "<light_purple>\nꜰʟʏᴛᴇ.ɢɢ/ᴅᴏɴᴀᴛᴇ\n\n".style()
-                .append(" <gradient:#ff80e8:#ffffff>ꜰʟʏᴛᴇ.ɢɢ</gradient>".style())
+                .append(" <gradient:${Colours.LIGHT_PURPLE.asHexString()}:${Colours.PINK.asHexString()}>ꜰʟʏᴛᴇ.ɢɢ".style())
                 .append("<grey> • ".style())
-                .append("<gradient:#fffdb8:#ffffff>ᴄᴀʀʙᴏɴ.ʜᴏꜱᴛ</gradient>".style())
+                .append("<gradient:#6835cf:#b119c2>ᴄᴀʀʙᴏɴ.ʜᴏѕᴛ</gradient>".style())
                 .append("<grey> • ".style())
                 .append("<gradient:#FF1285:#FA0000>ᴊᴇᴛʙʀ</gradient><gradient:#FA0000:#FF6921>ᴀɪɴs</gradient>".style())
                 .append("\n".style())
@@ -191,7 +192,7 @@ class HousekeepingEventListener : Listener, PacketListener {
             worldNPCs.forEach { npc ->
                 val npcLocation = npc.npc.location.bukkit()
                 if (npcLocation.distance(playerLocation) <= 25) {
-                    var location = player.location.apply {
+                    val location = player.location.apply {
 
                         // since the NPCs are scaled, the look vector is not exact at eye level; this corrects it
                         when (npc.scale) {
@@ -312,15 +313,15 @@ class HousekeepingEventListener : Listener, PacketListener {
     }
 
     private fun openSpectateMenu(player: Player) {
-        var options = eventController().currentGame!!.gameConfig.spectatorCameraLocations.size
-        var standardMenu = StandardMenu("Spectate Map:", ceil(options.div(9.0)).toInt() * 9)
+        val options = eventController().currentGame!!.gameConfig.spectatorCameraLocations.size
+        val standardMenu = StandardMenu("ѕᴘᴇᴄᴛᴀᴛᴇ ᴍᴀᴘ:", ceil(options.div(9.0)).toInt() * 9)
 
         for (i in 0 until options) {
 
             val menuItem = MenuItem(Material.PLAYER_HEAD)
-                .setName("Spectate Point $i")
+                .setName("ѕᴘᴇᴄᴛᴀᴛᴇ ᴘᴏɪɴᴛ $i")
                 .setSkullTexture("66f88107041ff1ad84b0a4ae97298bd3d6b59d0402cbc679bd2f77356d454bc4")
-                .onClick { whoClicked, itemStack, clickType, inventoryClickEvent ->
+                .onClick { whoClicked, _, _, _ ->
                     val requestedCameraEntity = eventController().currentGame!!.spectateEntities[i]
                     whoClicked.gameMode = GameMode.SPECTATOR
                     whoClicked.spectatorTarget = requestedCameraEntity

@@ -1,7 +1,6 @@
 package gg.flyte.christmas.donation
 
-import org.bukkit.event.Event
-import org.bukkit.event.HandlerList
+import gg.flyte.twilight.event.TwilightEvent
 
 /**
  * Called when a donation is made through the Tiltify API with a predetermined `campaignId`
@@ -20,17 +19,4 @@ class DonateEvent(
     val value: String?,
     val currency: String,
     val donationId: String
-) : Event() {
-    override fun getHandlers(): HandlerList {
-        return HANDLERS_LIST
-    }
-
-    companion object {
-        private val HANDLERS_LIST = HandlerList()
-
-        @JvmStatic
-        fun getHandlerList(): HandlerList {
-            return HANDLERS_LIST
-        }
-    }
-}
+) : TwilightEvent()

@@ -56,7 +56,7 @@ class ChristmasEventPlugin : JavaPlugin() {
         registerCommands()
         registerEvents()
         registerPacketAPI()
-        handleDonations()
+        if (!config.getBoolean("donations.disabled")) handleDonations()
         loadNPCs()
     }
 
@@ -108,7 +108,7 @@ class ChristmasEventPlugin : JavaPlugin() {
             val contribution = contributor.contribution
             val location = contributor.location
 
-            var randomColour = mapOf(
+            val randomColour = mapOf(
                 "<dark_red>" to "4",
                 "<red>" to "c",
                 "<gold>" to "6",
@@ -117,16 +117,16 @@ class ChristmasEventPlugin : JavaPlugin() {
                 "<blue>" to "9",
             ).entries.random()
 
-            val displayName = "§${randomColour.value}${MojangAPIUtil.requestPlayerName(uniqueId)}"
+            val displayName = "&${randomColour.value}${MojangAPIUtil.requestPlayerName(uniqueId)}"
 
-            var contributorNPC = WorldNPC.createFromUniqueId(displayName, uniqueId, location).also { worldNPCs += it }
+            val contributorNPC = WorldNPC.createFromUniqueId(displayName, uniqueId, location).also { worldNPCs += it }
             contributorNPC.npc.prefixName = "${randomColour.key}<obf>W ".style()
             contributorNPC.npc.suffixName = " ${randomColour.key}<obf>W".style()
             contributorNPC.spawnForAll()
 
             location.world.spawn(location.clone().add(0.0, 2.5, 0.0), TextDisplay::class.java).apply {
-                text("<colour:#ffc4ff>$contribution".style())
-                backgroundColor = Color.fromRGB(84, 72, 84)
+                text("<pink>$contribution".style())
+                backgroundColor = Color.fromARGB(26, 0, 0, 0)
                 billboard = Display.Billboard.CENTER
             }
         }
@@ -142,13 +142,13 @@ class ChristmasEventPlugin : JavaPlugin() {
         }
 
         serverWorld.spawn(MapSinglePoint(535.5, 121, 503.5, -90, 0), TextDisplay::class.java) {
-            it.text("<gold>ᴇᴠᴇɴᴛ\nʟᴇᴀᴅᴇʀʙᴏᴀʀᴅ".style())
+            it.text("<colour:#ff8b94>ᴇᴠᴇɴᴛ\nʟᴇᴀᴅᴇʀʙᴏᴀʀᴅ".style())
             it.transformation = it.transformation.apply {
                 this.scale.mul(10F)
             }
             it.billboard = Display.Billboard.CENTER
             it.isDefaultBackground = false
-            it.backgroundColor = Color.fromRGB(94, 68, 23)
+            it.backgroundColor = Color.fromARGB(26, 0, 0, 0)
         }
 
         WorldNPC.refreshPodium()
@@ -166,7 +166,7 @@ class ChristmasEventPlugin : JavaPlugin() {
             time = 6000
 
             // Create Podium
-            var podiumModel = ItemStack(Material.PAPER).apply {
+            val podiumModel = ItemStack(Material.PAPER).apply {
                 itemMeta = itemMeta?.apply { setCustomModelData(2) }
             }
             spawn(Location(this, 535.5, 105.0, 503.5), ItemDisplay::class.java) {
