@@ -32,7 +32,7 @@ enum class GameConfig(
         "<colour:#33ff8b>Avalanche".style(),
         "<colour:#33ff8b>ᴀᴠᴀʟᴀɴᴄʜᴇ".style(),
         ItemStack(Material.SNOWBALL),
-        TextColor.color(0x33F8BB),
+        TextColor.fromHexString("#33ff8b")!!,
         " • ᴅᴀɴᴄᴇ ᴀʀᴏᴜɴᴅ ᴛʜᴇ ɪᴄʏ ᴘʟᴀᴛꜰᴏʀᴍ ᴜɴᴛɪʟ ᴛʜᴇ ᴄʜʀɪѕᴛᴍᴀѕ ᴍᴜѕɪᴄ ѕᴛᴏᴘѕ.\n\n" +
                 " • ʀᴜɴ ᴀɴᴅ ѕᴛᴀɴᴅ ᴜɴᴅᴇʀ ѕʜᴇʟᴛᴇʀ ᴀѕ ᴛʜᴇ ѕɴᴏᴡʙᴀʟʟѕ ꜰᴀʟʟ ꜰʀᴏᴍ ᴛʜᴇ ѕᴋʏ.\n\n" +
                 " • ɪꜰ ʏᴏᴜ ᴀʀᴇ ʜɪᴛ ʙʏ ᴀ ꜰᴀʟʟɪɴɢ ѕɴᴏᴡʙᴀʟʟ, ʏᴏᴜ ᴡɪʟʟ ʙᴇ ᴇʟɪᴍɪɴᴀᴛᴇᴅ!",
@@ -87,7 +87,7 @@ enum class GameConfig(
         "<colour:#aed3d8>Bauble Tag".style(),
         "<colour:#aed3d8>ʙᴀᴜʙʟᴇ ᴛᴀɢ".style(),
         MenuItem(Material.PLAYER_HEAD).setSkullTexture("1e3ad039e903e30f90daa68cebfc5cee72b5ed84d6044382409c67f374d1732b").itemStack,
-        TextColor.color(0xAED3D8),
+        TextColor.fromHexString("#aed3d8")!!,
         " • ʀᴜɴ ᴀᴡᴀʏ ꜰʀᴏᴍ ᴛʜᴇ ᴘʟᴀʏᴇʀѕ ᴡɪᴛʜ ʙᴀᴜʙʟᴇѕ ᴏɴ ᴛʜᴇɪʀ ʜᴇᴀᴅ.\n\n" +
                 " • ɪꜰ ʏᴏᴜ ᴀʀᴇ ᴛᴀɢɢᴇᴅ, ʏᴏᴜ ᴡɪʟʟ ʙᴇᴄᴏᴍᴇ ᴛʜᴇ ɴᴇᴡ ʙᴀᴜʙʟᴇ ʜᴏʟᴅᴇʀ.\n\n" +
                 " • ᴛʜᴇ ʙᴀᴜʙʟᴇѕ ᴡɪʟʟ ѕʜᴀᴛᴛᴇʀ ᴀᴛ ᴛʜᴇ ᴇɴᴅ ᴏꜰ ᴇᴀᴄʜ ʀᴏᴜɴᴅ.\n\n" +
@@ -156,7 +156,7 @@ enum class GameConfig(
         "<colour:#e05c6f>Block Party".style(),
         "<colour:#e05c6f>ʙʟᴏᴄᴋ ᴘᴀʀᴛʏ".style(),
         ItemStack(Material.MAGENTA_GLAZED_TERRACOTTA),
-        TextColor.color(0xE05C6F),
+        TextColor.fromHexString("#e05c6f")!!,
         " • ᴅᴀɴᴄᴇ ᴀʀᴏᴜɴᴅ ᴛʜᴇ ᴄᴏʟᴏᴜʀꜰᴜʟ ꜰʟᴏᴏʀ ᴜɴᴛɪʟ ᴛʜᴇ ᴄʜʀɪѕᴛᴍᴀѕ ᴍᴜѕɪᴄ ѕᴛᴏᴘѕ.\n\n" +
                 " • ʀᴜɴ ᴀɴᴅ ѕᴛᴀɴᴅ ᴏɴ ᴛʜᴇ ᴄᴏʟᴏᴜʀ ᴡʜɪᴄʜ ʜᴀѕ ʙᴇᴇɴ ᴄʜᴏѕᴇɴ (ᴄʜᴇᴄᴋ ʜᴏᴛʙᴀʀ) ʙᴇꜰᴏʀᴇ ᴛʜᴇ ᴛɪᴍᴇʀ ᴇɴᴅѕ.\n\n" +
                 " • ᴀꜰᴛᴇʀ ᴛʜᴇ ᴛɪᴍᴇʀ, ᴛʜᴇ ᴍᴀᴘ ᴡɪʟʟ ᴄʟᴇᴀʀ ᴀʟʟ ʙʟᴏᴄᴋѕ ᴇxᴄᴇᴘᴛ ᴛʜᴇ ᴄʜᴏѕᴇɴ ᴄᴏʟᴏᴜʀ ʙʟᴏᴄᴋѕ. ᴛᴏ ᴡɪɴ, ѕᴜʀᴠɪᴠᴇ ᴛʜᴇ ᴍᴏѕᴛ ʀᴏᴜɴᴅѕ!",
@@ -214,7 +214,7 @@ enum class GameConfig(
         "<colour:#f70123>King of the Hill".style(),
         "<colour:#f70123>ᴋɪɴɢ ᴏғ ᴛʜᴇ ʜɪʟʟ".style(),
         ItemStack(Material.STICK),
-        TextColor.color(0xF70123),
+        TextColor.fromHexString("#f70123")!!,
         " • ʙᴇ ᴛʜᴇ ᴋɪɴɢ ᴏꜰ ᴛʜᴇ ʜɪʟʟ! ѕᴛᴀɴᴅ ɪɴ ᴛʜᴇ ᴄᴇɴᴛʀᴇ ᴏꜰ ᴛʜᴇ ᴍᴀᴘ ᴛᴏ ɢᴀɪɴ ᴘᴏɪɴᴛѕ ᴇᴠᴇʀʏ ѕᴇᴄᴏɴᴅ.\n\n" +
                 " • ᴋɴᴏᴄᴋ ᴏᴛʜᴇʀ ᴘʟᴀʏᴇʀѕ ᴏꜰꜰ ᴛʜᴇ ᴍᴀᴘ ᴡɪᴛʜ ʏᴏᴜʀ ᴋɴᴏᴄᴋʙᴀᴄᴋ ѕᴛɪᴄᴋ. ᴀᴠᴏɪᴅ ꜰᴀʟʟɪɴɢ ᴏꜰꜰ ʏᴏᴜʀѕᴇʟꜰ!\n\n" +
                 " • ᴛʜᴇ ᴘʟᴀʏᴇʀ ѕᴛᴏᴏᴅ ɪɴ ᴛʜᴇ ᴄᴇɴᴛʀᴇ ᴏꜰ ᴛʜᴇ ᴍᴀᴘ ꜰᴏʀ ᴛʜᴇ ʟᴏɴɢᴇѕᴛ ᴛɪᴍᴇ, ᴡɪɴѕ!",
@@ -301,7 +301,7 @@ enum class GameConfig(
         "<colour:#a1a4ff>Musical Minecarts".style(),
         "<colour:#a1a4ff>ᴍᴜꜱɪᴄᴀʟ ᴍɪɴᴇᴄᴀʀᴛꜱ".style(),
         ItemStack(Material.MINECART),
-        TextColor.color(0xA1A4FF),
+        TextColor.fromHexString("#a1a4ff")!!,
         " • ᴅᴀɴᴄᴇ ᴀʀᴏᴜɴᴅ ᴛʜᴇ ᴘʟᴀᴛꜰᴏʀᴍ ᴜɴᴛɪʟ ᴛʜᴇ ᴄʜʀɪѕᴛᴍᴀѕ ᴍᴜѕɪᴄ ѕᴛᴏᴘѕ.\n\n" +
                 " • ʀᴜɴ ᴛᴏ ᴛʜᴇ ɴᴇᴀʀᴇѕᴛ ᴍɪɴᴇᴄᴀʀᴛ ᴀɴᴅ ɢᴇᴛ ɪɴѕɪᴅᴇ ʙᴇꜰᴏʀᴇ ᴛʜᴇ ᴛɪᴍᴇʀ ᴇɴᴅѕ.\n\n" +
                 " • ɪꜰ ʏᴏᴜ ꜰᴀɪʟ ᴛᴏ ꜰɪɴᴅ ᴀ ᴍɪɴᴇᴄᴀʀᴛ ʙᴇꜰᴏʀᴇ ᴛʜᴇ ᴛɪᴍᴇʀ ᴇɴᴅѕ, ʏᴏᴜ ᴡɪʟʟ ʙᴇ <b>ᴇʟɪᴍɪɴᴀᴛᴇᴅ!\n\n" +
@@ -358,7 +358,7 @@ enum class GameConfig(
         "<colour:#89bdf5>Paintball".style(),
         "<colour:#89bdf5>ᴘᴀɪɴᴛʙᴀʟʟ".style(),
         ItemStack(Material.HEART_OF_THE_SEA),
-        TextColor.color(0x89BDF5),
+        TextColor.fromHexString("#89bdf5")!!,
         " • ѕʜᴏᴏᴛ ᴏᴛʜᴇʀ ᴘʟᴀʏᴇʀѕ ᴡɪᴛʜ ʏᴏᴜʀ ᴘᴀɪɴᴛʙᴀʟʟ ɢᴜɴ ᴛᴏ ɢᴇᴛ ᴀ ᴘᴏɪɴᴛ.\n\n" +
                 " • ᴀᴠᴏɪᴅ ʙᴇɪɴɢ ѕʜᴏᴛ ʙʏ ᴏᴛʜᴇʀ ᴘʟᴀʏᴇʀѕ ᴛᴏ ѕᴜʀᴠɪᴠᴇ ᴛʜᴇ ʟᴏɴɢᴇѕᴛ.\n\n" +
                 " • ᴛᴏ ᴡɪɴ, ʜɪᴛ ᴛʜᴇ ᴍᴏѕᴛ ᴘʟᴀʏᴇʀѕ ᴀɴᴅ ɢᴇᴛ ᴛʜᴇ ᴍᴏѕᴛ ᴘᴏɪɴᴛѕ!",
@@ -428,7 +428,7 @@ enum class GameConfig(
         "<colour:#75e01d>Paint Wars".style(),
         "<colour:#75e01d>ᴘᴀɪɴᴛ ᴡᴀʀꜱ".style(),
         ItemStack(Material.BRUSH),
-        TextColor.color(0x75E01D),
+        TextColor.fromHexString("#75e01d")!!,
         " • ᴜѕᴇ ʏᴏᴜʀ ᴘᴀɪɴᴛ ɢᴜɴ ᴛᴏ ѕʜᴏᴏᴛ ʙʟᴏᴄᴋѕ ᴀʀᴏᴜɴᴅ ᴛʜᴇ ᴍᴀᴘ ɪɴᴛᴏ ʏᴏᴜʀ ᴄʜᴏѕᴇɴ ʙʟᴏᴄᴋ.\n\n" +
                 " • ʏᴏᴜ ᴄᴀɴ ѕʜᴏᴏᴛ ᴏᴠᴇʀ ᴏᴛʜᴇʀ ᴘʟᴀʏᴇʀ'ѕ ʙʟᴏᴄᴋѕ ᴛᴏ ʀᴇᴅᴜᴄᴇ ᴛʜᴇɪʀ ѕᴄᴏʀᴇ!\n\n" +
                 " • ᴛᴏ ᴡɪɴ, ᴄᴏᴠᴇʀ ᴛʜᴇ ᴍᴏѕᴛ ᴀᴍᴏᴜɴᴛ ᴏꜰ ᴛʜᴇ ᴍᴀᴘ ᴡɪᴛʜ ʏᴏᴜʀ ʙʟᴏᴄᴋ/ᴄᴏʟᴏᴜʀ!",
@@ -507,7 +507,7 @@ enum class GameConfig(
         "<colour:#ffc642>Spleef".style(),
         "<colour:#ffc642>ꜱᴘʟᴇᴇꜰ".style(),
         ItemStack(Material.DIAMOND_SHOVEL),
-        TextColor.color(0xFFC642),
+        TextColor.fromHexString("#ffc642")!!,
         " • ᴅᴇѕᴛʀᴏʏ ᴛʜᴇ ѕɴᴏᴡ ʙʟᴏᴄᴋѕ ᴜɴᴅᴇʀ ᴏᴛʜᴇʀ ᴘʟᴀʏᴇʀѕ ᴛᴏ ᴇʟɪᴍɪɴᴀᴛᴇ ᴛʜᴇᴍ.\n\n" +
                 " • ᴀᴠᴏɪᴅ ꜰᴀʟʟɪɴɢ ɪɴᴛᴏ ᴛʜᴇ ʟᴀᴠᴀ ʙʏ ᴊᴜᴍᴘɪɴɢ ᴏᴠᴇʀ ʜᴏʟᴇѕ ɪɴ ᴛʜᴇ ɢʀᴏᴜɴᴅ.\n\n" +
                 " • ᴛᴏ ᴡɪɴ, ʙᴇ ᴛʜᴇ ʟᴀѕᴛ ᴘʟᴀʏᴇʀ ѕᴛᴀɴᴅɪɴɢ ᴏɴ ᴛʜᴇ ᴍᴀᴘ!",

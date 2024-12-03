@@ -123,19 +123,19 @@ class ChristmasEventPlugin : JavaPlugin() {
 
             location.world.spawn(location.clone().add(0.0, 2.5, 0.0), TextDisplay::class.java).apply {
                 text("<pink>$contribution".style())
-                backgroundColor = Color.fromARGB(0x1A000000)
+                backgroundColor = Color.fromARGB(26, 0, 0, 0)
                 billboard = Display.Billboard.CENTER
             }
         }
 
         serverWorld.spawn(MapSinglePoint(535.5, 121, 503.5, -90, 0), TextDisplay::class.java) {
-            it.text("<gold>ᴇᴠᴇɴᴛ\nʟᴇᴀᴅᴇʀʙᴏᴀʀᴅ".style())
+            it.text("<colour:#ff8b94>ᴇᴠᴇɴᴛ\nʟᴇᴀᴅᴇʀʙᴏᴀʀᴅ".style())
             it.transformation = it.transformation.apply {
                 this.scale.mul(10F)
             }
             it.billboard = Display.Billboard.CENTER
             it.isDefaultBackground = false
-            it.backgroundColor = Color.fromARGB(0x1A000000)
+            it.backgroundColor = Color.fromARGB(26, 0, 0, 0)
         }
 
         WorldNPC.refreshPodium()
