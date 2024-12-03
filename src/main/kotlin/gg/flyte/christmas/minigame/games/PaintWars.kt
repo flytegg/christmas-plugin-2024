@@ -1,6 +1,7 @@
 package gg.flyte.christmas.minigame.games
 
 import com.google.common.collect.HashBiMap
+import gg.flyte.christmas.donation.DonationTier
 import gg.flyte.christmas.minigame.engine.EventMiniGame
 import gg.flyte.christmas.minigame.engine.GameConfig
 import gg.flyte.christmas.util.eventController
@@ -256,5 +257,13 @@ class PaintWars : EventMiniGame(GameConfig.PAINT_WARS) {
 
         listeners += event<InventoryClickEvent> { isCancelled = true }
     }
+
+    override fun handleDonation(tier: DonationTier) {
+        when (tier) {
+            DonationTier.LOW -> TODO()
+            DonationTier.MEDIUM -> TODO()
+            DonationTier.HIGH -> TODO()
+        }
+    }
 }
-// TODO<Map> redo overview locations and make all LIGHT blocks one block higher.
+// TODO<Map> make all LIGHT blocks one block higher.

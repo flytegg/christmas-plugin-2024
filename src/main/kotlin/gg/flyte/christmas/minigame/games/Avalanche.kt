@@ -4,6 +4,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEn
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityRotation
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetPassengers
 import gg.flyte.christmas.ChristmasEventPlugin
+import gg.flyte.christmas.donation.DonationTier
 import gg.flyte.christmas.minigame.engine.EventMiniGame
 import gg.flyte.christmas.minigame.engine.GameConfig
 import gg.flyte.christmas.minigame.engine.PlayerType
@@ -80,7 +81,7 @@ class Avalanche : EventMiniGame(GameConfig.AVALANCHE) {
             }
 
             floorRegion.randomLocation().apply {
-                add(0.0, 4.0, 0.0)
+                add(0.0, 3.0, 0.0)
                 block.type = Material.CUT_COPPER
                 safePoints += block.location
                 block.world.spawnParticle(Particle.FLASH, block.location.toCenterLocation(), 1000)
@@ -146,7 +147,7 @@ class Avalanche : EventMiniGame(GameConfig.AVALANCHE) {
 
         repeat(safePointsByRound[roundNumber] ?: 1) {
             floorRegion.randomLocation().apply {
-                add(0.0, 4.0, 0.0)
+                add(0.0, 3.0, 0.0)
                 block.type = Material.CUT_COPPER
                 safePoints += block.location
                 block.world.spawnParticle(Particle.FLASH, block.location.toCenterLocation(), 1000)
@@ -339,6 +340,14 @@ class Avalanche : EventMiniGame(GameConfig.AVALANCHE) {
             if (player.location.blockY < 104) {
                 if (remainingPlayers().contains(player)) eliminate(player, EliminationReason.ELIMINATED)
             }
+        }
+    }
+
+    override fun handleDonation(tier: DonationTier) {
+        when (tier) {
+            DonationTier.LOW -> TODO()
+            DonationTier.MEDIUM -> TODO()
+            DonationTier.HIGH -> TODO()
         }
     }
 }

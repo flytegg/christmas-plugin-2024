@@ -115,12 +115,12 @@ class EventCommand(val menu: StandardMenu = StandardMenu("&c☃ ᴇᴠᴇɴᴛ �
             eventController().points.clear()
             ChristmasEventPlugin.instance.config.getConfigurationSection("points")?.getKeys(false)?.forEach {
                 eventController().points[UUID.fromString(it)] = ChristmasEventPlugin.instance.config.getInt("points.$it")
-                sync {
-                    eventController().sidebarManager.update()
-                    WorldNPC.refreshPodium()
-                }
             }
-            sender.sendMessage("<green>ʟᴏᴀᴅᴇᴅ ᴄʀᴀѕʜ ᴅᴀᴛᴀ! ʏᴏᴜʀ ѕᴄᴏʀᴇʙᴏᴀʀᴅ ѕʜᴏᴜʟᴅ ɴᴏᴡ ѕʜᴏᴡ ᴛʜᴇ ᴍᴏѕᴛ ʀᴇᴄᴇɴᴛ ѕᴇʀɪᴀʟɪѕᴇᴅ ᴅᴀᴛᴀ!".style())
+            sync {
+                eventController().sidebarManager.update()
+                WorldNPC.refreshPodium()
+                sender.sendMessage("<green>ʟᴏᴀᴅᴇᴅ ᴄʀᴀѕʜ ᴅᴀᴛᴀ! ʏᴏᴜʀ ѕᴄᴏʀᴇʙᴏᴀʀᴅ ѕʜᴏᴜʟᴅ ɴᴏᴡ ѕʜᴏᴡ ᴛʜᴇ ᴍᴏѕᴛ ʀᴇᴄᴇɴᴛ ѕᴇʀɪᴀʟɪѕᴇᴅ ᴅᴀᴛᴀ!".style())
+            }
         }
     }
 

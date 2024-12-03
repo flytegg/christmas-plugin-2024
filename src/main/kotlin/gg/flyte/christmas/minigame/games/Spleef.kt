@@ -1,5 +1,6 @@
 package gg.flyte.christmas.minigame.games
 
+import gg.flyte.christmas.donation.DonationTier
 import gg.flyte.christmas.minigame.engine.EventMiniGame
 import gg.flyte.christmas.minigame.engine.GameConfig
 import gg.flyte.christmas.minigame.engine.PlayerType
@@ -239,6 +240,14 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
         listeners += event<PlayerMoveEvent> {
             if (player.location.blockY < 70 && remainingPlayers().contains(player)) eliminate(player, EliminationReason.ELIMINATED)
+        }
+    }
+
+    override fun handleDonation(tier: DonationTier) {
+        when (tier) {
+            DonationTier.LOW -> TODO()
+            DonationTier.MEDIUM -> TODO()
+            DonationTier.HIGH -> TODO()
         }
     }
 }

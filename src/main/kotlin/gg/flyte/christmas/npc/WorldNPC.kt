@@ -90,8 +90,8 @@ class WorldNPC private constructor(displayName: String, textureProperties: List<
             2 to MapSinglePoint(535.5, 105, 499.5, -90, 0) // 1.5
         )
         private val leaderboardPositionToNamePlateLocation = mapOf(
-            0 to MapSinglePoint(537.3, 107.35, 503.55, -90, 0),
-            1 to MapSinglePoint(537.3, 105.65, 507.55, -90, 0),
+            0 to MapSinglePoint(537.3, 107.48, 503.55, -90, 0),
+            1 to MapSinglePoint(537.3, 105.72, 507.55, -90, 0),
             2 to MapSinglePoint(537.3, 104.25, 499.55, -90, 0)
         )
         private val placeDefaultComponent = mapOf(
@@ -110,16 +110,16 @@ class WorldNPC private constructor(displayName: String, textureProperties: List<
                 }
             }
 
+            // remove all existing leaderboard NPCs
+            leaderBoardNPCs.forEach { (_, npc) ->
+                ChristmasEventPlugin.instance.worldNPCs.remove(npc)
+                npc.despawnForAll()
+            }
+
             eventController().points.entries
                 .sortedByDescending { it.value }
                 .take(3)
                 .forEachIndexed { index, (uniqueId, points) ->
-                    // remove existing leader, if any, and spawn new leader
-                    leaderBoardNPCs[index].apply {
-                        ChristmasEventPlugin.instance.worldNPCs.remove(this)
-                        leaderBoardNPCs[index]?.despawnForAll()
-                    }
-
                     ChristmasEventPlugin.instance.worldNPCs.remove(leaderBoardNPCs[index])
 
                     async {
@@ -133,7 +133,6 @@ class WorldNPC private constructor(displayName: String, textureProperties: List<
 
                             ChristmasEventPlugin.instance.worldNPCs += this
                         }
-
                         sync {
                             leaderBoardNPCs[index]?.spawnForAll()
                         }

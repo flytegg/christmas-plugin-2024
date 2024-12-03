@@ -33,11 +33,7 @@ import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.text
 import net.kyori.adventure.text.format.TextColor
-import net.kyori.adventure.text.minimessage.MiniMessage
-import org.bukkit.Bukkit
-import org.bukkit.GameMode
-import org.bukkit.Material
-import org.bukkit.Sound
+import org.bukkit.*
 import org.bukkit.entity.Player
 import org.bukkit.entity.Snowball
 import org.bukkit.event.EventPriority
@@ -48,6 +44,7 @@ import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.FoodLevelChangeEvent
 import org.bukkit.event.inventory.*
 import org.bukkit.event.player.*
+import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.PlayerInventory
 import java.util.*
 import kotlin.math.ceil
@@ -102,6 +99,28 @@ class HousekeepingEventListener : Listener, PacketListener {
                     .append("<white> ${signedMessage().message()}".style())
                     .build()
             })
+        }
+
+        event<PlayerInteractEvent> {
+            val clickedBlock = clickedBlock ?: return@event
+            if (eventController().currentGame != null) return@event
+            if (!(clickedBlock.type == Material.SNOW || clickedBlock.type == Material.SNOW_BLOCK)) return@event
+            if (Random().nextInt(5) != 0) return@event
+
+            if (player.inventory.firstEmpty() == -1) return@event
+            player.inventory.addItem(ItemStack(Material.SNOWBALL, 1))
+
+            player.playSound(clickedBlock.location, Sound.BLOCK_SNOW_BREAK, 1f, 1.5f)
+            player.playSound(clickedBlock.location, Sound.BLOCK_SNOW_STEP, 0.5f, 2f)
+            clickedBlock.location.world.spawnParticle(
+                Particle.SNOWFLAKE,
+                clickedBlock.location.clone().add(0.5, 0.5, 0.5),
+                30,
+                0.2,
+                0.2,
+                0.2,
+                0.1
+            )
         }
 
         event<PlayerJoinEvent>(priority = EventPriority.LOWEST) {
