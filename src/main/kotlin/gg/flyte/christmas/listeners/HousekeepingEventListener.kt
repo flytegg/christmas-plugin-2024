@@ -63,15 +63,15 @@ class HousekeepingEventListener : Listener, PacketListener {
         event<PaperServerListPingEvent> {
             // TODO finish sponsors
             val footer = text("       ")
-                .append("<gradient:${Colors.PURPLE.asHexString()}:${Colors.MAGENTA.asHexString()}>ᴄᴀʀʙᴏɴ.ʜᴏꜱᴛ".style())
+                .append("<gradient:${Colours.PURPLE.asHexString()}:${Colours.MAGENTA.asHexString()}>ᴄᴀʀʙᴏɴ.ʜᴏꜱᴛ".style())
                 .append("<grey> • ".style())
                 .append("<gradient:#FF1285:#FA0000>ᴊᴇᴛʙʀ</gradient><gradient:#FA0000:#FF6921>ᴀɪɴs</gradient>".style())
                 .append("<grey> • ".style())
 
             val motd = Component.empty()
                 .append("<b><obf><white>        ||||||  ".style())
-                .append("<gradient:${Colors.LIGHT_PURPLE.asHexString()}:${Colors.PINK.asHexString()}>ꜰʟʏᴛᴇ ".style())
-                .append("<gradient:${Colors.ORANGE.asHexString()}:${Colors.RED.asHexString()}>ᴄʜʀɪsᴛᴍᴀs ᴇᴠᴇɴᴛ".style())
+                .append("<gradient:${Colours.LIGHT_PURPLE.asHexString()}:${Colours.PINK.asHexString()}>ꜰʟʏᴛᴇ ".style())
+                .append("<gradient:${Colours.ORANGE.asHexString()}:${Colours.RED.asHexString()}>ᴄʜʀɪsᴛᴍᴀs ᴇᴠᴇɴᴛ".style())
                 .append("<b><obf><white>  ||||||\n".style())
                 .append(footer)
 
@@ -144,7 +144,7 @@ class HousekeepingEventListener : Listener, PacketListener {
 
             // TODO finish sponsors
             val footer = "<light_purple>\nꜰʟʏᴛᴇ.ɢɢ/ᴅᴏɴᴀᴛᴇ\n\n".style()
-                .append(" <gradient:${Colors.LIGHT_PURPLE.asHexString()}:${Colors.PINK.asHexString()}>ꜰʟʏᴛᴇ.ɢɢ".style())
+                .append(" <gradient:${Colours.LIGHT_PURPLE.asHexString()}:${Colours.PINK.asHexString()}>ꜰʟʏᴛᴇ.ɢɢ".style())
                 .append("<grey> • ".style())
                 .append("<gradient:#6835cf:#b119c2>ᴄᴀʀʙᴏɴ.ʜᴏѕᴛ</gradient>".style())
                 .append("<grey> • ".style())

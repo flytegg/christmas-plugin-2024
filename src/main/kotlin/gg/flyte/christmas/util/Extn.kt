@@ -37,7 +37,7 @@ fun String.style(vararg placeholders: Component): Component {
         *components,
         TagResolver.standard(),
         colourResolver,
-        Colors.tagResolver()
+        Colours.tagResolver()
     )
 }
 
