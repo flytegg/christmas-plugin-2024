@@ -277,7 +277,7 @@ class Avalanche : EventMiniGame(GameConfig.AVALANCHE) {
                     Snowball::class.java
                 ) { snowBall ->
                     val randomColour: String = listOf("4", "c", "6", "2", "a", "9").random()
-                    val displayName: String = "§$randomColour${winnerPlayer.name}".colourise()
+                    val displayName: String = "&$randomColour${winnerPlayer.name}".colourise()
 
                     WorldNPC.createFromLive(displayName, winnerPlayer, snowBall.location).also {
                         winnerNPCs.add(it)

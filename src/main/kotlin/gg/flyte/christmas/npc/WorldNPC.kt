@@ -95,9 +95,9 @@ class WorldNPC private constructor(displayName: String, textureProperties: List<
             2 to MapSinglePoint(537.3, 104.25, 499.55, -90, 0)
         )
         private val placeDefaultComponent = mapOf(
-            0 to "<gold>➊",
-            1 to "<orange>➋",
-            2 to "<yellow>➌"
+            0 to "<colour:#ffcb1a>➊",
+            1 to "<colour:#d0d0d0>➋",
+            2 to "<colour:#a39341>➌"
         )
 
         /**

@@ -266,7 +266,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
             formattedWinners.entries.take(3).reversed().forEachIndexed { index, keyValuePair ->
                 val uniqueId = keyValuePair.key
                 val value = keyValuePair.value
-                val displayName = "§${descendingColour[index]}${Bukkit.getPlayer(uniqueId)!!.name}"
+                val displayName = "&${descendingColour[index]}${Bukkit.getPlayer(uniqueId)!!.name}"
                 val placeLocation = Util.getNPCSummaryLocation(index)
                 val animationTasks = mutableListOf<TwilightRunnable>()
 

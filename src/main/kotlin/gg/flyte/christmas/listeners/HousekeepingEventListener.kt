@@ -87,7 +87,7 @@ class HousekeepingEventListener : Listener, PacketListener {
                 "              <gold>ᴀɴᴅ ѕᴜᴘᴘᴏʀᴛ <red>[ᴄʜᴀʀɪᴛʏ ɴᴀᴍᴇ]" // TODO fill charity name and centre
             )
             serverListPingText.map { MiniMessage.miniMessage().deserialize(it) }.forEach {
-                this.listedPlayers.add(PaperServerListPingEvent.ListedPlayerInfo(it.toLegacyString().replace('&', '§'), UUID.randomUUID()))
+                this.listedPlayers.add(PaperServerListPingEvent.ListedPlayerInfo(it.toLegacyString(), UUID.randomUUID()))
             }
         }
 

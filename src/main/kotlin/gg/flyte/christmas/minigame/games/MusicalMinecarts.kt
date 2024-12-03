@@ -91,7 +91,7 @@ class MusicalMinecarts : EventMiniGame(GameConfig.MUSICAL_MINECARTS) {
 
         simpleCountdown {
             newRound()
-            Util.runAction(PlayerType.PARTICIPANT) { it.sendMessage("<game_colour>ʀᴇᴍᴇᴍʙᴇʀ, ᴅᴏ ɴᴏᴛ ᴄʟɪᴄᴋ ᴛʜᴇ ᴍɪɴᴇᴄᴀʀᴛѕ ʙᴇꜰᴏʀᴇ ᴛʜᴇ ᴍᴜѕɪᴄ ʜᴀѕ ѕᴛᴏᴘᴘᴇᴅ... ʏᴏᴜ ᴡɪʟʟ ʙᴇ ѕᴛᴜɴɴᴇᴅ!".style()) }
+            Util.runAction(PlayerType.PARTICIPANT) { it.sendMessage("<game_colour>ʀᴇᴍᴇᴍʙᴇʀ, <b>ᴅᴏ</b> ɴᴏᴛ ᴄʟɪᴄᴋ ᴛʜᴇ ᴍɪɴᴇᴄᴀʀᴛѕ ʙᴇꜰᴏʀᴇ ᴛʜᴇ ᴍᴜѕɪᴄ ʜᴀѕ ѕᴛᴏᴘᴘᴇᴅ... ʏᴏᴜ ᴡɪʟʟ ʙᴇ ѕᴛᴜɴɴᴇᴅ!".style()) }
         }
     }
 
@@ -395,7 +395,7 @@ class MusicalMinecarts : EventMiniGame(GameConfig.MUSICAL_MINECARTS) {
                     minecart.velocity = direction.normalize()
                     minecarts.add(minecart)
 
-                    val displayName = "§${listOf("4", "c", "6", "2", "a", "9").random()}${player.name}".colourise()
+                    val displayName = "&${listOf("4", "c", "6", "2", "a", "9").random()}${player.name}".colourise()
                     val npc = WorldNPC.createFromLive(displayName, player, location).also {
                         worldNPCs.add(it)
                         it.spawnForAll()
