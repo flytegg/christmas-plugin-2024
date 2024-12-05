@@ -38,6 +38,19 @@
 - Donations progress bar somehow.
 - "Chaos" donations -> drop TNT in a spleef game, for example.
 
+## Donation Events:
+### Spleef:
+ - Low-tier
+    - A few seconds of unlimited double jump
+    - Spawn a fast-shooting snow golem on the layer 1 sweats
+    - +1 double jump for everyone
+- Medium-tier
+    - Spawn a fast-shooting snow golem riding a flying mob (Bee maybe? Invisible maybe?)
+    - Refill double jumps for everyone
+- High-tier
+    - Remove the bottom layer with a 5-second warning, can only be used once
+    - Perform random low tier & medium tier action
+
 ## Stream:
 
 - Drumroll while rolling givaway?H
