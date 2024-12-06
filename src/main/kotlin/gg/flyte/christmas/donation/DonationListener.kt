@@ -83,8 +83,9 @@ class DonationListener(private val campaignId: String) {
                 val time = donation.get("completed_at")?.asString
                 val value = amount.get("value")?.asString
                 val currency = amount.get("currency")?.asString ?: "USD"
+                val isMatch = donation.get("is_match")?.asBoolean ?: false
 
-                Bukkit.getPluginManager().callEvent(DonateEvent(donorName, comment, time, value, currency, donationId))
+                Bukkit.getPluginManager().callEvent(DonateEvent(donorName, comment, time, value, currency, donationId, isMatch))
             }
         }
     }
