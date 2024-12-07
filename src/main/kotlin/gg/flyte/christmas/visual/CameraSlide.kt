@@ -25,7 +25,7 @@ class CameraSlide(slideTo: MapSinglePoint, onComplete: (() -> Unit)? = null) {
         Bukkit.getOnlinePlayers().forEach { loopedPlayer ->
             loopedPlayer.world.spawn(loopedPlayer.location, ItemDisplay::class.java) {
                 it.setItemStack(ItemStack(Material.AIR))
-                it.teleportDuration = 5
+                it.teleportDuration = 3
                 CameraSequence.ACTIVE_CAMERAS.add(it.uniqueId)
 
                 delay(1) {

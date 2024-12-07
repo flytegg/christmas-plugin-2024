@@ -128,7 +128,7 @@ class Paintball : EventMiniGame(GameConfig.PAINTBALL) {
     }
 
     private fun updateScoreboard() {
-        val timeLeft = "<aqua>ᴛɪᴍᴇ ʟᴇғᴛ: <red><b>${gameTime}".style()
+        val timeLeft = "<aqua>ᴛɪᴍᴇ ʟᴇꜰᴛ: <red><b>${gameTime}".style()
         Bukkit.getOnlinePlayers().forEach { eventController().sidebarManager.updateLines(it, listOf(Component.empty(), timeLeft)) }
     }
 

@@ -333,7 +333,6 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
                 it.detonate()
             }
 
-
             val notification = "<game_colour><b>« A mysterious power-up has spawned on the floor! »".style()
             Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) { it.sendMessage(notification) }
             Util.runAction(PlayerType.PARTICIPANT) {
@@ -568,34 +567,32 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
     override fun handleDonation(tier: DonationTier) {
         when (tier) {
             DonationTier.LOW -> {
-                Util.runAction(PlayerType.OPTED_OUT) { it.sendMessage("<game_colour>Everyone has received <aqua>3 snowballs<game_colour>!".style()) }
-                Util.runAction(PlayerType.PARTICIPANT) { setNextAvailableSlot(it, ItemStack(Material.SNOWBALL, 3)) }
+                Util.runAction(PlayerType.OPTED_OUT) { it.sendMessage("<game_colour>Everyone has received <red>6 snowballs<game_colour>!".style()) }
+                Util.runAction(PlayerType.PARTICIPANT) { setNextAvailableSlot(it, ItemStack(Material.SNOWBALL, 6)) }
             }
 
             DonationTier.MEDIUM -> {
-                Util.runAction(PlayerType.OPTED_OUT) { it.sendMessage("<game_colour>Everyone has received a <aqua>fireball<game_colour>!".style()) }
+                Util.runAction(PlayerType.OPTED_OUT) { it.sendMessage("<game_colour>Everyone has received a <red>fireball<game_colour>!".style()) }
                 Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) { setNextAvailableSlot(it, ItemStack(Material.FIRE_CHARGE)) }
             }
 
             DonationTier.HIGH -> {
-                Util.runAction(PlayerType.OPTED_OUT) { it.sendMessage("<game_colour>Everyone has received a <aqua>short-fuse TNT<game_colour>!".style()) }
+                Util.runAction(PlayerType.OPTED_OUT) { it.sendMessage("<game_colour>Everyone has received a <red>short-fuse TNT<game_colour>!".style()) }
                 Util.runAction(PlayerType.PARTICIPANT) { setNextAvailableSlot(it, ItemStack(Material.TNT)) }
             }
         }
     }
 
-    private enum class PowerUp(
-        val displayName: String,
-    ) {
-        ENDER_PEARL("Ender Pearl"),
-        COLOR_BOMB("Colour Bomb"),
-        JUMP_BOOST("Jump Boost"),
-        FISHING_ROD("Fishing Rod"),
-        SLOWNESS("Slowness"),
+    private enum class PowerUp(val displayName: String) {
         BLINDNESS("Blindness"),
-        RANDOM_TP("Random TP"),
-        PUSH_SELF("Random Self-Boost"),
+        COLOR_BOMB("Colour Bomb"),
+        DOUBLE_JUMP("Double Jump"),
+        ENDER_PEARL("Ender Pearl"),
+        FISHING_ROD("Fishing Rod"),
+        JUMP_BOOST("Jump Boost"),
         PUSH_RANDOM("Random Player Boost"),
-        DOUBLE_JUMP("Double Jump")
+        PUSH_SELF("Random Self-Boost"),
+        RANDOM_TP("Random TP"),
+        SLOWNESS("Slowness")
     }
 }

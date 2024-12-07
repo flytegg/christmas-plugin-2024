@@ -101,7 +101,7 @@ class EventController() {
                         countdownMap[seconds]?.let { number ->
                             it.title(number, Component.empty(), titleTimes(Duration.ZERO, Duration.ofMillis(1100), Duration.ZERO))
                             it.playSound(Sound.UI_BUTTON_CLICK)
-                            it.sendMessage("<grey>Game starting in $number seconds...".style())
+                            it.sendMessage("<grey>Game starting in <0> seconds...".style(number))
                         }
                     }
                     seconds--

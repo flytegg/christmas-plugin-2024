@@ -544,18 +544,16 @@ class MusicalMinecarts : EventMiniGame(GameConfig.MUSICAL_MINECARTS) {
         }
     }
 
-    private enum class PowerUp(
-        val displayName: String,
-    ) {
-        ENDER_PEARL("Ender Pearl"),
-        JUMP_BOOST("Jump Boost"),
-        FISHING_ROD("Fishing Rod"),
-        SLOWNESS("Slowness"),
+    private enum class PowerUp(val displayName: String) {
         BLINDNESS("Blindness"),
-        RANDOM_TP("Random TP"),
-        PUSH_SELF("Random Self-Boost"),
-        PUSH_RANDOM("Random Player Boost"),
         DOUBLE_JUMP("Double Jump"),
+        ENDER_PEARL("Ender Pearl"),
         EXTRA_CART("Extra Minecart"),
+        FISHING_ROD("Fishing Rod"),
+        JUMP_BOOST("Jump Boost"),
+        PUSH_RANDOM("Random Player Boost"),
+        PUSH_SELF("Random Self-Boost"),
+        RANDOM_TP("Random TP"),
+        SLOWNESS("Slowness")
     }
 }

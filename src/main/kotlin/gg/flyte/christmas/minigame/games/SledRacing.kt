@@ -84,7 +84,7 @@ class SledRacing : EventMiniGame(GameConfig.SLED_RACING) {
             } // autocorrect armor stand rotation to boat rotation
 
             tasks += repeatingTask(20) {
-                val timeLeft = "<aqua>ᴛɪᴍᴇ ʟᴇғᴛ: <red><b>${gameTime}".style()
+                val timeLeft = "<aqua>ᴛɪᴍᴇ ʟᴇꜰᴛ: <red><b>${gameTime}".style()
                 Bukkit.getOnlinePlayers().forEach { eventController().sidebarManager.updateLines(it, listOf(Component.empty(), timeLeft)) }
 
                 gameTime--
@@ -105,6 +105,8 @@ class SledRacing : EventMiniGame(GameConfig.SLED_RACING) {
                 formattedWinners.putIfAbsent(uuid, "3ʀᴅ ᴘʟᴀᴄᴇ")
             }
         }
+
+        ChristmasEventPlugin.instance.serverWorld.entities.forEach { if (it is ArmorStand || it is Boat) it.remove() }
         super.endGame()
     }
 
@@ -127,7 +129,7 @@ class SledRacing : EventMiniGame(GameConfig.SLED_RACING) {
         val lapsCompleted = lapsCompleted.getOrDefault(playerUUID, 0) + 1
 
         if (lapsCompleted >= lapsRequired) {
-            Util.runAction(PlayerType.PARTICIPANT) { it.sendMessage("<grey>${player.displayName} <game_colour>ʜᴀs ᴄᴏᴍᴘʟᴇᴛᴇᴅ ᴛʜᴇ ʀᴀᴄᴇ!".style()) }
+            Util.runAction(PlayerType.PARTICIPANT) { it.sendMessage("<grey>${player.name} <game_colour>ʜᴀs ᴄᴏᴍᴘʟᴇᴛᴇᴅ ᴛʜᴇ ʀᴀᴄᴇ!".style()) }
 
             player.title(
                 "<game_colour>ᴄᴏɴɢʀᴀᴛᴜʟᴀᴛɪᴏɴs!".style(), "<grey>ʏᴏᴜ ʜᴀᴠᴇ ᴄᴏᴍᴘʟᴇᴛᴇᴅ ᴛʜᴇ ʀᴀᴄᴇ!".style(),
