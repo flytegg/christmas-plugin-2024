@@ -9,6 +9,7 @@
 - Staff Utils Menu:
     - Teleport all players to a “screenie” location. player’s movement is locked and facing forward to facilitate an easy event screenie. (ik stephen
       will love this)
+- Add a point for hitting someone with a snowball in the lobby
 
 ## Game Specific:
 
@@ -39,6 +40,7 @@
 - "Chaos" donations -> drop TNT in a spleef game, for example.
 
 ## Donation Events:
+
 ### Spleef:
  - Low-tier
     - A few seconds of unlimited double jump
@@ -51,9 +53,31 @@
     - Remove the bottom layer with a 5-second warning, can only be used once
     - Perform random low tier & medium tier action
 
+### Bauble Tag:
+ - Low-tier
+    - Make everyone glow for 10 seconds
+    - Double everyone's speed for 10 seconds
+ - Medium-tier
+    - Randomly swap a tagged player
+    - Teleport everyone to the middle
+ - High-tier
+    - Explode one random player, killing nearby players too. Disabled in the final round.
+    - Explode specifically stephen
+
+### Paintball:
+  - Low-tier
+    - Make everyone glow for 10 seconds
+    - Give everyone nausea for 10 seconds
+  - Medium-tier
+    - Give everyone a sniper
+    - Spawn a snow golem in the middle of the map
+  - High-tier
+    - Spawn a snow golem on the enemy team
+    - Spawn a snow golem on the enemy team
+
 ## Stream:
 
-- Drumroll while rolling givaway?H
+- Drumroll while rolling giveaway?
 
 # Things to change:
 
