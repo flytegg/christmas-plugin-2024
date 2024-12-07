@@ -220,9 +220,8 @@ class SledRacing : EventMiniGame(GameConfig.SLED_RACING) {
     }
 
     private class CollisionlessBoat : net.minecraft.world.entity.vehicle.Boat(
-        EntityType.OAK_BOAT,
+        EntityType.BOAT,
         (ChristmasEventPlugin.instance.serverWorld as CraftWorld).handle.level,
-        { Items.OAK_BOAT }
     ) {
         override fun canBeCollidedWith() = false
         override fun canCollideWith(other: Entity) = false

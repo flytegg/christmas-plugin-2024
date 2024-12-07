@@ -45,3 +45,6 @@ bin/
 ### Run ###
 run/
 !run/eula.txt
+
+### Kotlin ###
+.kotlin/sessions/kotlin-compiler-*.salive
