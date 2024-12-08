@@ -90,13 +90,7 @@ class DonationListener {
 
                 sync {
                     Bukkit.getPluginManager().callEvent(
-                        DonateEvent(
-                            donationId,
-                            donorName,
-                            comment,
-                            amount,
-                            timestamp
-                        )
+                        DonateEvent(donationId, donorName, comment, amount, timestamp)
                     )
                 }
             }
