@@ -20,11 +20,4 @@ contributors:
   - "<358235d5-ca9f-4db1-8e84-24e7ec04c73b><ᴄᴀʀʙᴏɴ ʜᴏsᴛ ᴛᴇᴀᴍ><554.5, 101, 460.5>" # dawson
   # atom needed
 
-# Donation Auth
-donations:
-  clientId: ""
-  clientSecret: ""
-  campaignId: ""
-  totalDonations: 0
-
 points:
