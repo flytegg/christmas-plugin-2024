@@ -56,7 +56,6 @@ class ChristmasEventPlugin : JavaPlugin() {
         registerCommands()
         registerEvents()
         registerPacketAPI()
-        handleDonations()
         loadNPCs()
     }
 
@@ -92,14 +91,11 @@ class ChristmasEventPlugin : JavaPlugin() {
 
     private fun registerEvents() {
         HousekeepingEventListener()
+        DonationListener()
     }
 
     private fun registerPacketAPI() {
         PacketEvents.getAPI().init()
-    }
-
-    private fun handleDonations() {
-        DonationListener()
     }
 
     private fun loadNPCs() {
