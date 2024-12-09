@@ -218,7 +218,11 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 }
             }
 
-            bossbar.progress(remainingUnlimitedJumpTicks / bossbarMaxTicks)
+            if (!unlimitedJumps) {
+                return@repeatingTask
+            }
+
+            bossbar.progress(Math.clamp(remainingUnlimitedJumpTicks / bossbarMaxTicks, 0.0F, 1.0F))
 
             if (remainingUnlimitedJumpTicks-- <= 0) {
                 unlimitedJumps = false
