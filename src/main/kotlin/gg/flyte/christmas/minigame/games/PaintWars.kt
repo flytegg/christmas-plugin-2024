@@ -256,7 +256,7 @@ class PaintWars : EventMiniGame(GameConfig.PAINT_WARS) {
         listeners += event<InventoryClickEvent> { isCancelled = true }
     }
 
-    override fun handleDonation(tier: DonationTier) {
+    override fun handleDonation(tier: DonationTier, donorName: String?) {
         when (tier) {
             DonationTier.LOW -> TODO()
             DonationTier.MEDIUM -> TODO()

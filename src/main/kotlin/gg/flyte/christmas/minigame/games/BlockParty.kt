@@ -564,7 +564,7 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
         } // double-jump
     }
 
-    override fun handleDonation(tier: DonationTier) {
+    override fun handleDonation(tier: DonationTier, donorName: String?) {
         when (tier) {
             DonationTier.LOW -> {
                 Util.runAction(PlayerType.OPTED_OUT) { it.sendMessage("<game_colour>Everyone has received <red>6 snowballs<game_colour>!".style()) }

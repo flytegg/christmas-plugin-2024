@@ -343,7 +343,7 @@ class Avalanche : EventMiniGame(GameConfig.AVALANCHE) {
         }
     }
 
-    override fun handleDonation(tier: DonationTier) {
+    override fun handleDonation(tier: DonationTier, donorName: String?) {
         when (tier) {
             DonationTier.LOW -> TODO()
             DonationTier.MEDIUM -> TODO()

@@ -267,7 +267,7 @@ class EventController() {
             ChristmasEventPlugin.instance.saveConfig()
         }
 
-        currentGame?.handleDonation(DonationTier.getTier(value))
+        currentGame?.handleDonation(DonationTier.getTier(value), event.donorName)
     }
 
     /**

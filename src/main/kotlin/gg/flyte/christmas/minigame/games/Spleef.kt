@@ -247,9 +247,9 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
     }
 
-    override fun handleDonation(tier: DonationTier) {
+    override fun handleDonation(tier: DonationTier, donorName: String?) {
         when (tier) {
-            DonationTier.LOW -> TODO()
+            DonationTier.LOW -> incrementDoubleJumpsForAll(donorName)
             DonationTier.MEDIUM -> TODO()
             DonationTier.HIGH -> TODO()
         }

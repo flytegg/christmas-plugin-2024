@@ -536,7 +536,7 @@ class MusicalMinecarts : EventMiniGame(GameConfig.MUSICAL_MINECARTS) {
         }
     }
 
-    override fun handleDonation(tier: DonationTier) {
+    override fun handleDonation(tier: DonationTier, donorName: String?) {
         when (tier) {
             DonationTier.LOW -> TODO()
             DonationTier.MEDIUM -> TODO()

@@ -163,7 +163,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         }
     }
 
-    override fun handleDonation(tier: DonationTier) {
+    override fun handleDonation(tier: DonationTier, donorName: String?) {
         when (tier) {
             DonationTier.LOW -> TODO()
             DonationTier.MEDIUM -> TODO()
