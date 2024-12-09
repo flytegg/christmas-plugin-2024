@@ -44,11 +44,11 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         Util.fillArena(110, Material.SNOW_BLOCK),
         Util.fillArena(98, Material.SNOW_BLOCK),
         Util.fillArena(86, Material.SNOW_BLOCK)
-    ).flatMap { it }
+    ).flatten()
 
     private var secondsElapsed = 0
 
-    private val bossbar = BossBar.bossBar("<gold><b>UNLIMITED DOUBLE JUMPS".style(), 1.0F, BossBar.Color.BLUE, BossBar.Overlay.NOTCHED_6);
+    private val bossbar = BossBar.bossBar("<gold><b>UNLIMITED DOUBLE JUMPS".style(), 1.0F, BossBar.Color.BLUE, BossBar.Overlay.NOTCHED_6)
     private var bossbarMaxTicks = 0.0F
 
     private var doubleJumps = mutableMapOf<UUID, Int>()

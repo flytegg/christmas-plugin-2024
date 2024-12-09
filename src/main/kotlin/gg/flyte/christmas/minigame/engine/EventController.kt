@@ -227,9 +227,8 @@ class EventController() {
      * @see EventMiniGame.handleDonation
      */
     fun handleDonation(event: DonateEvent) {
-        if (event.amount == null) return // no clue why this would happen, but just in case
-        var value = event.amount.toDouble()
-        if (value < 0) return // no negative donations (don't think this is possible)
+        val value = event.amount.toDouble()
+        if (value <= 0) return // no negative donations (don't think this is possible)
 
         updateDonationBar()
 
@@ -269,7 +268,7 @@ class EventController() {
      */
     fun updateDonationBar() {
         donationBossBar.name("<colour:#1DF1BC>ᴅᴏɴᴀᴛɪᴏɴ ɢᴏᴀʟ: <white>$<green>${totalDonations}/${donationGoal}".style())
-        var progress = (totalDonations.toFloat() / donationGoal)
+        val progress = (totalDonations.toFloat() / donationGoal)
         donationBossBar.progress(progress)
     }
 }
