@@ -16,6 +16,7 @@ import gg.flyte.twilight.extension.showPlayer
 import gg.flyte.twilight.scheduler.TwilightRunnable
 import gg.flyte.twilight.scheduler.delay
 import gg.flyte.twilight.scheduler.repeatingTask
+import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
@@ -34,7 +35,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.util.Vector
-import java.util.UUID
+import java.util.*
 
 class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     private var overviewTasks = mutableListOf<TwilightRunnable>()
@@ -45,8 +46,14 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         Util.fillArena(86, Material.SNOW_BLOCK)
     ).flatMap { it }
 
-    private var seconds = 0
+    private var secondsElapsed = 0
+
+    private val bossbar = BossBar.bossBar("<gold><b>UNLIMITED DOUBLE JUMPS".style(), 1.0F, BossBar.Color.BLUE, BossBar.Overlay.NOTCHED_6);
+    private var bossbarMaxTicks = 0.0F
+
     private var doubleJumps = mutableMapOf<UUID, Int>()
+    private var unlimitedJumps = false
+    private var remainingUnlimitedJumpTicks = 0
 
     override fun startGameOverview() {
         super.startGameOverview()
@@ -87,11 +94,12 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             }
 
             addActionBarTask()
+            addUnlimitedJumpsTask()
 
             tasks += repeatingTask(20) {
-                seconds++
+                secondsElapsed++
 
-                if (seconds % 20 == 0) {
+                if (secondsElapsed % 20 == 0) {
                     remainingPlayers().forEach {
                         it.sendMessage("<green>+1 point for surviving 30 seconds!".style())
                         eventController().addPoints(it.uniqueId, 1)
@@ -118,6 +126,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
         player.apply {
             allowFlight = false
+            bossbar.removeViewer(player)
 
             @Suppress("DuplicatedCode") // yes ik but im lazy and can't think of any other animations
             if (reason == EliminationReason.ELIMINATED) {
@@ -151,7 +160,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
         super.eliminate(player, reason)
 
-        val value = "$seconds second${if (seconds > 1) "s" else ""}" // bro imagine surviving a singular amount of seconds
+        val value = "$secondsElapsed second${if (secondsElapsed > 1) "s" else ""}" // bro imagine surviving a singular amount of seconds
         when (remainingPlayers().size) {
             1 -> {
                 formattedWinners[player.uniqueId] = value
@@ -164,7 +173,15 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     }
 
     override fun endGame() {
-        for (point in floorLevelBlocks) point.block.type = Material.AIR
+        for (point in floorLevelBlocks) {
+            point.block.type = Material.AIR
+        }
+
+        remainingPlayers().forEach {
+            it.allowFlight = false
+            bossbar.removeViewer(it)
+        }
+
         super.endGame()
     }
 
@@ -176,10 +193,40 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     private fun addActionBarTask() {
         tasks += repeatingTask(10) {
             remainingPlayers().forEach {
+                if (unlimitedJumps) {
+                    it.sendActionBar("<gold><b>UNLIMITED<reset> <game_colour>double jumps!".style())
+                    return@forEach
+                }
+
                 if (doubleJumps[it.uniqueId]!! > 0) {
                     it.sendActionBar("<green><b>${doubleJumps[it.uniqueId]!!} <reset><game_colour>double jumps left!".style())
                 } else {
                     it.sendActionBar("<red><b>0 <reset><game_colour>double jumps left!".style())
+                }
+            }
+        }
+    }
+
+    private fun addUnlimitedJumpsTask() {
+        tasks += repeatingTask(1) {
+            if (!unlimitedJumps && remainingUnlimitedJumpTicks > 0) {
+                unlimitedJumps = true
+
+                remainingPlayers().forEach {
+                    it.allowFlight = true
+                    bossbar.addViewer(it)
+                }
+            }
+
+            bossbar.progress(remainingUnlimitedJumpTicks / bossbarMaxTicks)
+
+            if (remainingUnlimitedJumpTicks-- <= 0) {
+                unlimitedJumps = false
+                bossbarMaxTicks = 0.0F
+
+                remainingPlayers().forEach {
+                    it.allowFlight = doubleJumps[it.uniqueId]!! > 0
+                    bossbar.removeViewer(it)
                 }
             }
         }
@@ -203,11 +250,10 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             if (player.gameMode != GameMode.SURVIVAL) return@event
             isCancelled = true
 
-            if (doubleJumps[player.uniqueId]!! > 0) {
-                player.isFlying = false
-                player.velocity = player.location.direction.multiply(0.5).add(Vector(0.0, 1.25, 0.0))
-
-                player.playSound(Sound.ITEM_TOTEM_USE)
+            if (unlimitedJumps) {
+                doubleJump(player)
+            } else if (doubleJumps[player.uniqueId]!! > 0) {
+                doubleJump(player)
 
                 doubleJumps[player.uniqueId] = doubleJumps[player.uniqueId]!! - 1
             } else {
@@ -219,7 +265,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             if (hitBlock == null) return@event
             if (entity !is Snowball) return@event
 
-            floorLevelBlocks.any { it.block == hitBlock }.let {
+            if (floorLevelBlocks.any { it.block == hitBlock }) {
                 wearDownSnowBlock(hitBlock!!)
             }
         }
@@ -231,6 +277,13 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 }
             }
         }
+    }
+
+    private fun doubleJump(player: Player) {
+        player.isFlying = false
+        player.velocity = player.location.direction.multiply(0.5).add(Vector(0.0, 1.25, 0.0))
+
+        player.playSound(Sound.ENTITY_BREEZE_SHOOT)
     }
 
     private fun wearDownSnowBlock(block: Block) {
@@ -262,21 +315,45 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
     override fun handleDonation(tier: DonationTier, donorName: String?) {
         when (tier) {
-            DonationTier.LOW -> incrementDoubleJumpsForAll(donorName)
+            DonationTier.LOW -> lowTierDonation(donorName)
             DonationTier.MEDIUM -> TODO()
             DonationTier.HIGH -> TODO()
         }
     }
 
-    private fun incrementDoubleJumpsForAll(name: String?) {
+    private fun lowTierDonation(donorName: String?) {
+        if ((0..1).random() == 0) {
+            increaseDoubleJumpsForAll(donorName)
+        } else {
+            giveUnlimitedDoubleJumps(donorName)
+        }
+    }
+
+    private fun increaseDoubleJumpsForAll(name: String?) {
+        val increase = (1..2).random()
+        val plural = if (increase > 1) "s" else ""
+
         remainingPlayers().forEach {
-            doubleJumps[it.uniqueId] = doubleJumps[it.uniqueId]!! + 1
+            doubleJumps[it.uniqueId] = doubleJumps[it.uniqueId]!! + increase
             it.allowFlight = true
 
             if (name != null) {
-                it.sendMessage("<green>+1 double jump! (<aqua>$name's</aqua> donation)".style())
+                it.sendMessage("<green>+<red>$increase</red> double jump$plural! (<aqua>$name's</aqua> donation)".style())
             } else {
-                it.sendMessage("<green>+1 double jump! (donation)".style())
+                it.sendMessage("<green>+<red>$increase</red> double jump$plural! (donation)".style())
+            }
+        }
+    }
+
+    private fun giveUnlimitedDoubleJumps(name: String?) {
+        remainingUnlimitedJumpTicks += 20 * 5
+        bossbarMaxTicks += 20 * 5
+
+        remainingPlayers().forEach {
+            if (name != null) {
+                it.sendMessage("<green>+<red>5</red> seconds of unlimited double jump! (<aqua>$name's</aqua> donation)".style())
+            } else {
+                it.sendMessage("<green>+<red>5</red> seconds of unlimited double jump! (donation)".style())
             }
         }
     }
