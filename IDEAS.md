@@ -51,6 +51,7 @@
     - Refill double jumps for everyone
 - High-tier
     - Remove the bottom layer with a 5-second warning, can only be used once
+    - Start snowing snowballs
     - Perform random low tier & medium tier action
 
 ### Bauble Tag:
