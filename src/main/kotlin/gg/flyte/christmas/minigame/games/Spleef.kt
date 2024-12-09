@@ -100,11 +100,11 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                             }
 
                             Material.SNOW -> {
-                                var blockData = it.block.blockData as Snow
+                                val blockData = it.block.blockData as Snow
                                 if (blockData.layers == 2) {
                                     it.block.type = Material.AIR
                                 } else {
-                                    blockData.layers = blockData.layers - 3
+                                    blockData.layers -= 3
                                     it.block.blockData = blockData
                                 }
                             }
@@ -199,6 +199,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                     player.inventory.addItem(ItemStack(Material.SNOWBALL, (1..4).random()))
                 }
             }
+            Bukkit.broadcastMessage("event got cancelled by this random ahh event");
         }
 
         listeners += event<PlayerToggleFlightEvent> {
@@ -226,11 +227,11 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                     }
 
                     Material.SNOW -> {
-                        var blockData = hitBlock!!.blockData as Snow
+                        val blockData = hitBlock!!.blockData as Snow
                         if (blockData.layers == 2) {
                             hitBlock!!.type = Material.AIR
                         } else {
-                            blockData.layers = blockData.layers - 3
+                            blockData.layers -= 3
                             hitBlock!!.blockData = blockData
                         }
                     }
@@ -252,6 +253,19 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             DonationTier.LOW -> incrementDoubleJumpsForAll(donorName)
             DonationTier.MEDIUM -> TODO()
             DonationTier.HIGH -> TODO()
+        }
+    }
+
+    private fun incrementDoubleJumpsForAll(name: String?) {
+        remainingPlayers().forEach {
+            doubleJumps[it] = doubleJumps[it]!! + 1
+            it.allowFlight = true
+
+            if (name != null) {
+                it.sendMessage("<green>+1 double jump! (<aqua>$name</aqua>'s donation)".style())
+            } else {
+                it.sendMessage("<green>+1 double jump! (donation)".style())
+            }
         }
     }
 }
