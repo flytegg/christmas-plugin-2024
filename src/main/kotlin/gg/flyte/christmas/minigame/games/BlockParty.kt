@@ -387,7 +387,7 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
                         packetToSend = WrapperPlayServerEntityMetadata(npc.npc.id, listOf(EntityData(6, EntityDataTypes.ENTITY_POSE, pose)))
                     }
 
-                    if (loopedPlayer != null) packetToSend.sendPacket(player)
+                    if (loopedPlayer != null) packetToSend.sendPacket(loopedPlayer)
                 } // NPC Crouching & Swinging
 
                 var jumpIndex = 0

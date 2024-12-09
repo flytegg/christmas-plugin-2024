@@ -20,6 +20,7 @@ import dev.shreyasayyengar.menuapi.menu.MenuItem
 import dev.shreyasayyengar.menuapi.menu.StandardMenu
 import gg.flyte.christmas.ChristmasEventPlugin
 import gg.flyte.christmas.donation.DonateEvent
+import gg.flyte.christmas.minigame.engine.GameState
 import gg.flyte.christmas.util.*
 import gg.flyte.christmas.visual.CameraSequence
 import gg.flyte.twilight.event.event
@@ -101,16 +102,17 @@ class HousekeepingEventListener : Listener, PacketListener {
 
         event<PlayerInteractEvent> {
             val clickedBlock = clickedBlock ?: return@event
-            if (eventController().currentGame != null) return@event
+            if (eventController().currentGame?.state != GameState.IDLE && eventController().currentGame != null) return@event
             if (!(clickedBlock.type == Material.SNOW || clickedBlock.type == Material.SNOW_BLOCK)) return@event
             if (this.item?.type == Material.SNOWBALL) {
                 isCancelled = true
-                return@event
             }
             if (Random().nextInt(5) != 0) return@event
 
             if (player.inventory.firstEmpty() == -1) return@event
-            player.inventory.addItem(ItemStack(Material.SNOWBALL, 1))
+            player.inventory.addItem(ItemStack(Material.SNOWBALL, 1).apply {
+                itemMeta = itemMeta.apply { setMaxStackSize(99) }
+            })
 
             player.playSound(clickedBlock.location, Sound.BLOCK_SNOW_BREAK, 1f, 1.5f)
             player.playSound(clickedBlock.location, Sound.BLOCK_SNOW_STEP, 0.5f, 2f)

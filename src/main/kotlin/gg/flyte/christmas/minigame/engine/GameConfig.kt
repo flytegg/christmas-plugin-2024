@@ -130,8 +130,8 @@ enum class GameConfig(
             MapSinglePoint(178, 128, 1253, -133.11133F, 8.586087F),
             MapSinglePoint(181, 128, 1252, -133.11133F, 8.586087F),
         ),
-        listOf(MapSinglePoint(147, 200, 1270, -92.046814F, 49.535908F),),
-        listOf(MapSinglePoint(128, 146, 1288, -115.052185F, 22.471674F),),
+        listOf(MapSinglePoint(147, 200, 1270, -92.046814F, 49.535908F)),
+        listOf(MapSinglePoint(128, 146, 1288, -115.052185F, 22.471674F)),
     ),
     //endregion
 
@@ -197,7 +197,7 @@ enum class GameConfig(
     KING_OF_THE_HILL(
         KingHill::class,
         "<colour:#f70123>King of the Hill".style(),
-        "<colour:#f70123>ᴋɪɴɢ ᴏғ ᴛʜᴇ ʜɪʟʟ".style(),
+        "<colour:#f70123>ᴋɪɴɢ ᴏꜰ ᴛʜᴇ ʜɪʟʟ".style(),
         ItemStack(Material.STICK),
         TextColor.fromHexString("#f70123")!!,
         " • Be the King of The Hill! Stand in the centre of the map to gain points every second.\n\n" +
@@ -399,7 +399,7 @@ enum class GameConfig(
             MapSinglePoint(223, 73, 307, -24.32486F, 4.2968564F)
         ),
         listOf(MapSinglePoint(157, 127, 312)),
-        listOf(),
+        listOf(MapSinglePoint(212, 82, 284, 0, 38)),
         false
     ),
     //endregion
@@ -493,7 +493,7 @@ enum class GameConfig(
                 " • To win, be the first player to finish all 3 laps!\n\n" +
                 " • \uD83C\uDFB5 Come on, it's lovely weather for a sleigh ride together with you! \uD83C\uDFB6 🛷",
         1,
-        MapSinglePoint(523, 207, 1842, 127F, 90F),
+        MapSinglePoint(523, 150, 1842, 127F, 90F),
         listOf(
             MapRegion(MapSinglePoint(671, 149, 1811, 116.8, 0), MapSinglePoint(651, 149, 1791, 116.8, 0))
         ),

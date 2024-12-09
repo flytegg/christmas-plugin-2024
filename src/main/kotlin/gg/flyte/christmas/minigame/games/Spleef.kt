@@ -196,7 +196,9 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 if (it.block == block) {
                     isCancelled = false
                     isDropItems = false
-                    player.inventory.addItem(ItemStack(Material.SNOWBALL, (1..4).random()))
+                    player.inventory.addItem(ItemStack(Material.SNOWBALL, (1..4).random()).apply {
+                        itemMeta = itemMeta.apply { setMaxStackSize(99) }
+                    })
                 }
             }
             Bukkit.broadcastMessage("event got cancelled by this random ahh event");

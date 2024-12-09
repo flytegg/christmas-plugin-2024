@@ -133,8 +133,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
         eliminatedPlayers.add(player.uniqueId)
         player.teleport(gameConfig.spectatorSpawnLocations.random())
         player.clearActivePotionEffects()
-        player.inventory.storageContents = arrayOf()
-        player.inventory.setItemInOffHand(null)
+        player.formatInventory()
 
         if (reason == EliminationReason.EXPIRED_SESSION) {
             player.teleport(gameConfig.spectatorSpawnLocations.random())
@@ -163,9 +162,8 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
         eliminatedPlayers.clear()
         eventController().currentGame = null
         eventController().sidebarManager.dataSupplier = eventController().points
-        eventController().serialisePoints()
         eventController().songPlayer?.isPlaying = true
-        WorldNPC.refreshPodium()
+        eventController().serialisePoints()
         showGameResults()
     }
 
@@ -366,6 +364,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
                     displays.forEach { it.remove() }
                 }
 
+                WorldNPC.refreshPodium()
                 eventController().sidebarManager.update()
             }
         }

@@ -4,7 +4,6 @@ import gg.flyte.christmas.ChristmasEventPlugin
 import gg.flyte.christmas.minigame.engine.GameConfig
 import gg.flyte.christmas.minigame.world.MapSinglePoint
 import gg.flyte.twilight.scheduler.delay
-import io.papermc.paper.entity.TeleportFlag
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Location
@@ -67,10 +66,11 @@ class CameraSlide(slideTo: MapSinglePoint, onComplete: (() -> Unit)? = null) {
     ) : BukkitRunnable() {
         private val destination = location
         private val highPoint = 200.0
-        private val duration = 80
-        private val epsilon = 0.5
+        private var duration = 70
+        private var epsilon = 0.5
         private var progress = 0.0
         private var stage = 0
+        private var hasComputedDuration = false
 
         /**
          * Executes the display movement logic based on the current stage of the display sequence.
@@ -87,20 +87,36 @@ class CameraSlide(slideTo: MapSinglePoint, onComplete: (() -> Unit)? = null) {
             val (destX, destY, destZ, destYaw, destPitch) = destination
 
             when (stage) {
-                0 -> updateCamera(
-                    deltaY = highPoint - curY,
-                    deltaYaw = destYaw - curYaw,
-                    deltaPitch = destPitch - curPitch
-                )
+                0 -> {
+                    updateCamera(
+                        deltaY = highPoint - curY,
+                        deltaYaw = destYaw - curYaw,
+                        deltaPitch = destPitch - curPitch
+                    )
+                }
 
-                1 -> updateCamera(
-                    deltaX = destX - curX,
-                    deltaZ = destZ - curZ
-                )
+                1 -> {
+                    if (!hasComputedDuration) {
+                        duration = (itemDisplay.location.distance(destination) * (0.5)).toInt().also {
+                            hasComputedDuration = true
+                            if (it > 0.5) epsilon = 0.75
+                            // TODO TEST
+                        }
+                    }
 
-                2 -> updateCamera(
-                    deltaY = destY - curY,
-                )
+                    updateCamera(
+                        deltaX = destX - curX,
+                        deltaZ = destZ - curZ
+                    )
+                }
+
+                2 -> {
+                    duration = 70
+                    epsilon = 0.5
+                    updateCamera(
+                        deltaY = destY - curY,
+                    )
+                }
 
                 else -> {
                     cancel()
@@ -142,7 +158,6 @@ class CameraSlide(slideTo: MapSinglePoint, onComplete: (() -> Unit)? = null) {
         ) = itemDisplay.apply {
             teleport(
                 location.add(deltaX.eased(), deltaY.eased(), deltaZ.eased()).addYawPitch(deltaYaw.eased(), deltaPitch.eased()),
-                TeleportFlag.EntityState.RETAIN_PASSENGERS
             )
         }.also { progress() }
 
