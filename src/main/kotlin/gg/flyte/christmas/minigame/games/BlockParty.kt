@@ -333,7 +333,6 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
                 it.detonate()
             }
 
-
             val notification = "<game_colour><b>« ᴀ ᴍʏѕᴛᴇʀɪᴏᴜѕ ᴘᴏᴡᴇʀ-ᴜᴘ ʜᴀѕ ѕᴘᴀᴡɴᴇᴅ ᴏɴ ᴛʜᴇ ꜰʟᴏᴏʀ! »".style()
             Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) { it.sendMessage(notification) }
             Util.runAction(PlayerType.PARTICIPANT) {
@@ -496,6 +495,7 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
 
                         clickedBlock!!.world.playSound(clickedBlock!!.location, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f)
                     }
+
                     PowerUp.JUMP_BOOST -> player.addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, 20 * 8, 3, false, false, false))
                     PowerUp.FISHING_ROD -> setNextAvailableSlot(player, ItemStack(Material.FISHING_ROD))
                     PowerUp.SLOWNESS -> player.addPotionEffect(PotionEffect(PotionEffectType.SLOWNESS, 20 * 10, 2, false, false, false))
@@ -510,6 +510,7 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
                             eventPlayer.sendMessage("<game_colour>ʏᴏᴜ'ᴠᴇ ᴘᴜѕʜᴇᴅ ᴀ ʀᴀɴᴅᴏᴍ ᴘʟᴀʏᴇʀ (${name}) ᴡɪᴛʜ ᴛʜᴇ ᴘᴏᴡᴇʀ-ᴜᴘ!".style())
                         }
                     }
+
                     PowerUp.DOUBLE_JUMP -> player.allowFlight = true
                 }
 
