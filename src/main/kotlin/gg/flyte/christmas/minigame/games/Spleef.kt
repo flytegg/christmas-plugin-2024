@@ -361,7 +361,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     }
 
     private fun lowTierDonation(donorName: String?) {
-        val random = (0..3).random();
+        val random = (0..2).random();
 
         when (random) {
             0 -> extraDoubleJumps(donorName)
