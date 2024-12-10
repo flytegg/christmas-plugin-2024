@@ -45,6 +45,11 @@ bin/
 ### Run ###
 run/
 !run/eula.txt
+!run/world
+!run/config/paper-global.yml
+!run/bukkit.yml
+!run/server.properties
+!run/spigot.yml
 
 ### Kotlin ###
 .kotlin/sessions/kotlin-compiler-*.salive
