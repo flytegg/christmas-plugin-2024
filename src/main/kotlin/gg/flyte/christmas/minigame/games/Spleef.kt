@@ -252,6 +252,10 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         tasks += repeatingTask(1) {
             if (!powerfulSnowballs && remainingPowerfulSnowballTicks > 0) {
                 powerfulSnowballs = true
+
+                remainingPlayers().forEach {
+                    snowballBar.addViewer(it)
+                }
             }
 
             if (!powerfulSnowballs) {
