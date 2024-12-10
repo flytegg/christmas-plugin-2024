@@ -43,8 +43,12 @@ bin/
 .DS_Store
 
 ### Run ###
-run/
+run/*
+!run/config
 !run/eula.txt
+!run/bukkit.yml
+!run/server.properties
+!run/spigot.yml
 
 ### Kotlin ###
 .kotlin/sessions/kotlin-compiler-*.salive
