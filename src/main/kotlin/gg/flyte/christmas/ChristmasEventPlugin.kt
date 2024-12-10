@@ -123,7 +123,7 @@ class ChristmasEventPlugin : JavaPlugin() {
 
             location.world.spawn(location.clone().add(0.0, 2.5, 0.0), TextDisplay::class.java).apply {
                 text("<pink>$contribution".style())
-                backgroundColor = Color.fromARGB(26, 0, 0, 0)
+                backgroundColor = Color.fromARGB(150, 0, 0, 0)
                 billboard = Display.Billboard.CENTER
             }
         }
