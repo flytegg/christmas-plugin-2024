@@ -57,7 +57,6 @@ class ChristmasEventPlugin : JavaPlugin() {
         registerCommands()
         registerEvents()
         registerPacketAPI()
-        if (!config.getBoolean("donations.disabled")) handleDonations()
         loadNPCs()
     }
 
