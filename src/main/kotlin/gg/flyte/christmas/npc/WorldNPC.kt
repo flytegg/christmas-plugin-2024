@@ -46,7 +46,10 @@ class WorldNPC private constructor(displayName: String, textureProperties: List<
      */
     fun spawnFor(player: Player) {
         this.npc.location = location.packetObj()
-        this.npc.spawn(PacketEvents.getAPI().playerManager.getUser(player).channel)
+        try {
+            this.npc.spawn(PacketEvents.getAPI().playerManager.getUser(player).channel)
+        } catch (_: Exception) {
+        } // try-catch to prevent very rare exception with netty channel being invalidated. (when player leaves)
 
         // skin packet
         WrapperPlayServerEntityMetadata(id, listOf(EntityData(17, EntityDataTypes.BYTE, 127.toByte()))).sendPacket(player)

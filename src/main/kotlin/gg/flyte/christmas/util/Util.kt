@@ -75,7 +75,7 @@ object Util {
     fun getNPCSummaryLocation(position: Int): MapSinglePoint {
         Preconditions.checkArgument(position in 0..2, "Leaderboard only supports positions between 0 and 2")
         return when (position) {
-            0 -> return MapSinglePoint(525.5, 215, 548.5)
+            0 -> return MapSinglePoint(526.5, 215, 548.5)
             1 -> return MapSinglePoint(517.5, 211, 543.5)
             2 -> return MapSinglePoint(533.5, 211, 557.5)
             else -> {

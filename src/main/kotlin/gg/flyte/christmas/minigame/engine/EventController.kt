@@ -92,7 +92,7 @@ class EventController() {
             when (seconds) {
                 0 -> {
                     currentGame!!.startGameOverview()
-                    currentGame!!.state = GameState.LIVE
+                    currentGame!!.state = GameState.OVERVIEWING
                     cancel()
                 }
 
@@ -125,17 +125,29 @@ class EventController() {
      */
     fun onPlayerJoin(player: Player) {
         if (currentGame == null) {
-            player.showBossBar(eventController().donationBossBar)
             player.teleport(ChristmasEventPlugin.instance.lobbySpawn)
+            player.showBossBar(eventController().donationBossBar)
         } else {
-            if (currentGame!!.state == GameState.WAITING_FOR_PLAYERS) {
-                if (enoughPlayers()) {
-                    currentGame!!.state = GameState.COUNTDOWN
-                    countdown()
+            when (currentGame!!.state) {
+                GameState.IDLE, GameState.COUNTDOWN -> {
+                    player.teleport(ChristmasEventPlugin.instance.lobbySpawn)
+                    player.showBossBar(eventController().donationBossBar)
                 }
-            }
 
-            if (currentGame!!.state == GameState.LIVE) currentGame!!.onPlayerJoin(player)
+                GameState.WAITING_FOR_PLAYERS -> {
+                    player.teleport(ChristmasEventPlugin.instance.lobbySpawn)
+                    player.showBossBar(eventController().donationBossBar)
+
+                    if (enoughPlayers()) {
+                        currentGame!!.state = GameState.COUNTDOWN
+                        countdown()
+                    }
+                }
+
+                GameState.LIVE -> currentGame!!.onPlayerJoin(player)
+
+                else -> return
+            }
         }
     }
 
@@ -147,7 +159,6 @@ class EventController() {
         sidebarManager.remove(player)
 
         when (currentGame?.state) {
-
             GameState.COUNTDOWN -> {
                 delay(1) { // getOnlinePlayers [called through enoughPlayers()] does not update until the next tick
                     if (!enoughPlayers()) {
@@ -165,7 +176,7 @@ class EventController() {
                 }
             }
 
-            GameState.LIVE -> currentGame!!.onPlayerQuit(player)
+            GameState.LIVE, GameState.OVERVIEWING -> currentGame!!.onPlayerQuit(player)
 
             else -> return
         }

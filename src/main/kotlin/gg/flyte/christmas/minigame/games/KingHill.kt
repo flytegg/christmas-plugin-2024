@@ -72,6 +72,8 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             tasks += repeatingTask(1, TimeUnit.SECONDS) {
                 Util.runAction(PlayerType.PARTICIPANT) {
                     if (hillRegion.contains(it.location)) {
+                        if (gameTime == 0) return@runAction // viewing win animation; don't increment time
+
                         timeOnHill[it.uniqueId] = timeOnHill[it.uniqueId]!! + 1
                         it.playSound(Sound.ENTITY_ITEM_PICKUP)
                         it.sendMessage("<green>+1 second".style())
@@ -95,7 +97,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         for (entry in timeOnHill) eventController().addPoints(entry.key, entry.value)
 
         val (first) = timeOnHill.entries
-            .sortedByDescending { it.value }
+            .sortedBy { it.value }
             .take(3)
             .also { it.forEach { formattedWinners.put(it.key, it.value.toString() + " second${if (it.value > 1) "s" else ""}") } }
 

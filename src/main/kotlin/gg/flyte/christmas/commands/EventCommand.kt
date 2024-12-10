@@ -12,6 +12,7 @@ import gg.flyte.christmas.util.style
 import gg.flyte.christmas.util.toLegacyString
 import gg.flyte.twilight.extension.playSound
 import gg.flyte.twilight.scheduler.async
+import gg.flyte.twilight.scheduler.delay
 import gg.flyte.twilight.scheduler.sync
 import net.kyori.adventure.inventory.Book
 import net.kyori.adventure.text.Component
@@ -266,9 +267,10 @@ class EventCommand(val menu: StandardMenu = StandardMenu("&c☃ Event Menu!".col
                 }
 
                 eventController().currentGame!!.endGame()
+                delay(1) { whoClicked.closeInventory() }
+                eventController().sidebarManager.update()
                 whoClicked.sendMessage("<red>Game terminated!".style())
                 whoClicked.playSound(Sound.ENTITY_GENERIC_EXPLODE)
-                eventController().sidebarManager.update()
             }
     }
 }

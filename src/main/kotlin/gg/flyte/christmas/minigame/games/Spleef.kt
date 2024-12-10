@@ -121,7 +121,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
     override fun eliminate(player: Player, reason: EliminationReason) {
         Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) { it.sendMessage("<red>${player.name} <grey>has been eliminated!".style()) }
-
+        doubleJumps.remove(player)
         player.apply {
             allowFlight = false
 
@@ -196,7 +196,9 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 if (it.block == block) {
                     isCancelled = false
                     isDropItems = false
-                    player.inventory.addItem(ItemStack(Material.SNOWBALL, (1..4).random()))
+                    player.inventory.addItem(ItemStack(Material.SNOWBALL, (1..4).random()).apply {
+                        itemMeta = itemMeta.apply { setMaxStackSize(99) }
+                    })
                 }
             }
         }

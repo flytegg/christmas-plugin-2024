@@ -105,6 +105,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
 
                 eventController().sidebarManager.update() // enable again after sequence ended.
                 startGame()
+                state = GameState.LIVE
             }
         }
     }
@@ -133,8 +134,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
         eliminatedPlayers.add(player.uniqueId)
         player.teleport(gameConfig.spectatorSpawnLocations.random())
         player.clearActivePotionEffects()
-        player.inventory.storageContents = arrayOf()
-        player.inventory.setItemInOffHand(null)
+        player.formatInventory()
 
         if (reason == EliminationReason.EXPIRED_SESSION) {
             player.teleport(gameConfig.spectatorSpawnLocations.random())
@@ -163,9 +163,8 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
         eliminatedPlayers.clear()
         eventController().currentGame = null
         eventController().sidebarManager.dataSupplier = eventController().points
-        eventController().serialisePoints()
         eventController().songPlayer?.isPlaying = true
-        WorldNPC.refreshPodium()
+        eventController().serialisePoints()
         showGameResults()
     }
 
@@ -210,7 +209,9 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
      * @see [GameConfig.eliminateOnLeave]
      */
     fun onPlayerQuit(player: Player) {
-        if (state == GameState.LIVE) {
+        if (state == GameState.OVERVIEWING) {
+            player.teleport(gameConfig.spectatorSpawnLocations.random()) // left while overviewing, temporarily hold them away from playspace.
+        } else if (state == GameState.LIVE) {
             if (gameConfig.eliminateOnLeave) eliminate(player, EliminationReason.EXPIRED_SESSION)
         }
     }
@@ -365,6 +366,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
                     displays.forEach { it.remove() }
                 }
 
+                WorldNPC.refreshPodium()
                 eventController().sidebarManager.update()
             }
         }
@@ -381,7 +383,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
          *
          * This can be because:
          * 1. The player disconnected from the server during an active game.
-         * 2. The player re-joined the server while a game was in progess **AND** [GameConfig.eliminateOnLeave] is `true`.
+         * 2. The player joined the server while a game was in progress **AND** [GameConfig.eliminateOnLeave] is `true`.
          */
         EXPIRED_SESSION,
 

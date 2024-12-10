@@ -56,7 +56,6 @@ class ChristmasEventPlugin : JavaPlugin() {
         registerCommands()
         registerEvents()
         registerPacketAPI()
-        handleDonations()
         loadNPCs()
     }
 
@@ -92,14 +91,11 @@ class ChristmasEventPlugin : JavaPlugin() {
 
     private fun registerEvents() {
         HousekeepingEventListener()
+        DonationListener()
     }
 
     private fun registerPacketAPI() {
         PacketEvents.getAPI().init()
-    }
-
-    private fun handleDonations() {
-        DonationListener()
     }
 
     private fun loadNPCs() {
@@ -161,6 +157,7 @@ class ChristmasEventPlugin : JavaPlugin() {
             it.billboard = Display.Billboard.CENTER
             it.isDefaultBackground = false
             it.backgroundColor = Color.fromRGB(94, 68, 23)
+            it.isSeeThrough = false
         }
 
         // Create Event Contributors Display
@@ -171,6 +168,7 @@ class ChristmasEventPlugin : JavaPlugin() {
             it.isDefaultBackground = false
             it.backgroundColor = Color.fromARGB(255, 255, 207, 207)
             it.brightness = Display.Brightness(15, 15)
+            it.isSeeThrough = false
         }
 
         // Create Donation Info
@@ -184,9 +182,9 @@ class ChristmasEventPlugin : JavaPlugin() {
                     .append("<white>ᴏꜰ ᴅᴏɢs ᴀɴᴅ ᴄᴀᴛs ɪɴ ᴀᴍᴇʀɪᴄᴀ's sʜᴇʟᴛᴇʀs ᴅᴜᴇ ᴛᴏ ʜᴏᴍᴇʟᴇssɴᴇss ᴀɴᴅ ᴏᴠᴇʀᴘᴏᴘᴜʟᴀᴛɪᴏɴ. ".style())
                     .append("<white>ᴛʜᴇʏ ᴀʀᴇ ᴀ ɴᴏɴ-ᴘʀᴏꜰɪᴛ ᴏʀɢᴀɴɪsᴀᴛɪᴏɴ ᴛʜᴀᴛ ʀᴜɴs ᴛʜᴇ ʟᴀʀᴇsᴛ ɴᴏ-ᴋɪʟʟ ᴍᴏᴠᴇᴍᴇɴᴛ & ᴀɴɪᴍᴀʟ sᴀɴᴄᴛᴜᴀʀʏ ɪɴ ᴛʜᴇ ᴜ.s.".style())
                     .append("\n\n".style())
-                    .append("<colour:#ff3d9b>ᴛʜᴇ ʙᴇsᴛ ᴘᴀʀᴛ? ᴇᴠᴇʀʏ ᴅᴏʟʟᴀʀ ʏᴏᴜ ᴘᴜᴛ ꜰᴏᴜʀᴛʜ ᴡɪʟʟ ʙᴇ <b><colour:#ec8339>ᴛʀɪᴘᴘʟᴇ ᴍᴀᴛᴄʜᴇᴅ<reset><white>!\n\n".style())
+                    .append("<colour:#ff3d9b>ᴛʜᴇ ʙᴇsᴛ ᴘᴀʀᴛ? ᴇᴠᴇʀʏ ᴅᴏʟʟᴀʀ ʏᴏᴜ ᴘᴜᴛ ꜰᴏᴜʀᴛʜ ᴡɪʟʟ ʙᴇ <b><colour:#ec8339>ᴛʀɪᴘʟᴇ ᴍᴀᴛᴄʜᴇᴅ<reset><white>!\n\n".style())
                     .append("<white>ʜᴇᴀᴅ ᴏᴠᴇʀ ᴛᴏ <gradient:#ff80e8:#ffffff>ꜰʟʏᴛᴇ.ɢɢ/ᴅᴏɴᴀᴛᴇ</gradient> ᴛᴏ ᴅᴏɴᴀᴛᴇ ɴᴏᴡ!\n\n".style())
-                    .append("<white>sᴇᴇ <colour:#ec8339>ʙᴇsᴛꜰʀɪᴇɴᴅs..ᴏʀɢ ꜰᴏʀ ᴍᴏʀᴇ ɪɴꜰᴏ\n\n".style())
+                    .append("<white>ʟᴇᴀʀɴ ᴍᴏʀᴇ @ <colour:#ec8339>ʙᴇsᴛꜰʀɪᴇɴᴅs.ᴏʀɢ\n\n".style())
                     .append("<red>ᴛʜᴀɴᴋ ʏᴏᴜ ꜰᴏʀ ᴊᴏɪɴɪɴɢ ᴜs ❤".style())
 
             )
@@ -194,8 +192,9 @@ class ChristmasEventPlugin : JavaPlugin() {
             it.transformation = it.transformation.apply { this.scale.mul(2F) }
             it.billboard = Display.Billboard.FIXED
             it.isDefaultBackground = false
-            it.backgroundColor = Color.fromARGB(255, 0, 0, 0)
+            it.backgroundColor = Color.fromARGB(255, 100, 100, 100)
             it.brightness = Display.Brightness(15, 15)
+            it.isSeeThrough = false
         }
 
         WorldNPC.refreshPodium()
