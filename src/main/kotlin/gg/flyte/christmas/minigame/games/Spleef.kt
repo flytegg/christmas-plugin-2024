@@ -29,6 +29,7 @@ import org.bukkit.entity.Player
 import org.bukkit.entity.Snowball
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.ProjectileHitEvent
+import org.bukkit.event.entity.ProjectileLaunchEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerToggleFlightEvent
 import org.bukkit.inventory.ItemStack
@@ -54,6 +55,9 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     private var doubleJumps = mutableMapOf<UUID, Int>()
     private var unlimitedJumps = false
     private var remainingUnlimitedJumpTicks = 0
+
+    private var powerfulSnowballs = false
+    private var remainingPowerfulSnowballTicks = 0
 
     override fun startGameOverview() {
         super.startGameOverview()
@@ -95,6 +99,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
             addActionBarTask()
             addUnlimitedJumpsTask()
+            addPowerfulSnowballsTask()
 
             tasks += repeatingTask(20) {
                 secondsElapsed++
@@ -236,6 +241,22 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
     }
 
+    private fun addPowerfulSnowballsTask() {
+        tasks += repeatingTask(1) {
+            if (!powerfulSnowballs && remainingPowerfulSnowballTicks > 0) {
+                powerfulSnowballs = true
+            }
+
+            if (!powerfulSnowballs) {
+                return@repeatingTask
+            }
+
+            if (remainingPowerfulSnowballTicks-- <= 0) {
+                powerfulSnowballs = false
+            }
+        }
+    }
+
     override fun handleGameEvents() {
         listeners += event<BlockBreakEvent> {
             isCancelled = true
@@ -265,12 +286,24 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             }
         }
 
+        listeners += event<ProjectileLaunchEvent> {
+            if (entity !is Snowball) return@event
+
+            if (powerfulSnowballs) {
+                entity.velocity = entity.velocity.multiply(2)
+            }
+        }
+
         listeners += event<ProjectileHitEvent> {
             if (hitBlock == null) return@event
             if (entity !is Snowball) return@event
 
             if (floorLevelBlocks.any { it.block == hitBlock }) {
-                wearDownSnowBlock(hitBlock!!)
+                if (powerfulSnowballs) {
+                    hitBlock!!.type = Material.AIR
+                } else {
+                    wearDownSnowBlock(hitBlock!!)
+                }
             }
         }
 
@@ -326,14 +359,16 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     }
 
     private fun lowTierDonation(donorName: String?) {
-        if ((0..1).random() == 0) {
-            increaseDoubleJumpsForAll(donorName)
-        } else {
-            giveUnlimitedDoubleJumps(donorName)
+        val random = (0..3).random();
+
+        when (random) {
+            0 -> extraDoubleJumps(donorName)
+            1 -> unlimitedDoubleJumps(donorName)
+            2 -> powerfulSnowballs(donorName)
         }
     }
 
-    private fun increaseDoubleJumpsForAll(name: String?) {
+    private fun extraDoubleJumps(name: String?) {
         val increase = (1..2).random()
         val plural = if (increase > 1) "s" else ""
 
@@ -349,7 +384,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
     }
 
-    private fun giveUnlimitedDoubleJumps(name: String?) {
+    private fun unlimitedDoubleJumps(name: String?) {
         remainingUnlimitedJumpTicks += 20 * 5
         bossbarMaxTicks += 20 * 5
 
@@ -358,6 +393,18 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 it.sendMessage("<green>+<red>5</red> seconds of unlimited double jump! (<aqua>$name's</aqua> donation)".style())
             } else {
                 it.sendMessage("<green>+<red>5</red> seconds of unlimited double jump! (donation)".style())
+            }
+        }
+    }
+
+    private fun powerfulSnowballs(name: String?) {
+        remainingPowerfulSnowballTicks += 20 * 10
+
+        remainingPlayers().forEach {
+            if (name != null) {
+                it.sendMessage("<green>+<red>10</red> seconds of powerful snowballs! (<aqua>$name's</aqua> donation)".style())
+            } else {
+                it.sendMessage("<green>+<red>10</red> seconds of powerful snowballs! (donation)".style())
             }
         }
     }
