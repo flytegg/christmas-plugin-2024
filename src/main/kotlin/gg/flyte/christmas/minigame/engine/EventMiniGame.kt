@@ -381,7 +381,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
          *
          * This can be because:
          * 1. The player disconnected from the server during an active game.
-         * 2. The player re-joined the server while a game was in progess **AND** [GameConfig.eliminateOnLeave] is `true`.
+         * 2. The player joined the server while a game was in progress **AND** [GameConfig.eliminateOnLeave] is `true`.
          */
         EXPIRED_SESSION,
 

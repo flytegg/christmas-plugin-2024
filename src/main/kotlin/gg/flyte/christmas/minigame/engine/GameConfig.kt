@@ -579,6 +579,73 @@ enum class GameConfig(
             MapSinglePoint(635.5, 77, 800.5, 90, 35),
             MapSinglePoint(635.5, 77, 800.5, 90, 35),
         ),
-    )
+    ),
     //endregion
+
+    //region TREE_DECORATE
+    TREE_DECORATE(
+        TreeDecorate::class,
+        "<colour:#c293db>ᴅᴇᴄᴏʀᴀᴛᴇ ᴛʜᴇ ᴛʀᴇᴇ".style(),
+        "<colour:#c293db>ᴅᴇᴄᴏʀᴀᴛᴇ ᴛʜᴇ ᴛʀᴇᴇ".style(),
+        ItemStack(Material.OAK_LEAVES),
+        TextColor.fromHexString("#c293db")!!,
+        " • ᴛʜᴇ ʟᴀsᴛ ᴇᴠᴇɴᴛ! ᴅᴇᴄᴏʀᴀᴛᴇ ᴛʜᴇ ʟᴏʙʙʏ ᴄʜʀɪsᴛᴍᴀs ᴛʀᴇᴇ ᴡɪᴛʜ ᴀssᴏʀᴛᴇᴅ ᴅᴇᴄᴏʀᴀᴛɪᴏɴs.\n\n" +
+                " • ᴅᴇᴄᴏʀᴀᴛɪᴏɴs ᴡɪʟʟ ʙᴇ ᴀᴠᴀɪʟᴀʙʟᴇ ᴛʜʀᴏᴜɢʜ ʏᴏᴜʀ ʜᴏᴛʙᴀʀ. ᴍᴏʀᴇ ᴄᴀɴ ʙᴇ ʙʀᴏᴜɢʜᴛ ɪɴ ᴛʜʀᴏᴜɢʜ ᴛʜᴇ ᴄʀᴇᴀᴛɪᴠᴇ ɪɴᴠᴇɴᴛᴏʀʏ!\n\n" +
+                " • ᴛʜᴀɴᴋ ʏᴏᴜ ꜰᴏʀ ᴊᴏɪɴɪɴɢ ᴜs ꜰᴏʀ ᴛʜɪs ᴇᴠᴇɴᴛ",
+        1,
+        MapSinglePoint(545, 115, 384, 0, -34),
+        listOf(
+            MapRegion.single(MapSinglePoint(586, 209, 442, 89.26306F, 2.8403294F)),
+            MapRegion.single(MapSinglePoint(575, 209, 461, 124.62903F, 0.25062752F)),
+            MapRegion.single(MapSinglePoint(562, 209, 475, 146.48047F, 2.5975444F)),
+            MapRegion.single(MapSinglePoint(543, 209, 483, -179.44702F, 3.164041F)),
+            MapRegion.single(MapSinglePoint(519, 209, 475, -139.14319F, 3.4068255F)),
+            MapRegion.single(MapSinglePoint(507, 209, 461, -116.7251F, 4.7826056F)),
+            MapRegion.single(MapSinglePoint(501, 209, 444, -95.68262F, 3.406826F)),
+            MapRegion.single(MapSinglePoint(503, 209, 427, -65.33313F, 4.7826056F)),
+            MapRegion.single(MapSinglePoint(517, 209, 409, -28.266235F, 6.1583858F)),
+            MapRegion.single(MapSinglePoint(539, 209, 403, -12.079834F, 3.3258967F)),
+            MapRegion.single(MapSinglePoint(559, 209, 410, 22.962524F, 6.1583834F)),
+            MapRegion.single(MapSinglePoint(583, 180, 432, 75.00098F, 0.4934106F)),
+            MapRegion.single(MapSinglePoint(571, 180, 460, 131.89368F, -1.1251532F)),
+            MapRegion.single(MapSinglePoint(497, 138, 453, -98.29736F, 5.7537436F)),
+            MapRegion.single(MapSinglePoint(524, 242, 448, -92.470215F, 6.967665F)),
+            MapRegion.single(MapSinglePoint(575, 242, 445, 87.837524F, 4.782604F)),
+        ),
+        listOf(
+            MapSinglePoint(548, 121, 384, 2.602295F, -21.333181F),
+            MapSinglePoint(555, 126, 384, 9.967163F, -18.257893F),
+            MapSinglePoint(563, 132, 389, 16.03711F, -14.211476F),
+            MapSinglePoint(571, 138, 400, 16.03711F, -14.211476F),
+            MapSinglePoint(585, 160, 426, 30.92871F, -9.679501F),
+            MapSinglePoint(592, 166, 448, 75.1156F, -4.581027F),
+            MapSinglePoint(580, 185, 473, 104.33093F, 2.2169394F),
+            MapSinglePoint(546, 211, 496, 136.37854F, 7.6391277F),
+            MapSinglePoint(526, 216, 498, 171.74475F, 11.280895F),
+            MapSinglePoint(512, 217, 490, -156.93433F, 12.494814F),
+            MapSinglePoint(508, 212, 477, -145.36096F, 12.737597F),
+            MapSinglePoint(510, 206, 465, -122.13342F, 9.824187F),
+            MapSinglePoint(508, 201, 456, -109.508545F, 9.824187F),
+            MapSinglePoint(506, 195, 448, -90.81641F, 7.4772716F),
+            MapSinglePoint(505, 189, 440, -83.77905F, 8.286553F),
+            MapSinglePoint(506, 184, 432, -64.761475F, 3.3499343F),
+            MapSinglePoint(511, 168, 422, -54.88965F, 1.245802F),
+            MapSinglePoint(521, 145, 408, -34.98291F, -6.1995897F),
+            MapSinglePoint(531, 139, 399, -9.330566F, -9.679501F),
+            MapSinglePoint(537, 134, 392, -1.9699707F, -12.107337F),
+            MapSinglePoint(543, 134, 386, 3.2045898F, -9.355779F),
+        ),
+        listOf(
+            MapSinglePoint(559.5, 103, 518.5, 135, 0)
+        ),
+        listOf(
+            MapSinglePoint(561, 269, 419, 35.624023F, 26.92271F),
+            MapSinglePoint(561, 234, 419, 35.624023F, 26.92271F),
+            MapSinglePoint(576, 205, 438, 78.59668F, 24.009295F),
+            MapSinglePoint(577, 180, 467, 119.5459F, 30.40262F),
+            MapSinglePoint(566, 154, 491, 149.0852F, 28.379414F),
+            MapSinglePoint(555, 129, 500, 175.46826F, 13.407703F),
+        ),
+        false
+    )
 }
