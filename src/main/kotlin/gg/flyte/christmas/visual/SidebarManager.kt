@@ -86,9 +86,9 @@ class SidebarManager {
         Preconditions.checkArgument(position in 0..2, "Position must be between 0 and 2")
 
         val placeDefaultComponent = mapOf(
-            0 to "<gold>➊<grey>:",
-            1 to "<orange>➋<grey>:",
-            2 to "<yellow>➌<grey>:"
+            0 to "<colour:#ffcb1a>➊<grey>:",
+            1 to "<colour:#d0d0d0>➋<grey>:",
+            2 to "<colour:#a39341>➌<grey>:"
         )
 
         val uniqueIdAtPosition = getUUIDByPlacement(position)
