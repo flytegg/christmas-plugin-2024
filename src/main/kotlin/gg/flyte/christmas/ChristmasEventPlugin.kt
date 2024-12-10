@@ -11,6 +11,7 @@ import gg.flyte.christmas.minigame.engine.GameConfig
 import gg.flyte.christmas.minigame.world.MapSinglePoint
 import gg.flyte.christmas.npc.WorldNPC
 import gg.flyte.christmas.util.Util
+import gg.flyte.christmas.util.colourise
 import gg.flyte.christmas.util.eventController
 import gg.flyte.christmas.util.style
 import gg.flyte.twilight.twilight
@@ -56,6 +57,7 @@ class ChristmasEventPlugin : JavaPlugin() {
         registerCommands()
         registerEvents()
         registerPacketAPI()
+        if (!config.getBoolean("donations.disabled")) handleDonations()
         loadNPCs()
     }
 
@@ -104,7 +106,7 @@ class ChristmasEventPlugin : JavaPlugin() {
             val contribution = contributor.contribution
             val location = contributor.location
 
-            var randomColour = mapOf(
+            val randomColour = mapOf(
                 "<dark_red>" to "4",
                 "<red>" to "c",
                 "<gold>" to "6",
@@ -113,16 +115,16 @@ class ChristmasEventPlugin : JavaPlugin() {
                 "<blue>" to "9",
             ).entries.random()
 
-            val displayName = "§${randomColour.value}${MojangAPIUtil.requestPlayerName(uniqueId)}"
+            val displayName = "§${randomColour.value}${MojangAPIUtil.requestPlayerName(uniqueId)}".colourise()
 
-            var contributorNPC = WorldNPC.createFromUniqueId(displayName, uniqueId, location).also { worldNPCs += it }
+            val contributorNPC = WorldNPC.createFromUniqueId(displayName, uniqueId, location).also { worldNPCs += it }
             contributorNPC.npc.prefixName = "${randomColour.key}<obf>W ".style()
             contributorNPC.npc.suffixName = " ${randomColour.key}<obf>W".style()
             contributorNPC.spawnForAll()
 
             location.world.spawn(location.clone().add(0.0, 2.5, 0.0), TextDisplay::class.java).apply {
-                text("<colour:#ffc4ff>$contribution".style())
-                backgroundColor = Color.fromRGB(84, 72, 84)
+                text("<pink>$contribution".style())
+                backgroundColor = Color.fromARGB(26, 0, 0, 0)
                 billboard = Display.Billboard.CENTER
             }
         }

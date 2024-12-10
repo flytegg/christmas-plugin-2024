@@ -111,11 +111,11 @@ class Avalanche : EventMiniGame(GameConfig.AVALANCHE) {
             Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) { it.playSound(Sound.ENTITY_ENDER_DRAGON_GROWL) }
             Util.runAction(PlayerType.PARTICIPANT) {
                 it.title(
-                    "<game_colour>Hard Mode!".style(), "<bold><red>PVP <game_colour>is now enabled!".style(),
+                    "<game_colour>ʜᴀʀᴅ ᴍᴏᴅᴇ!".style(), "<bold><red>ᴘᴠᴘ <game_colour>ɪѕ ɴᴏᴡ ᴇɴᴀʙʟᴇᴅ!".style(),
                     titleTimes(Duration.ofMillis(300), Duration.ofSeconds(3), Duration.ofMillis(300))
                 )
             }
-            Util.runAction(PlayerType.OPTED_OUT) { it.sendMessage("<game_colour>The game is getting harder!".style()) }
+            Util.runAction(PlayerType.OPTED_OUT) { it.sendMessage("<game_colour>ᴛʜᴇ ɢᴀᴍᴇ ɪѕ ɢᴇᴛᴛɪɴɢ ʜᴀʀᴅᴇʀ!".style()) }
         }
 
         if (roundNumber % 3 == 0) {
@@ -140,7 +140,7 @@ class Avalanche : EventMiniGame(GameConfig.AVALANCHE) {
         eventController().songPlayer?.isPlaying = false
 
         val timerBar: BossBar = BossBar.bossBar(
-            "<game_colour><b>Avalanche In: $secondsForRound".style(), 1.0f, BossBar.Color.BLUE, BossBar.Overlay.PROGRESS
+            "<game_colour><b>ᴀᴠᴀʟᴀɴᴄʜᴇ ɪɴ: $secondsForRound".style(), 1.0f, BossBar.Color.BLUE, BossBar.Overlay.PROGRESS
         ).also { currentBossBar = it }
 
         Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) { it.showBossBar(timerBar) }
@@ -164,9 +164,9 @@ class Avalanche : EventMiniGame(GameConfig.AVALANCHE) {
                 gameLogicTask = null
 
                 // spawn da snowballs from da sky
-                var maxPoint = floorRegion.maxPoint
-                var minPoint = floorRegion.minPoint
-                var slightlyExpandedRegion = MapRegion(
+                val maxPoint = floorRegion.maxPoint
+                val minPoint = floorRegion.minPoint
+                val slightlyExpandedRegion = MapRegion(
                     MapSinglePoint(minPoint.x.toInt() - 3, minPoint.y, minPoint.z.toInt() - 3),
                     MapSinglePoint(maxPoint.x.toInt() + 3, maxPoint.y, maxPoint.z.toInt() + 3)
                 )
@@ -201,7 +201,7 @@ class Avalanche : EventMiniGame(GameConfig.AVALANCHE) {
                 timerBar.progress(progress.toFloat())
 
                 val secondsRemaining = ceil(remainingTicks / 20.0).toInt()
-                timerBar.name("<game_colour><b>Time left: $secondsRemaining".style())
+                timerBar.name("<game_colour><b>ᴛɪᴍᴇ ʟᴇꜰᴛ: $secondsRemaining".style())
                 remainingTicks--
             }
         }
@@ -212,7 +212,7 @@ class Avalanche : EventMiniGame(GameConfig.AVALANCHE) {
 
     override fun eliminate(player: Player, reason: EliminationReason) {
         Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) {
-            it.sendMessage("<red>${player.name} <grey>has been eliminated!".style())
+            it.sendMessage("<red>${player.name} <grey>ʜᴀѕ ʙᴇᴇɴ ᴇʟɪᴍɪɴᴀᴛᴇᴅ!".style())
             it.playSound(Sound.ENTITY_PLAYER_HURT)
         }
 
@@ -245,15 +245,15 @@ class Avalanche : EventMiniGame(GameConfig.AVALANCHE) {
 
         super.eliminate(player, reason)
 
-        val value = "$roundNumber Round${if (roundNumber > 1) "s" else ""}"
+        val value = "$roundNumber ʀᴏᴜɴᴅ${if (roundNumber > 1) "ѕ" else ""}"
         when (remainingPlayers().size) {
             1 -> {
-                formattedWinners.put(player.uniqueId, value)
-                formattedWinners.put(remainingPlayers().first().uniqueId, "$value (1st Place!)")
+                formattedWinners[player.uniqueId] = value
+                formattedWinners[remainingPlayers().first().uniqueId] = "$value (1ѕᴛ ᴘʟᴀᴄᴇ!)"
                 endGame()
             }
 
-            2 -> formattedWinners.put(player.uniqueId, value)
+            2 -> formattedWinners[player.uniqueId] = value
         }
     }
 
@@ -277,17 +277,17 @@ class Avalanche : EventMiniGame(GameConfig.AVALANCHE) {
                     floorRegion.randomLocation().clone().add(0.0, (25..30).random().toDouble(), 0.0),
                     Snowball::class.java
                 ) { snowBall ->
-                    var randomColour: String = listOf("4", "c", "6", "2", "a", "9").random()
+                    val randomColour: String = listOf("4", "c", "6", "2", "a", "9").random()
                     val displayName: String = "§$randomColour${winnerPlayer.name}".colourise()
 
                     WorldNPC.createFromLive(displayName, winnerPlayer, snowBall.location).also {
                         winnerNPCs.add(it)
                         it.spawnForAll()
-                        var passengerPacket = WrapperPlayServerSetPassengers(snowBall.entityId, intArrayOf(it.npc.id))
+                        val passengerPacket = WrapperPlayServerSetPassengers(snowBall.entityId, intArrayOf(it.npc.id))
 
-                        var yaw = (0..360).random().toFloat()
-                        var lookPacket = WrapperPlayServerEntityHeadLook(it.npc.id, yaw)
-                        var rotationPacket = WrapperPlayServerEntityRotation(it.npc.id, yaw, 0F, true)
+                        val yaw = (0..360).random().toFloat()
+                        val lookPacket = WrapperPlayServerEntityHeadLook(it.npc.id, yaw)
+                        val rotationPacket = WrapperPlayServerEntityRotation(it.npc.id, yaw, 0F, true)
 
                         delay(1) {
                             Bukkit.getOnlinePlayers().forEach {
@@ -319,7 +319,7 @@ class Avalanche : EventMiniGame(GameConfig.AVALANCHE) {
         listeners += event<EntityDamageEvent>(priority = EventPriority.HIGHEST) {
             // return@event -> already cancelled by lower priority [HousekeepingEventListener]
 
-            entity as? Player ?: return@event
+            if (entity !is Player) return@event
             if ((this as? EntityDamageByEntityEvent)?.damager !is Player) {
                 isCancelled = true
                 return@event
@@ -330,7 +330,7 @@ class Avalanche : EventMiniGame(GameConfig.AVALANCHE) {
         }
 
         listeners += event<ProjectileHitEvent> {
-            hitEntity as? Player ?: return@event
+            if (hitEntity !is Player) return@event
             if (remainingPlayers().contains(hitEntity as Player) && Random.nextBoolean()) { // 50% chance of elimination
                 eliminate(hitEntity as Player, EliminationReason.ELIMINATED)
             }

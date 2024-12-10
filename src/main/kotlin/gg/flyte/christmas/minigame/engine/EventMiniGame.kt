@@ -77,7 +77,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
                 )
             }
 
-            var displayComponent = Component.empty()
+            val displayComponent = Component.empty()
                 .append("<st>\n   ".style())
                 .append("> ".style())
                 .append("<b><0>".style(gameConfig.displayName))
@@ -142,9 +142,9 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
             // spectate item
             ItemStack(Material.RECOVERY_COMPASS).apply {
                 itemMeta = itemMeta.apply {
-                    displayName("<!i><white>Spectate".style())
+                    displayName("<!i><white>ѕᴘᴇᴄᴛᴀᴛᴇ".style())
                     editMeta {
-                        lore(listOf("<grey>Click to Spectate!".style()))
+                        lore(listOf("<grey>ᴄʟɪᴄᴋ ᴛᴏ ѕᴘᴇᴄᴛᴀᴛᴇ!".style()))
                     }
                 }
             }.also { player.inventory.setItem(8, it) }
@@ -249,9 +249,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
     /**
      * @return A list of players who have not been eliminated from the game.
      */
-    fun remainingPlayers(): List<Player> {
-        return Util.runAction(PlayerType.PARTICIPANT) {}.filter { !(eliminatedPlayers.contains(it.uniqueId)) }
-    }
+    fun remainingPlayers(): List<Player> = Util.runAction(PlayerType.PARTICIPANT) {}.filter { !(eliminatedPlayers.contains(it.uniqueId)) }
 
     /**
      * Renders a cinematic sequence of the game results with the temporary podium NPCs.
@@ -269,10 +267,10 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
             val displays = mutableListOf<TextDisplay>()
             val descendingColour = listOf("a", "c", "9")
             formattedWinners.entries.take(3).reversed().forEachIndexed { index, keyValuePair ->
-                var uniqueId = keyValuePair.key
-                var value = keyValuePair.value
-                val displayName = "§${descendingColour[index]}${Bukkit.getPlayer(uniqueId)!!.name}"
-                var placeLocation = Util.getNPCSummaryLocation(index)
+                val uniqueId = keyValuePair.key
+                val value = keyValuePair.value
+                val displayName = "§${descendingColour[index]}${Bukkit.getPlayer(uniqueId)!!.name}".colourise()
+                val placeLocation = Util.getNPCSummaryLocation(index)
                 val animationTasks = mutableListOf<TwilightRunnable>()
 
                 WorldNPC.createFromUniqueId(displayName, uniqueId, placeLocation).also { npc ->

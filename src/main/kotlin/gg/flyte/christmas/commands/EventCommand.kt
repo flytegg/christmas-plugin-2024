@@ -30,7 +30,7 @@ import java.util.*
  * Miscellaneous commands to manage the event.
  */
 @Suppress("unused") // power of lamp!
-class EventCommand(val menu: StandardMenu = StandardMenu("&c☃ Event Menu!".colourise(), 54)) {
+class EventCommand(val menu: StandardMenu = StandardMenu("&c☃ ᴇᴠᴇɴᴛ ᴍᴇɴᴜ!".colourise(), 54)) {
     private val availableGames = GameConfig.entries
     private var selectedIndex = -1
     private var modifyingGame: UUID? = null
@@ -40,21 +40,21 @@ class EventCommand(val menu: StandardMenu = StandardMenu("&c☃ Event Menu!".col
 
         menu.setItem(
             21, MenuItem(Material.PAINTING)
-                .setName("&cTake a Screenie!".colourise())
+                .setName("&cᴛᴀᴋᴇ ᴀ ѕᴄʀᴇᴇɴɪᴇ!".colourise())
                 .setEnchantmentGlint(true)
                 .closeWhenClicked(true)
                 .onClick { whoClicked, itemStack, clickType, inventoryClickEvent ->
                     // TODO
-                    whoClicked.sendMessage("<red>Coming soon!".style())
+                    whoClicked.sendMessage("<red>ᴄᴏᴍɪɴɢ ѕᴏᴏɴ!".style())
                 }
         )
         menu.setItem(
             23, MenuItem(Material.ENDER_PEARL)
-                .setName("&cTeleport Everyone to Me!".colourise())
+                .setName("&cᴛᴇʟᴇᴘᴏʀᴛ ᴇᴠᴇʀʏᴏɴᴇ ᴛᴏ ᴍᴇ!".colourise())
                 .closeWhenClicked(true)
                 .onClick { whoClicked, itemStack, clickType, inventoryClickEvent ->
                     Bukkit.getOnlinePlayers().forEach { it.teleport(whoClicked) }
-                    whoClicked.sendMessage("<green>Teleported all players to you!".style())
+                    whoClicked.sendMessage("<green>ᴛᴇʟᴇᴘᴏʀᴛᴇᴅ ᴀʟʟ ᴘʟᴀʏᴇʀѕ ᴛᴏ ʏᴏᴜ!".style())
                     whoClicked.playSound(Sound.ENTITY_ENDERMAN_TELEPORT)
                 }
         )
@@ -67,7 +67,7 @@ class EventCommand(val menu: StandardMenu = StandardMenu("&c☃ Event Menu!".col
             modifyingGame = null
             eventController().setMiniGame(availableGames[selectedIndex])
             eventController().sidebarManager.update()
-            whoClosed.sendMessage("<grey>Selected game: <0>".style(availableGames[selectedIndex].displayName))
+            whoClosed.sendMessage("<grey>ѕᴇʟᴇᴄᴛᴇᴅ ɢᴀᴍᴇ: <0>".style(availableGames[selectedIndex].displayName))
             whoClosed.playSound(Sound.UI_BUTTON_CLICK)
         }
     }
@@ -96,12 +96,12 @@ class EventCommand(val menu: StandardMenu = StandardMenu("&c☃ Event Menu!".col
     @Command("event optout")
     @CommandPermission("event.optout")
     fun optOut(sender: Player) {
-        var remove = eventController().optOut.remove(sender.uniqueId)
+        val remove = eventController().optOut.remove(sender.uniqueId)
         if (remove) {
-            sender.sendMessage("<green>You have opted back into the event!".style())
+            sender.sendMessage("<green>ʏᴏᴜ ʜᴀᴠᴇ ᴏᴘᴛᴇᴅ ʙᴀᴄᴋ ɪɴᴛᴏ ᴛʜᴇ ᴇᴠᴇɴᴛ!".style())
         } else {
             eventController().optOut.add(sender.uniqueId)
-            sender.sendMessage("<red>You have opted out of the event!".style())
+            sender.sendMessage("<red>ʏᴏᴜ ʜᴀᴠᴇ ᴏᴘᴛᴇᴅ ᴏᴜᴛ ᴏꜰ ᴛʜᴇ ᴇᴠᴇɴᴛ!".style())
         }
 
         sender.playSound(Sound.UI_BUTTON_CLICK)
@@ -123,7 +123,7 @@ class EventCommand(val menu: StandardMenu = StandardMenu("&c☃ Event Menu!".col
             sync {
                 eventController().sidebarManager.update()
                 WorldNPC.refreshPodium()
-                sender.sendMessage("<green>Loaded crash data! Your scoreboard should now show the most recent serialised data!".style())
+                sender.sendMessage("<green>ʟᴏᴀᴅᴇᴅ ᴄʀᴀѕʜ ᴅᴀᴛᴀ! ʏᴏᴜʀ ѕᴄᴏʀᴇʙᴏᴀʀᴅ ѕʜᴏᴜʟᴅ ɴᴏᴡ ѕʜᴏᴡ ᴛʜᴇ ᴍᴏѕᴛ ʀᴇᴄᴇɴᴛ ѕᴇʀɪᴀʟɪѕᴇᴅ ᴅᴀᴛᴀ!".style())
             }
         }
     }
@@ -176,7 +176,7 @@ class EventCommand(val menu: StandardMenu = StandardMenu("&c☃ Event Menu!".col
 
                 if (modifyingGame != null && modifyingGame != whoClicked.uniqueId) {
                     whoClicked.closeInventory()
-                    whoClicked.sendMessage("<red>Someone else is currently modifying the game!".style())
+                    whoClicked.sendMessage("<red>ѕᴏᴍᴇᴏɴᴇ ᴇʟѕᴇ ɪѕ ᴄᴜʀʀᴇɴᴛʟʏ ᴍᴏᴅɪꜰʏɪɴɢ ᴛʜᴇ ɢᴀᴍᴇ!".style())
                     whoClicked.playSound(Sound.ENTITY_VILLAGER_NO)
                     return@onClick
                 }
@@ -222,24 +222,24 @@ class EventCommand(val menu: StandardMenu = StandardMenu("&c☃ Event Menu!".col
                 .setName(availableGames[selectedIndex].displayName.toLegacyString().colourise())
                 .setLore(
                     "",
-                    "&aThis will begin the countdown".colourise(),
-                    "&cimmediately &aand prepare the players".colourise(),
+                    "&aᴛʜɪѕ ᴡɪʟʟ ʙᴇɢɪɴ ᴛʜᴇ ᴄᴏᴜɴᴛᴅᴏᴡɴ".colourise(),
+                    "&cɪᴍᴍᴇᴅɪᴀᴛᴇʟʏ &aᴀɴᴅ ᴘʀᴇᴘᴀʀᴇ ᴛʜᴇ ᴘʟᴀʏᴇʀѕ".colourise(),
                     "",
-                    "&eIf you do not want to start".colourise(),
-                    "&eyet, simply exit this menu. ".colourise(),
-                    "&eThe game has already been set.".colourise()
+                    "&eɪꜰ ʏᴏᴜ ᴅᴏ ɴᴏᴛ ᴡᴀɴᴛ ᴛᴏ ѕᴛᴀʀᴛ".colourise(),
+                    "&eʏᴇᴛ, ѕɪᴍᴘʟʏ ᴇxɪᴛ ᴛʜɪѕ ᴍᴇɴᴜ. ".colourise(),
+                    "&eᴛʜᴇ ɢᴀᴍᴇ ʜᴀѕ ᴀʟʀᴇᴀᴅʏ ʙᴇᴇɴ ѕᴇᴛ.".colourise()
                 )
                 .onClick { whoClicked, itemStack, clickType, inventoryClickEvent ->
                     whoClicked.closeInventory()
                     if (eventController().currentGame == null) {
                         whoClicked.playSound(Sound.ENTITY_VILLAGER_NO)
-                        whoClicked.sendMessage("<red>No game has been selected!".style())
+                        whoClicked.sendMessage("<red>ɴᴏ ɢᴀᴍᴇ ʜᴀѕ ʙᴇᴇɴ ѕᴇʟᴇᴄᴛᴇᴅ!".style())
                         return@onClick
                     }
 
                     eventController().prepareStart()
                     whoClicked.playSound(Sound.ENTITY_PLAYER_LEVELUP)
-                    whoClicked.sendMessage("<green>Game starting! Please wait...".style())
+                    whoClicked.sendMessage("<green>ɢᴀᴍᴇ ѕᴛᴀʀᴛɪɴɢ! ᴘʟᴇᴀѕᴇ ᴡᴀɪᴛ...".style())
 
                     selectedIndex = -1
                     menu.setItem(13, setGameSwitcher())

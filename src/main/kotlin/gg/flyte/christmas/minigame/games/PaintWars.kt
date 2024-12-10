@@ -124,8 +124,8 @@ class PaintWars : EventMiniGame(GameConfig.PAINT_WARS) {
 
         ItemStack(Material.BRUSH).apply {
             itemMeta = itemMeta.apply {
-                displayName("<!i><game_colour><b>Paint Brush".style())
-                lore(listOf("<grey>Use this to paint the map!".style()))
+                displayName("<!i><game_colour><b>ᴘᴀɪɴᴛ ʙʀᴜѕʜ".style())
+                lore(listOf("<grey>ᴜѕᴇ ᴛʜɪѕ ᴛᴏ ᴘᴀɪɴᴛ ᴛʜᴇ ᴍᴀᴘ!".style()))
             }
         }.apply { player.inventory.setItem(0, this) }
 
@@ -169,7 +169,9 @@ class PaintWars : EventMiniGame(GameConfig.PAINT_WARS) {
         scores.entries
             .sortedBy { it.value }
             .take(3)
-            .also { it.forEach { formattedWinners.put(it.key, "${it.value} block${if (it.value > 1) "s" else ""}") } }
+            .also { it.forEach {
+                formattedWinners[it.key] = "${it.value} ʙʟᴏᴄᴋ${if (it.value > 1) "ѕ" else ""}" }
+            }
 
         super.endGame()
     }
@@ -232,7 +234,7 @@ class PaintWars : EventMiniGame(GameConfig.PAINT_WARS) {
             hitBlock!!.world.playSound(hitBlock!!.location, Sound.ENTITY_PLAYER_SPLASH, 0.5F, 1.0f)
             tryUpdateBlock(hitBlock!!, entity.shooter as Player, false)
 
-            var hitBlockLocation = hitBlock!!.location
+            val hitBlockLocation = hitBlock!!.location
             for (x in -1..1) {
                 for (y in -1..1) {
                     for (z in -1..1) {

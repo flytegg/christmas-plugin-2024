@@ -82,7 +82,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 // every 30 seconds, they get points
                 if (seconds % 20 == 0) {
                     remainingPlayers().forEach {
-                        it.sendMessage("<green>+1 point for surviving 30 seconds!".style())
+                        it.sendMessage("<green>+1 ᴘᴏɪɴᴛ ꜰᴏʀ ѕᴜʀᴠɪᴠɪɴɢ 30 ѕᴇᴄᴏɴᴅѕ!".style())
                         eventController().addPoints(it.uniqueId, 1)
                     }
                 }
@@ -95,16 +95,16 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                         when (it.block.type) {
                             Material.SNOW_BLOCK -> {
                                 it.block.type = Material.SNOW
-                                it.block.blockData as? Snow ?: return@delay
+                                if (it.block.blockData !is Snow) return@delay
                                 it.block.blockData = (it.block.blockData as Snow).apply { layers = 5 }
                             }
 
                             Material.SNOW -> {
-                                var blockData = it.block.blockData as Snow
+                                val blockData = it.block.blockData as Snow
                                 if (blockData.layers == 2) {
                                     it.block.type = Material.AIR
                                 } else {
-                                    blockData.layers = blockData.layers - 3
+                                    blockData.layers -= 3
                                     it.block.blockData = blockData
                                 }
                             }
@@ -157,15 +157,14 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
         super.eliminate(player, reason)
 
-        val value = "$seconds second${if (seconds > 1) "s" else ""}"
+        val value = "$seconds ѕᴇᴄᴏɴᴅ${if (seconds > 1) "ѕ" else ""}"
         when (remainingPlayers().size) {
             1 -> {
-                formattedWinners.put(player.uniqueId, value)
-                formattedWinners.put(remainingPlayers().first().uniqueId, "$value (1st Place!)")
+                formattedWinners[player.uniqueId] = value
+                formattedWinners[remainingPlayers().first().uniqueId] = "$value (1ѕᴛ ᴘʟᴀᴄᴇ!)"
                 endGame()
             }
-
-            2 -> formattedWinners.put(player.uniqueId, value)
+            2 -> formattedWinners[player.uniqueId] = value
         }
     }
 
@@ -183,7 +182,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         tasks += repeatingTask(10) {
             remainingPlayers().forEach {
                 if (doubleJumps[it]!! > 0) {
-                    it.sendActionBar("<green><b>${doubleJumps[it]!!} <reset><game_colour>double jumps left!".style())
+                    it.sendActionBar("<green><b>${doubleJumps[it]!!} <reset><game_colour>ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘѕ ʟᴇꜰᴛ!".style())
                 }
             }
         }
@@ -223,12 +222,12 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 when (hitBlock!!.type) {
                     Material.SNOW_BLOCK -> {
                         hitBlock!!.type = Material.SNOW
-                        hitBlock!!.blockData as? Snow ?: return@event
+                        if (hitBlock!!.blockData !is Snow) return@event
                         hitBlock!!.blockData = (hitBlock!!.blockData as Snow).apply { layers = 5 }
                     }
 
                     Material.SNOW -> {
-                        var blockData = hitBlock!!.blockData as Snow
+                        val blockData = hitBlock!!.blockData as Snow
                         if (blockData.layers == 2) {
                             hitBlock!!.type = Material.AIR
                         } else {
@@ -236,16 +235,13 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                             hitBlock!!.blockData = blockData
                         }
                     }
-
                     else -> return@event
                 }
             }
         }
 
         listeners += event<PlayerMoveEvent> {
-            if (player.location.blockY < 70) {
-                if (remainingPlayers().contains(player)) eliminate(player, EliminationReason.ELIMINATED)
-            }
+            if (player.location.blockY < 70 && remainingPlayers().contains(player)) eliminate(player, EliminationReason.ELIMINATED)
         }
     }
 

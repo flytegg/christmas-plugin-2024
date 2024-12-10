@@ -33,30 +33,24 @@ data class MapSinglePoint(
  *
  * @see MapSinglePoint
  */
-class MapRegion {
-    val minPoint: MapSinglePoint
-    val maxPoint: MapSinglePoint
+class MapRegion(minPoint: MapSinglePoint, maxPoint: MapSinglePoint) {
+    val minPoint: MapSinglePoint = MapSinglePoint(
+        x = minOf(minPoint.x.toDouble(), maxPoint.x.toDouble()),
+        y = minOf(minPoint.y.toDouble(), maxPoint.y.toDouble()),
+        z = minOf(minPoint.z.toDouble(), maxPoint.z.toDouble()),
+        yaw = minPoint.yaw,
+        pitch = minPoint.pitch
+    )
+    val maxPoint: MapSinglePoint = MapSinglePoint(
+        x = maxOf(minPoint.x.toDouble(), maxPoint.x.toDouble()),
+        y = maxOf(minPoint.y.toDouble(), maxPoint.y.toDouble()),
+        z = maxOf(minPoint.z.toDouble(), maxPoint.z.toDouble()),
+        yaw = maxPoint.yaw,
+        pitch = maxPoint.pitch
+    )
 
     companion object {
         fun single(point: MapSinglePoint): MapRegion = MapRegion(point, point)
-    }
-
-    constructor(minPoint: MapSinglePoint, maxPoint: MapSinglePoint) {
-        this.minPoint = MapSinglePoint(
-            x = minOf(minPoint.x.toDouble(), maxPoint.x.toDouble()),
-            y = minOf(minPoint.y.toDouble(), maxPoint.y.toDouble()),
-            z = minOf(minPoint.z.toDouble(), maxPoint.z.toDouble()),
-            yaw = minPoint.yaw,
-            pitch = minPoint.pitch
-        )
-
-        this.maxPoint = MapSinglePoint(
-            x = maxOf(minPoint.x.toDouble(), maxPoint.x.toDouble()),
-            y = maxOf(minPoint.y.toDouble(), maxPoint.y.toDouble()),
-            z = maxOf(minPoint.z.toDouble(), maxPoint.z.toDouble()),
-            yaw = maxPoint.yaw,
-            pitch = maxPoint.pitch
-        )
     }
 
     /**

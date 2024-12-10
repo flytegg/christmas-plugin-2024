@@ -30,7 +30,7 @@ import kotlin.reflect.full.primaryConstructor
  * The controller for the event, handling the current game (and its state), countdown, player management,
  * and other UI and event-related elements.
  */
-class EventController() {
+class EventController {
     var currentGame: EventMiniGame? = null
     var countdownTask: TwilightRunnable? = null
     val countdownMap = mapOf(
@@ -49,7 +49,7 @@ class EventController() {
     var totalDonations = 0
     var donationGoal = 10000
     var donationBossBar = BossBar.bossBar(
-        "<colour:#1DF1BC>ᴅᴏɴᴀᴛɪᴏɴ ɢᴏᴀʟ: <white>$<grey>${totalDonations}/${donationGoal}".style(),
+        getBossBarMessage(),
         0F,
         BossBar.Color.GREEN,
         BossBar.Overlay.PROGRESS
@@ -143,9 +143,7 @@ class EventController() {
                         countdown()
                     }
                 }
-
                 GameState.LIVE -> currentGame!!.onPlayerJoin(player)
-
                 else -> return
             }
         }
@@ -167,7 +165,7 @@ class EventController() {
 
                         Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) {
                             it.title(
-                                "<dark_red>⦅x⦆".style(), "<red>Waiting for more players...".style(),
+                                "<dark_red>⦅x⦆".style(), "<red>ᴡᴀɪᴛɪɴɢ ꜰᴏʀ ᴍᴏʀᴇ ᴘʟᴀʏᴇʀѕ...".style(),
                                 titleTimes(Duration.ZERO, Duration.ofSeconds(5), Duration.ofSeconds(1))
                             )
                             it.playSound(Sound.BLOCK_NOTE_BLOCK_BASS)
@@ -279,8 +277,12 @@ class EventController() {
      * Updates the donation bar with the current total donations and donation goal.
      */
     fun updateDonationBar() {
-        donationBossBar.name("<colour:#1DF1BC>ᴅᴏɴᴀᴛɪᴏɴ ɢᴏᴀʟ: <white>$<green>${totalDonations}/${donationGoal}".style())
-        var progress = (totalDonations.toFloat() / donationGoal)
+        donationBossBar.name(getBossBarMessage())
+        val progress = (totalDonations.toFloat() / donationGoal)
         donationBossBar.progress(progress)
     }
+
+    private fun getBossBarMessage(): Component =
+        "<b><gradient:${Colours.LIGHT_PURPLE}:${Colours.MAGENTA}>ᴅᴏɴᴀᴛɪᴏɴ ɢᴏᴀʟ:</gradient></b> <white><b>$<light_purple>${totalDonations}<grey>/<magenta>${donationGoal}".style()
+
 }
