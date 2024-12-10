@@ -84,6 +84,12 @@ class HousekeepingEventListener : Listener, PacketListener {
                 "            <gold>ᴊᴏɪɴ <green><b>ɴᴏᴡ <reset><gold>ᴛᴏ ᴘʟᴀʏ <aqua>x-ᴍᴀѕ ᴍɪɴɪɢᴀᴍᴇѕ",
                 "       <gold>ᴀɴᴅ ѕᴜᴘᴘᴏʀᴛ <red>ʙᴇѕᴛ ꜰʀɪᴇɴᴅѕ ᴀɴɪᴍᴀʟ ѕᴏᴄɪᴇᴛʏ"
             )
+
+            /* Note:
+            Since Colours.kt rebinds tags like <red> to an alternate colour, they cannot be used for listed players
+            in the server list ping response. The Notchian client will not render custom text/colour formatting in this space,
+            and will instead be randomised. An explicit call to MiniMessage reverts to default text rendering.
+            */
             serverListPingText.map { MiniMessage.miniMessage().deserialize(it) }.forEach {
                 this.listedPlayers.add(PaperServerListPingEvent.ListedPlayerInfo(it.toLegacyString(), UUID.randomUUID()))
             }
