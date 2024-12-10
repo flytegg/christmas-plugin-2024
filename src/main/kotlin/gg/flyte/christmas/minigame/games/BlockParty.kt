@@ -230,7 +230,7 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
 
     override fun eliminate(player: Player, reason: EliminationReason) {
         Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) {
-            it.sendMessage("<red>${player.name.toSmallText()} <grey>ʜᴀѕ ʙᴇᴇɴ ᴇʟɪᴍɪɴᴀᴛᴇᴅ!".style())
+            it.sendMessage("<red>${player.name} <grey>ʜᴀѕ ʙᴇᴇɴ ᴇʟɪᴍɪɴᴀᴛᴇᴅ!".style())
             it.playSound(Sound.ENTITY_PLAYER_HURT)
         }
 
@@ -442,13 +442,13 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
 
                 Util.runAction(PlayerType.PARTICIPANT) {
                     if (it == player) {
-                        it.sendMessage("<green><b>ʏᴏᴜ'ᴠᴇ ꜰᴏᴜɴᴅ ᴀ ${randomPowerUp.displayName.toSmallText()} ᴘᴏᴡᴇʀ-ᴜᴘ!".style())
+                        it.sendMessage("<green><b>ʏᴏᴜ'ᴠᴇ ꜰᴏᴜɴᴅ ᴀ ${randomPowerUp.displayName} ᴘᴏᴡᴇʀ-ᴜᴘ!".style())
                     } else {
-                        it.sendMessage("<green><b>« ${player.name.toSmallText()} ʜᴀѕ ꜰᴏᴜɴᴅ ᴀ {${randomPowerUp.displayName.toSmallText()} ᴘᴏᴡᴇʀ-ᴜᴘ! »".style())
+                        it.sendMessage("<green><b>« ${player.name} ʜᴀѕ ꜰᴏᴜɴᴅ ᴀ {${randomPowerUp.displayName} ᴘᴏᴡᴇʀ-ᴜᴘ! »".style())
                     }
                 }
                 Util.runAction(PlayerType.OPTED_OUT) {
-                    it.sendMessage("<green><b>« ${player.name.toSmallText()} ʜᴀѕ ꜰᴏᴜɴᴅ ᴀ {${randomPowerUp.displayName.toSmallText()} ᴘᴏᴡᴇʀ-ᴜᴘ! »".style())
+                    it.sendMessage("<green><b>« ${player.name} ʜᴀѕ ꜰᴏᴜɴᴅ ᴀ {${randomPowerUp.displayName} ᴘᴏᴡᴇʀ-ᴜᴘ! »".style())
                 }
 
                 when (randomPowerUp) {
@@ -507,7 +507,7 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
                         remainingPlayers().random().apply {
                             velocity = this.location.direction.multiply(2).add(Vector(0.0, 1.5, 0.0))
                             sendMessage("<game_colour>ʏᴏᴜ'ᴠᴇ ʙᴇᴇɴ ᴘᴜѕʜᴇᴅ ʙʏ ᴀ ᴘᴏᴡᴇʀ-ᴜᴘ!".style())
-                            eventPlayer.sendMessage("<game_colour>ʏᴏᴜ'ᴠᴇ ᴘᴜѕʜᴇᴅ ᴀ ʀᴀɴᴅᴏᴍ ᴘʟᴀʏᴇʀ (${name.toSmallText()}) ᴡɪᴛʜ ᴛʜᴇ ᴘᴏᴡᴇʀ-ᴜᴘ!".style())
+                            eventPlayer.sendMessage("<game_colour>ʏᴏᴜ'ᴠᴇ ᴘᴜѕʜᴇᴅ ᴀ ʀᴀɴᴅᴏᴍ ᴘʟᴀʏᴇʀ (${name}) ᴡɪᴛʜ ᴛʜᴇ ᴘᴏᴡᴇʀ-ᴜᴘ!".style())
                         }
                     }
                     PowerUp.DOUBLE_JUMP -> player.allowFlight = true

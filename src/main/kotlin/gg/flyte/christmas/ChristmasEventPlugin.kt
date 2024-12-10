@@ -12,6 +12,7 @@ import gg.flyte.christmas.minigame.engine.GameConfig
 import gg.flyte.christmas.minigame.world.MapSinglePoint
 import gg.flyte.christmas.npc.WorldNPC
 import gg.flyte.christmas.util.Util
+import gg.flyte.christmas.util.colourise
 import gg.flyte.christmas.util.eventController
 import gg.flyte.christmas.util.style
 import gg.flyte.twilight.twilight
@@ -117,7 +118,7 @@ class ChristmasEventPlugin : JavaPlugin() {
                 "<blue>" to "9",
             ).entries.random()
 
-            val displayName = "&${randomColour.value}${MojangAPIUtil.requestPlayerName(uniqueId)}"
+            val displayName = "&${randomColour.value}${MojangAPIUtil.requestPlayerName(uniqueId)}".colourise()
 
             val contributorNPC = WorldNPC.createFromUniqueId(displayName, uniqueId, location).also { worldNPCs += it }
             contributorNPC.npc.prefixName = "${randomColour.key}<obf>W ".style()
@@ -137,7 +138,7 @@ class ChristmasEventPlugin : JavaPlugin() {
             }
             it.billboard = Display.Billboard.CENTER
             it.isDefaultBackground = false
-            it.backgroundColor = Color.fromARGB(255, 255, 207, 207)
+            it.backgroundColor = Color.fromARGB(26, 0, 0, 0)
             it.brightness = Display.Brightness(15, 15)
         }
 

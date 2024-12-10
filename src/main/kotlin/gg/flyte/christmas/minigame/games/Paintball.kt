@@ -170,7 +170,7 @@ class Paintball : EventMiniGame(GameConfig.PAINTBALL) {
             hitPlayer.playSound(Sound.ENTITY_PLAYER_HURT)
 
             shooter.playSound(Sound.BLOCK_NOTE_BLOCK_PLING)
-            shooter.sendMessage("<green>ʏᴏᴜ ʜɪᴛ <red>${hitPlayer.name.toSmallText()} <grey>— <green>+1".style())
+            shooter.sendMessage("<green>ʏᴏᴜ ʜɪᴛ <red>${hitPlayer.name} <grey>— <green>+1".style())
             scores[shooter.uniqueId] = scores[shooter.uniqueId]!! + 1
         }
     }

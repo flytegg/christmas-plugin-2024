@@ -104,7 +104,7 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
     }
 
     override fun eliminate(player: Player, reason: EliminationReason) {
-        Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) { it.sendMessage("<red>${player.name.toSmallText()} <grey>ʜᴀѕ ʙᴇᴇɴ ᴇʟɪᴍɪɴᴀᴛᴇᴅ!".style()) }
+        Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) { it.sendMessage("<red>${player.name} <grey>ʜᴀѕ ʙᴇᴇɴ ᴇʟɪᴍɪɴᴀᴛᴇᴅ!".style()) }
 
         if (reason == EliminationReason.ELIMINATED) {
             player.world.createExplosion(player.location, 3F, false, false)
@@ -135,13 +135,13 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
 
         if (oldTagger != null) {
             this.taggedPlayers.remove(oldTagger.uniqueId)
-            oldTagger.sendMessage("<game_colour>ʏᴏᴜ ʜᴀᴠᴇ ᴛᴀɢɢᴇᴅ <red>${newTagger.name.toSmallText()}!".style())
+            oldTagger.sendMessage("<game_colour>ʏᴏᴜ ʜᴀᴠᴇ ᴛᴀɢɢᴇᴅ <red>${newTagger.name}!".style())
             oldTagger.formatInventory()
 
             oldTagger.clearActivePotionEffects()
             oldTagger.addPotionEffect(PotionEffect(PotionEffectType.SPEED, 1000000, 2, false, false, false))
 
-            newTagger.sendMessage("<red>ʏᴏᴜ ʜᴀᴠᴇ ʙᴇᴇɴ ᴛᴀɢɢᴇᴅ ʙʏ <game_colour>${oldTagger.name.toSmallText()}!".style())
+            newTagger.sendMessage("<red>ʏᴏᴜ ʜᴀᴠᴇ ʙᴇᴇɴ ᴛᴀɢɢᴇᴅ ʙʏ <game_colour>${oldTagger.name}!".style())
         } else newTagger.sendMessage("« <red><b>ʏᴏᴜ <game_colour>ʜᴀᴠᴇ ѕᴛᴀʀᴛᴇᴅ ᴛʜɪѕ ʀᴏᴜɴᴅ ʙᴇɪɴɢ <red>ᴛʜᴇ ɪᴛ!<reset> »".style())
 
         newTagger.playSound(Sound.BLOCK_NOTE_BLOCK_PLING)

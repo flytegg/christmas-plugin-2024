@@ -212,7 +212,7 @@ class Avalanche : EventMiniGame(GameConfig.AVALANCHE) {
 
     override fun eliminate(player: Player, reason: EliminationReason) {
         Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) {
-            it.sendMessage("<red>${player.name.toSmallText()} <grey>ʜᴀѕ ʙᴇᴇɴ ᴇʟɪᴍɪɴᴀᴛᴇᴅ!".style())
+            it.sendMessage("<red>${player.name} <grey>ʜᴀѕ ʙᴇᴇɴ ᴇʟɪᴍɪɴᴀᴛᴇᴅ!".style())
             it.playSound(Sound.ENTITY_PLAYER_HURT)
         }
 
