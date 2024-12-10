@@ -17,8 +17,6 @@ import org.bukkit.entity.ThrowableProjectile
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
-import org.bukkit.potion.PotionEffect
-import org.bukkit.potion.PotionEffectType
 import java.time.Duration
 import java.util.*
 
@@ -81,7 +79,7 @@ class Paintball : EventMiniGame(GameConfig.PAINTBALL) {
         player.gameMode = GameMode.ADVENTURE
         player.formatInventory()
         player.teleport(gameConfig.spawnPoints.random().randomLocation())
-        player.addPotionEffect(PotionEffect(PotionEffectType.SPEED, 1000000, 2, false, false, false))
+        player.walkSpeed = 0.4F
 
         scores[player.uniqueId] = 0
 
@@ -120,17 +118,19 @@ class Paintball : EventMiniGame(GameConfig.PAINTBALL) {
         @Suppress("DuplicatedCode") // I'm lazy
         for (entry in scores) eventController().addPoints(entry.key, entry.value)
         scores.entries
-            .sortedByDescending { it.value }
+            .sortedBy { it.value }
             .take(3)
             .also { it.forEach { entry ->
                 formattedWinners[entry.key] = entry.value.toString() + " ᴋɪʟʟ${if (entry.value > 1) "ѕ" else ""}"
             } }
 
+        Util.runAction(PlayerType.PARTICIPANT) { it.walkSpeed = 0.2F }
+
         super.endGame()
     }
 
     private fun updateScoreboard() {
-        val timeLeft = "<aqua>ᴛɪᴍᴇ ʟᴇғᴛ: <red><b>${gameTime}".style()
+        val timeLeft = "<aqua>ᴛɪᴍᴇ ʟᴇꜰᴛ: <red><b>${gameTime}".style()
         Bukkit.getOnlinePlayers().forEach { eventController().sidebarManager.updateLines(it, listOf(Component.empty(), timeLeft)) }
     }
 

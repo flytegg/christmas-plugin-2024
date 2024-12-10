@@ -20,6 +20,7 @@ import dev.shreyasayyengar.menuapi.menu.MenuItem
 import dev.shreyasayyengar.menuapi.menu.StandardMenu
 import gg.flyte.christmas.ChristmasEventPlugin
 import gg.flyte.christmas.donation.DonateEvent
+import gg.flyte.christmas.minigame.engine.GameState
 import gg.flyte.christmas.util.*
 import gg.flyte.christmas.visual.CameraSequence
 import gg.flyte.twilight.event.event
@@ -59,7 +60,6 @@ class HousekeepingEventListener : Listener, PacketListener {
         PacketEvents.getAPI().eventManager.registerListener(this, PacketListenerPriority.NORMAL)
 
         event<PaperServerListPingEvent> {
-            // TODO finish sponsors
             val footer = text("       ")
                 .append("<gradient:${Colours.PURPLE.asHexString()}:${Colours.MAGENTA.asHexString()}>ᴄᴀʀʙᴏɴ.ʜᴏꜱᴛ".style())
                 .append("<grey> • ".style())
@@ -82,7 +82,7 @@ class HousekeepingEventListener : Listener, PacketListener {
                 "  <bold><light_purple>ꜰʟʏᴛᴇ.ɢɢ <grey>• <yellow>ᴄᴀʀʙᴏɴ.ʜᴏꜱᴛ <grey>• <blue>ʙᴜɪʟᴛʙʏʙɪᴛ.ᴄᴏᴍ",
                 "",
                 "            <gold>ᴊᴏɪɴ <green><b>ɴᴏᴡ <reset><gold>ᴛᴏ ᴘʟᴀʏ <aqua>x-ᴍᴀѕ ᴍɪɴɪɢᴀᴍᴇѕ",
-                "              <gold>ᴀɴᴅ ѕᴜᴘᴘᴏʀᴛ <red>[ᴄʜᴀʀɪᴛʏ ɴᴀᴍᴇ]" // TODO fill charity name and centre
+                "       <gold>ᴀɴᴅ ѕᴜᴘᴘᴏʀᴛ <red>ʙᴇѕᴛ ꜰʀɪᴇɴᴅѕ ᴀɴɪᴍᴀʟ ѕᴏᴄɪᴇᴛʏ"
             )
             serverListPingText.map { MiniMessage.miniMessage().deserialize(it) }.forEach {
                 this.listedPlayers.add(PaperServerListPingEvent.ListedPlayerInfo(it.toLegacyString(), UUID.randomUUID()))
@@ -104,12 +104,17 @@ class HousekeepingEventListener : Listener, PacketListener {
 
         event<PlayerInteractEvent> {
             val clickedBlock = clickedBlock ?: return@event
-            if (eventController().currentGame != null) return@event
+            if (eventController().currentGame?.state != GameState.IDLE && eventController().currentGame != null) return@event
             if (!(clickedBlock.type == Material.SNOW || clickedBlock.type == Material.SNOW_BLOCK)) return@event
+            if (this.item?.type == Material.SNOWBALL) {
+                isCancelled = true
+            }
             if (Random().nextInt(5) != 0) return@event
 
             if (player.inventory.firstEmpty() == -1) return@event
-            player.inventory.addItem(ItemStack(Material.SNOWBALL, 1))
+            player.inventory.addItem(ItemStack(Material.SNOWBALL, 1).apply {
+                itemMeta = itemMeta.apply { setMaxStackSize(99) }
+            })
 
             player.playSound(clickedBlock.location, Sound.BLOCK_SNOW_BREAK, 1f, 1.5f)
             player.playSound(clickedBlock.location, Sound.BLOCK_SNOW_STEP, 0.5f, 2f)
@@ -145,6 +150,7 @@ class HousekeepingEventListener : Listener, PacketListener {
                 gameMode = GameMode.ADVENTURE
                 playSound(Sound.ENTITY_PLAYER_LEVELUP)
                 formatInventory()
+                walkSpeed = 0.2F
 
                 eventController().points.putIfAbsent(uniqueId, 0)
                 eventController().onPlayerJoin(this)
@@ -162,7 +168,6 @@ class HousekeepingEventListener : Listener, PacketListener {
                 .append("\n".style())
                 .append("<grey>\n(${Bukkit.getOnlinePlayers().size} ᴘʟᴀʏᴇʀꜱ)".style())
 
-            // TODO finish sponsors
             val footer = "<light_purple>\nꜰʟʏᴛᴇ.ɢɢ/ᴅᴏɴᴀᴛᴇ\n\n".style()
                 .append(" <gradient:${Colours.LIGHT_PURPLE.asHexString()}:${Colours.PINK.asHexString()}>ꜰʟʏᴛᴇ.ɢɢ".style())
                 .append("<grey> • ".style())

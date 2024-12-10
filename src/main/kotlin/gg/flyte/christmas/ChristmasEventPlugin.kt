@@ -5,7 +5,6 @@ import com.github.retrooper.packetevents.util.MojangAPIUtil
 import dev.shreyasayyengar.menuapi.menu.MenuManager
 import gg.flyte.christmas.commands.EventCommand
 import gg.flyte.christmas.donation.DonationListener
-import gg.flyte.christmas.donation.RefreshToken
 import gg.flyte.christmas.listeners.HousekeepingEventListener
 import gg.flyte.christmas.minigame.engine.EventController
 import gg.flyte.christmas.minigame.engine.GameConfig
@@ -17,6 +16,7 @@ import gg.flyte.christmas.util.eventController
 import gg.flyte.christmas.util.style
 import gg.flyte.twilight.twilight
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.*
 import org.bukkit.entity.Display
@@ -63,7 +63,12 @@ class ChristmasEventPlugin : JavaPlugin() {
 
     override fun onDisable() {
         serverWorld.entities.forEach {
-            if (it !is Player) it.remove() else it.kick("<red>loddl".style()) // TODO edit kick msg
+            val kickMessage = Component.empty()
+                .append("<colour:#ff7070>ᴛʜᴀɴᴋ ʏᴏᴜ ꜰᴏʀ ᴊᴏɪɴɪɴɢ ᴜs!\n".style())
+                .append("<colour:#67c45e>ᴡᴇ ᴡɪsʜ ʏᴏᴜ ᴀ ᴍᴇʀʀʏ ᴄʜʀɪsᴛᴍᴀs\n".style())
+                .append("<gradient:#EE57FF:#E89EB8>ꜰʟʏᴛᴇ".style())
+
+            if (it !is Player) it.remove() else it.kick(kickMessage)
         } // clean up podium, spectate points, misc entities.
 
         for (npc in worldNPCs) {
@@ -88,19 +93,11 @@ class ChristmasEventPlugin : JavaPlugin() {
 
     private fun registerEvents() {
         HousekeepingEventListener()
+        DonationListener()
     }
 
     private fun registerPacketAPI() {
         PacketEvents.getAPI().init()
-    }
-
-    private fun handleDonations() {
-        if (1 == 1) return // TODO<Final> configure secrets when available.
-        RefreshToken(
-            config.getString("donations.clientId") ?: throw IllegalArgumentException("clientId cannot be empty"),
-            config.getString("donations.clientSecret") ?: throw IllegalArgumentException("clientSecret cannot be empty")
-        )
-        DonationListener(config.getString("donations.campaignId") ?: throw IllegalArgumentException("campaignId cannot be empty"))
     }
 
     private fun loadNPCs() {
@@ -131,28 +128,6 @@ class ChristmasEventPlugin : JavaPlugin() {
                 billboard = Display.Billboard.CENTER
             }
         }
-        serverWorld.spawn(MapSinglePoint(544.5, 108, 457.5, 0, 30), TextDisplay::class.java) {
-            it.text("<colour:#d45757>ᴇᴠᴇɴᴛ\nᴄᴏɴᴛʀɪʙᴜᴛᴏʀꜱ".style())
-            it.transformation = it.transformation.apply {
-                this.scale.mul(7F)
-            }
-            it.billboard = Display.Billboard.CENTER
-            it.isDefaultBackground = false
-            it.backgroundColor = Color.fromARGB(26, 0, 0, 0)
-            it.brightness = Display.Brightness(15, 15)
-        }
-
-        serverWorld.spawn(MapSinglePoint(535.5, 121, 503.5, -90, 0), TextDisplay::class.java) {
-            it.text("<colour:#ff8b94>ᴇᴠᴇɴᴛ\nʟᴇᴀᴅᴇʀʙᴏᴀʀᴅ".style())
-            it.transformation = it.transformation.apply {
-                this.scale.mul(10F)
-            }
-            it.billboard = Display.Billboard.CENTER
-            it.isDefaultBackground = false
-            it.backgroundColor = Color.fromARGB(26, 0, 0, 0)
-        }
-
-        WorldNPC.refreshPodium()
     }
 
     private fun configureWorld() {
@@ -165,18 +140,69 @@ class ChristmasEventPlugin : JavaPlugin() {
             setStorm(false)
             difficulty = Difficulty.PEACEFUL
             time = 6000
-
-            // Create Podium
-            val podiumModel = ItemStack(Material.PAPER).apply {
-                itemMeta = itemMeta?.apply { setCustomModelData(2) }
-            }
-            spawn(Location(this, 535.5, 105.0, 503.5), ItemDisplay::class.java) {
-                it.setItemStack(podiumModel)
-                it.transformation = it.transformation.apply { this.scale.mul(4F) }
-            }
         }
 
-        // player list displays entries by alphabetical order of the team they have entries with
+        // Create Podium Model
+        serverWorld.spawn(MapSinglePoint(535.5, 105.0, 503.5), ItemDisplay::class.java) {
+            it.setItemStack(ItemStack(Material.PAPER).apply {
+                itemMeta = itemMeta?.apply { setCustomModelData(2) }
+            })
+            it.transformation = it.transformation.apply { this.scale.mul(4F) }
+        }
+
+        // Create Event Leaderboard Display
+        serverWorld.spawn(MapSinglePoint(535.5, 121, 503.5, -90, 0), TextDisplay::class.java) {
+            it.text("<gold>ᴇᴠᴇɴᴛ\nʟᴇᴀᴅᴇʀʙᴏᴀʀᴅ".style())
+            it.transformation = it.transformation.apply {
+                this.scale.mul(10F)
+            }
+            it.billboard = Display.Billboard.CENTER
+            it.isDefaultBackground = false
+            it.backgroundColor = Color.fromRGB(94, 68, 23)
+            it.isSeeThrough = false
+        }
+
+        // Create Event Contributors Display
+        serverWorld.spawn(MapSinglePoint(544.5, 108, 457.5, 0, 30), TextDisplay::class.java) {
+            it.text("<colour:#d45757>ᴇᴠᴇɴᴛ\nᴄᴏɴᴛʀɪʙᴜᴛᴏʀꜱ".style())
+            it.transformation = it.transformation.apply { this.scale.mul(7F) }
+            it.billboard = Display.Billboard.CENTER
+            it.isDefaultBackground = false
+            it.backgroundColor = Color.fromARGB(255, 255, 207, 207)
+            it.brightness = Display.Brightness(15, 15)
+            it.isSeeThrough = false
+        }
+
+        // Create Donation Info
+        serverWorld.spawn(MapSinglePoint(555, 105, 502, 43, 25), TextDisplay::class.java) {
+            it.text(
+                Component.empty()
+                    .append("<white>sᴜᴘᴘᴏʀᴛ <colour:#ec8339>ʙᴇsᴛ ꜰʀɪᴇɴᴅs ᴀɴɪᴍᴀʟ sᴏᴄɪᴇᴛʏ\n".style())
+                    .append("\n".style())
+                    .append("<white>ᴛʜɪs ᴄʜʀɪsᴛᴍᴀs ᴄʜᴀʀɪᴛʏ ᴇᴠᴇɴᴛ ɪs ɪɴ sᴜᴘᴘᴏʀᴛ ᴏꜰ ᴛʜᴇ <colour:#ec8339>ʙᴇsᴛ ꜰʀɪᴇɴᴅs ᴀɴɪᴍᴀʟ sᴏᴄɪᴇᴛʏ ".style())
+                    .append("<white>ᴡʜɪᴄʜ ɪs ᴀ ʟᴇᴀᴅɪɴɢ ɴᴀᴛɪᴏɴᴀʟ ᴀɴɪᴍᴀʟ ᴡᴇʟꜰᴀʀᴇ ᴏʀɢᴀɴɪsᴀᴛɪᴏɴ ᴅᴇᴅɪᴄᴀᴛᴇᴅ ᴛᴏ ᴇɴᴅɪɴɢ ᴛʜᴇ ᴋɪʟʟɪɴɢ ".style())
+                    .append("<white>ᴏꜰ ᴅᴏɢs ᴀɴᴅ ᴄᴀᴛs ɪɴ ᴀᴍᴇʀɪᴄᴀ's sʜᴇʟᴛᴇʀs ᴅᴜᴇ ᴛᴏ ʜᴏᴍᴇʟᴇssɴᴇss ᴀɴᴅ ᴏᴠᴇʀᴘᴏᴘᴜʟᴀᴛɪᴏɴ. ".style())
+                    .append("<white>ᴛʜᴇʏ ᴀʀᴇ ᴀ ɴᴏɴ-ᴘʀᴏꜰɪᴛ ᴏʀɢᴀɴɪsᴀᴛɪᴏɴ ᴛʜᴀᴛ ʀᴜɴs ᴛʜᴇ ʟᴀʀᴇsᴛ ɴᴏ-ᴋɪʟʟ ᴍᴏᴠᴇᴍᴇɴᴛ & ᴀɴɪᴍᴀʟ sᴀɴᴄᴛᴜᴀʀʏ ɪɴ ᴛʜᴇ ᴜ.s.".style())
+                    .append("\n\n".style())
+                    .append("<colour:#ff3d9b>ᴛʜᴇ ʙᴇsᴛ ᴘᴀʀᴛ? ᴇᴠᴇʀʏ ᴅᴏʟʟᴀʀ ʏᴏᴜ ᴘᴜᴛ ꜰᴏᴜʀᴛʜ ᴡɪʟʟ ʙᴇ <b><colour:#ec8339>ᴛʀɪᴘʟᴇ ᴍᴀᴛᴄʜᴇᴅ<reset><white>!\n\n".style())
+                    .append("<white>ʜᴇᴀᴅ ᴏᴠᴇʀ ᴛᴏ <gradient:#ff80e8:#ffffff>ꜰʟʏᴛᴇ.ɢɢ/ᴅᴏɴᴀᴛᴇ</gradient> ᴛᴏ ᴅᴏɴᴀᴛᴇ ɴᴏᴡ!\n\n".style())
+                    .append("<white>ʟᴇᴀʀɴ ᴍᴏʀᴇ @ <colour:#ec8339>ʙᴇsᴛꜰʀɪᴇɴᴅs.ᴏʀɢ\n\n".style())
+                    .append("<red>ᴛʜᴀɴᴋ ʏᴏᴜ ꜰᴏʀ ᴊᴏɪɴɪɴɢ ᴜs ❤".style())
+
+            )
+            it.lineWidth = 250
+            it.transformation = it.transformation.apply { this.scale.mul(2F) }
+            it.billboard = Display.Billboard.FIXED
+            it.isDefaultBackground = false
+            it.backgroundColor = Color.fromARGB(255, 100, 100, 100)
+            it.brightness = Display.Brightness(15, 15)
+            it.isSeeThrough = false
+        }
+
+        WorldNPC.refreshPodium()
+
+        // Create scoreboard:
+        // note: player list displays entries by alphabetical order of the team they have entries with
         scoreBoardTab = Bukkit.getScoreboardManager().newScoreboard.apply {
             registerNewTeam("a. staff").apply {
                 setOption(Option.COLLISION_RULE, Team.OptionStatus.NEVER)
@@ -191,12 +217,12 @@ class ChristmasEventPlugin : JavaPlugin() {
             }
         }
 
-        eventController.totalDonations = config.getInt("donations.totalDonations")
         eventController.updateDonationBar()
 
         lobbySpawn = MapSinglePoint(559.5, 103, 518.5, 135, 0)
 
         GameConfig.entries.forEach { it.gameClass.primaryConstructor } // preload/cache classes for reflection
         eventController().startPlaylist()
+
     }
 }

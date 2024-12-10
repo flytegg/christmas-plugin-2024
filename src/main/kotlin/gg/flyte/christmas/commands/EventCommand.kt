@@ -12,7 +12,11 @@ import gg.flyte.christmas.util.style
 import gg.flyte.christmas.util.toLegacyString
 import gg.flyte.twilight.extension.playSound
 import gg.flyte.twilight.scheduler.async
+import gg.flyte.twilight.scheduler.delay
 import gg.flyte.twilight.scheduler.sync
+import net.kyori.adventure.inventory.Book
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.event.ClickEvent
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
@@ -124,24 +128,49 @@ class EventCommand(val menu: StandardMenu = StandardMenu("&c☃ ᴇᴠᴇɴᴛ �
         }
     }
 
+    @Command("donate")
+    fun donate(sender: Player) {
+        var book = Book.book(
+            "<red>Donating Info".style(), Component.empty(),
+            Component.empty()
+                .append("".style())
+                .append("<black>ᴛʜɪs ᴄʜʀɪsᴛᴍᴀs ᴇᴠᴇɴᴛ ɪs ɪɴ sᴜᴘᴘᴏʀᴛ ᴏꜰ ᴛʜᴇ <colour:#ec8339>ʙᴇsᴛ ꜰʀɪᴇɴᴅs ᴀɴɪᴍᴀʟ sᴏᴄɪᴇᴛʏ, ".style())
+                .append("<black>ᴀ ʟᴇᴀᴅɪɴɢ ᴜ.s. ɴᴀᴛɪᴏɴᴀʟ ᴀɴɪᴍᴀʟ ᴡᴇʟꜰᴀʀᴇ ᴏʀɢᴀɴɪsᴀᴛɪᴏɴ.\n".style())
+                .append("".style())
+                .append("<colour:#ff3d9b>ᴛʜᴇ ʙᴇsᴛ ᴘᴀʀᴛ? <black>ᴇᴠᴇʀʏ ᴅᴏʟʟᴀʀ ʏᴏᴜ ᴘᴜᴛ ꜰᴏᴜʀᴛʜ ᴡɪʟʟ ʙᴇ <b><colour:#ae61f2>ᴛʀɪᴘᴘʟᴇ ᴍᴀᴛᴄʜᴇᴅ<reset><black>!\n".style())
+                .append(
+                    "\n<black><0> ᴛᴏ ᴅᴏɴᴀᴛᴇ ɴᴏᴡ!".style(
+                        "<colour:#ff80e8>ꜰʟʏᴛᴇ.ɢɢ/ᴅᴏɴᴀᴛᴇ".style().clickEvent(ClickEvent.openUrl("https://flyte.gg/donate"))
+                    )
+                )
+        )
+
+        sender.openBook(book)
+    }
+
+    @Command("leaderboard")
+    fun showLeaderboard(sender: Player) {
+        // TODO show leaderboard
+    }
+
     @Command("event mock-donation-now <amount>")
     @CommandPermission("event.mockdonation")
-    fun mockDonation(player: Player, amount: Double) {
-        val donationEvent = DonateEvent(null, null, null, amount.toString(), "USD", "mockDonationId")
+    fun mockDonation(sender: Player, amount: Double) {
+        var donationEvent = DonateEvent(UUID.randomUUID().toString(), null, null, amount.toString(), System.currentTimeMillis())
         Bukkit.getPluginManager().callEvent(donationEvent)
     }
 
     @Command("event mock-donation-now <amount> <target>")
     @CommandPermission("event.mockdonation")
     fun mockDonation(sender: Player, amount: Double, target: Player) {
-        var donationEvent = DonateEvent(target.name, null, null, amount.toString(), "USD", "mockDonationId")
+        var donationEvent = DonateEvent(UUID.randomUUID().toString(), null, null, amount.toString(), System.currentTimeMillis())
         Bukkit.getPluginManager().callEvent(donationEvent)
     }
 
     private fun setGameSwitcher(): MenuItem {
         val menuItem = MenuItem(Material.STRUCTURE_VOID).apply {
             setName("&b&lSelect Game:".colourise())
-            updateRotatingItem(this) // initial lore setup
+            updateGameSwitcher(this) // initial lore setup
             onClick { whoClicked, itemStack, clickType, inventoryClickEvent ->
                 inventoryClickEvent.isCancelled = true
 
@@ -162,7 +191,7 @@ class EventCommand(val menu: StandardMenu = StandardMenu("&c☃ ᴇᴠᴇɴᴛ �
 
                 this.itemStack = availableGames[selectedIndex].menuItem
                 setName("&b&lSelect Game:".colourise())
-                updateRotatingItem(this)
+                updateGameSwitcher(this)
 
                 menu.setItem(13, this)
                 whoClicked.playSound(Sound.UI_BUTTON_CLICK)
@@ -172,32 +201,7 @@ class EventCommand(val menu: StandardMenu = StandardMenu("&c☃ ᴇᴠᴇɴᴛ �
         return menuItem
     }
 
-    private fun setEndGameButton(): MenuItem {
-        return MenuItem(Material.RED_CONCRETE)
-            .setName(
-                "<red>ᴋɪʟʟ ᴄᴜʀʀᴇɴᴛ ɢᴀᴍᴇ: <0>".style(eventController().currentGame?.gameConfig?.displayName ?: "ɴᴏɴᴇ".style()).toLegacyString()
-                    .colourise()
-            )
-            .setLore(
-                "",
-                "&cᴛʜɪѕ ᴡɪʟʟ ꜰᴏʀᴄᴇ ǫᴜɪᴛ ᴛʜᴇ ᴄᴜʀʀᴇɴᴛ ɢᴀᴍᴇ".colourise(),
-                "&cᴀɴᴅ ᴛᴇʟᴇᴘᴏʀᴛ ᴀʟʟ ᴘʟᴀʏᴇʀѕ ʙᴀᴄᴋ ᴛᴏ ᴛʜᴇ ʟᴏʙʙʏ.".colourise(),
-            )
-            .onClick { whoClicked, itemStack, clickType, inventoryClickEvent ->
-                if (eventController().currentGame == null) {
-                    whoClicked.playSound(Sound.ENTITY_VILLAGER_NO)
-                    whoClicked.sendMessage("<red>ɴᴏ ɢᴀᴍᴇ ɪѕ ᴄᴜʀʀᴇɴᴛʟʏ ʀᴜɴɴɪɴɢ!".style())
-                    return@onClick
-                }
-
-                eventController().currentGame!!.endGame()
-                whoClicked.sendMessage("<red>ɢᴀᴍᴇ ᴛᴇʀᴍɪɴᴀᴛᴇᴅ!".style())
-                whoClicked.playSound(Sound.ENTITY_GENERIC_EXPLODE)
-                eventController().sidebarManager.update()
-            }
-    }
-
-    private fun updateRotatingItem(menuItem: MenuItem) {
+    private fun updateGameSwitcher(menuItem: MenuItem) {
         val lore = mutableListOf<String>()
 
         for (index in availableGames.indices) {
@@ -242,5 +246,31 @@ class EventCommand(val menu: StandardMenu = StandardMenu("&c☃ ᴇᴠᴇɴᴛ �
                     menu.removeItem(38)
                 }
         )
+    }
+
+    private fun setEndGameButton(): MenuItem {
+        return MenuItem(Material.RED_CONCRETE)
+            .setName(
+                "<red>Kill Current Game: <0>".style(eventController().currentGame?.gameConfig?.displayName ?: "None".style()).toLegacyString()
+                    .colourise()
+            )
+            .setLore(
+                "",
+                "&cThis will force quit the current game".colourise(),
+                "&cand teleport all players back to the lobby.".colourise(),
+            )
+            .onClick { whoClicked, itemStack, clickType, inventoryClickEvent ->
+                if (eventController().currentGame == null) {
+                    whoClicked.playSound(Sound.ENTITY_VILLAGER_NO)
+                    whoClicked.sendMessage("<red>No game is currently running!".style())
+                    return@onClick
+                }
+
+                eventController().currentGame!!.endGame()
+                delay(1) { whoClicked.closeInventory() }
+                eventController().sidebarManager.update()
+                whoClicked.sendMessage("<red>Game terminated!".style())
+                whoClicked.playSound(Sound.ENTITY_GENERIC_EXPLODE)
+            }
     }
 }

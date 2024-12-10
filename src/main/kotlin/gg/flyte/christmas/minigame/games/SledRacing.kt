@@ -18,6 +18,7 @@ import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.block.state.BlockState
+import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.Sound
@@ -57,6 +58,8 @@ class SledRacing : EventMiniGame(GameConfig.SLED_RACING) {
     private val lapsCompleted = mutableMapOf<UUID, Int>()
     private val lapsRequired = 3
     private var hasStarted = false
+    private var gameTime = 421
+    private var scores = mutableMapOf<UUID, Int>()
 
     override fun preparePlayer(player: Player) {
         currentCheckPoint[player.uniqueId] = checkPointToNext.values.first()
@@ -79,10 +82,31 @@ class SledRacing : EventMiniGame(GameConfig.SLED_RACING) {
                     }
                 }
             } // autocorrect armor stand rotation to boat rotation
+
+            tasks += repeatingTask(20) {
+                val timeLeft = "<aqua>ᴛɪᴍᴇ ʟᴇꜰᴛ: <red><b>${gameTime}".style()
+                Bukkit.getOnlinePlayers().forEach { eventController().sidebarManager.updateLines(it, listOf(Component.empty(), timeLeft)) }
+
+                gameTime--
+                if (gameTime <= 0) endGame()
+            }
+
+            ChristmasEventPlugin.instance.eventController.sidebarManager.dataSupplier = scores
         }
     }
 
     override fun endGame() {
+        scores.entries.sortedBy { it.value }.take(3).forEachIndexed { index, (uuid, _) ->
+            if (index == 0) {
+                formattedWinners.putIfAbsent(uuid, "1sᴛ ᴘʟᴀᴄᴇ")
+            } else if (index == 1) {
+                formattedWinners.putIfAbsent(uuid, "2ɴᴅ ᴘʟᴀᴄᴇ")
+            } else if (index == 2) {
+                formattedWinners.putIfAbsent(uuid, "3ʀᴅ ᴘʟᴀᴄᴇ")
+            }
+        }
+
+        ChristmasEventPlugin.instance.serverWorld.entities.forEach { if (it is ArmorStand || it is Boat) it.remove() }
         super.endGame()
     }
 
@@ -97,6 +121,7 @@ class SledRacing : EventMiniGame(GameConfig.SLED_RACING) {
             titleTimes(Duration.ZERO, Duration.ofSeconds(2), Duration.ofMillis(500))
         )
         player.playSound(Sound.ITEM_LODESTONE_COMPASS_LOCK)
+        scores[playerUUID] = scores.getOrDefault(playerUUID, 0) + 1
     }
 
     private fun handleFinishLineCross(player: Player) {
@@ -104,7 +129,7 @@ class SledRacing : EventMiniGame(GameConfig.SLED_RACING) {
         val lapsCompleted = lapsCompleted.getOrDefault(playerUUID, 0) + 1
 
         if (lapsCompleted >= lapsRequired) {
-            Util.runAction(PlayerType.PARTICIPANT) { it.sendMessage("<grey>${player.displayName} <game_colour>ʜᴀs ᴄᴏᴍᴘʟᴇᴛᴇᴅ ᴛʜᴇ ʀᴀᴄᴇ!".style()) }
+            Util.runAction(PlayerType.PARTICIPANT) { it.sendMessage("<grey>${player.name} <game_colour>ʜᴀs ᴄᴏᴍᴘʟᴇᴛᴇᴅ ᴛʜᴇ ʀᴀᴄᴇ!".style()) }
 
             player.title(
                 "<game_colour>ᴄᴏɴɢʀᴀᴛᴜʟᴀᴛɪᴏɴs!".style(), "<grey>ʏᴏᴜ ʜᴀᴠᴇ ᴄᴏᴍᴘʟᴇᴛᴇᴅ ᴛʜᴇ ʀᴀᴄᴇ!".style(),
@@ -112,6 +137,7 @@ class SledRacing : EventMiniGame(GameConfig.SLED_RACING) {
             )
             player.playSound(Sound.UI_TOAST_CHALLENGE_COMPLETE)
             currentCheckPoint.remove(playerUUID)
+            scores[playerUUID] = scores.getOrDefault(playerUUID, 0) + 1
 
         } else {
             this.lapsCompleted[playerUUID] = lapsCompleted

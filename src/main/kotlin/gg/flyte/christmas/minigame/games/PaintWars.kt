@@ -167,7 +167,7 @@ class PaintWars : EventMiniGame(GameConfig.PAINT_WARS) {
         for (entry in scores) eventController().addPoints(entry.key, entry.value)
 
         scores.entries
-            .sortedByDescending { it.value }
+            .sortedBy { it.value }
             .take(3)
             .also { it.forEach {
                 formattedWinners[it.key] = "${it.value} ʙʟᴏᴄᴋ${if (it.value > 1) "ѕ" else ""}" }
@@ -177,7 +177,7 @@ class PaintWars : EventMiniGame(GameConfig.PAINT_WARS) {
     }
 
     private fun updateScoreboard() {
-        val timeLeft = "<aqua>ᴛɪᴍᴇ ʟᴇғᴛ: <red><b>${gameTime}".style()
+        val timeLeft = "<aqua>ᴛɪᴍᴇ ʟᴇꜰᴛ: <red><b>${gameTime}".style()
         Bukkit.getOnlinePlayers().forEach { eventController().sidebarManager.updateLines(it, listOf(Component.empty(), timeLeft)) }
     }
 
@@ -266,4 +266,3 @@ class PaintWars : EventMiniGame(GameConfig.PAINT_WARS) {
         }
     }
 }
-// TODO<Map> make all LIGHT blocks one block higher.

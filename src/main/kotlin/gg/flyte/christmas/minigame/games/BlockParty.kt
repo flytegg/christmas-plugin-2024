@@ -388,7 +388,7 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
                         packetToSend = WrapperPlayServerEntityMetadata(npc.npc.id, listOf(EntityData(6, EntityDataTypes.ENTITY_POSE, pose)))
                     }
 
-                    if (loopedPlayer != null) packetToSend.sendPacket(player)
+                    if (loopedPlayer != null) packetToSend.sendPacket(loopedPlayer)
                 } // NPC Crouching & Swinging
 
                 var jumpIndex = 0
@@ -561,34 +561,32 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
     override fun handleDonation(tier: DonationTier) {
         when (tier) {
             DonationTier.LOW -> {
-                Util.runAction(PlayerType.OPTED_OUT) { it.sendMessage("<game_colour>Everyone has received <aqua>3 snowballs<game_colour>!".style()) }
-                Util.runAction(PlayerType.PARTICIPANT) { setNextAvailableSlot(it, ItemStack(Material.SNOWBALL, 3)) }
+                Util.runAction(PlayerType.OPTED_OUT) { it.sendMessage("<game_colour>Everyone has received <red>6 snowballs<game_colour>!".style()) }
+                Util.runAction(PlayerType.PARTICIPANT) { setNextAvailableSlot(it, ItemStack(Material.SNOWBALL, 6)) }
             }
 
             DonationTier.MEDIUM -> {
-                Util.runAction(PlayerType.OPTED_OUT) { it.sendMessage("<game_colour>Everyone has received a <aqua>fireball<game_colour>!".style()) }
+                Util.runAction(PlayerType.OPTED_OUT) { it.sendMessage("<game_colour>Everyone has received a <red>fireball<game_colour>!".style()) }
                 Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) { setNextAvailableSlot(it, ItemStack(Material.FIRE_CHARGE)) }
             }
 
             DonationTier.HIGH -> {
-                Util.runAction(PlayerType.OPTED_OUT) { it.sendMessage("<game_colour>Everyone has received a <aqua>short-fuse TNT<game_colour>!".style()) }
+                Util.runAction(PlayerType.OPTED_OUT) { it.sendMessage("<game_colour>Everyone has received a <red>short-fuse TNT<game_colour>!".style()) }
                 Util.runAction(PlayerType.PARTICIPANT) { setNextAvailableSlot(it, ItemStack(Material.TNT)) }
             }
         }
     }
 
-    private enum class PowerUp(
-        val displayName: String,
-    ) {
-        ENDER_PEARL("ᴇɴᴅᴇʀ ᴘᴇᴀʀʟ"),
-        COLOR_BOMB("ᴄᴏʟᴏᴜʀ ʙᴏᴍʙ"),
-        JUMP_BOOST("ᴊᴜᴍᴘ ʙᴏᴏѕᴛ"),
-        FISHING_ROD("ꜰɪѕʜɪɴɢ ʀᴏᴅ"),
-        SLOWNESS("ѕʟᴏᴡɴᴇѕѕ"),
+    private enum class PowerUp(val displayName: String) {
         BLINDNESS("ʙʟɪɴᴅɴᴇѕѕ"),
-        RANDOM_TP("ʀᴀɴᴅᴏᴍ ᴛᴘ"),
-        PUSH_SELF("ʀᴀɴᴅᴏᴍ ѕᴇʟꜰ-ʙᴏᴏѕᴛ"),
+        COLOR_BOMB("ᴄᴏʟᴏᴜʀ ʙᴏᴍʙ"),
+        DOUBLE_JUMP("ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘ"),
+        ENDER_PEARL("ᴇɴᴅᴇʀ ᴘᴇᴀʀʟ"),
+        FISHING_ROD("ꜰɪѕʜɪɴɢ ʀᴏᴅ"),
+        JUMP_BOOST("ᴊᴜᴍᴘ ʙᴏᴏѕᴛ"),
         PUSH_RANDOM("ʀᴀɴᴅᴏᴍ ᴘʟᴀʏᴇʀ ʙᴏᴏѕᴛ"),
-        DOUBLE_JUMP("ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘ")
+        PUSH_SELF("ʀᴀɴᴅᴏᴍ ѕᴇʟꜰ-ʙᴏᴏѕᴛ"),
+        RANDOM_TP("ʀᴀɴᴅᴏᴍ ᴛᴘ"),
+        SLOWNESS("ѕʟᴏᴡɴᴇѕѕ")
     }
 }

@@ -105,6 +105,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
 
                 eventController().sidebarManager.update() // enable again after sequence ended.
                 startGame()
+                state = GameState.LIVE
             }
         }
     }
@@ -133,8 +134,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
         eliminatedPlayers.add(player.uniqueId)
         player.teleport(gameConfig.spectatorSpawnLocations.random())
         player.clearActivePotionEffects()
-        player.inventory.storageContents = arrayOf()
-        player.inventory.setItemInOffHand(null)
+        player.formatInventory()
 
         if (reason == EliminationReason.EXPIRED_SESSION) {
             player.teleport(gameConfig.spectatorSpawnLocations.random())
@@ -163,9 +163,8 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
         eliminatedPlayers.clear()
         eventController().currentGame = null
         eventController().sidebarManager.dataSupplier = eventController().points
-        eventController().serialisePoints()
         eventController().songPlayer?.isPlaying = true
-        WorldNPC.refreshPodium()
+        eventController().serialisePoints()
         showGameResults()
     }
 
@@ -210,7 +209,11 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
      * @see [GameConfig.eliminateOnLeave]
      */
     fun onPlayerQuit(player: Player) {
-        if (state == GameState.LIVE && gameConfig.eliminateOnLeave) eliminate(player, EliminationReason.EXPIRED_SESSION)
+        if (state == GameState.OVERVIEWING) {
+            player.teleport(gameConfig.spectatorSpawnLocations.random()) // left while overviewing, temporarily hold them away from playspace.
+        } else if (state == GameState.LIVE) {
+            if (gameConfig.eliminateOnLeave) eliminate(player, EliminationReason.EXPIRED_SESSION)
+        }
     }
 
     /**
@@ -361,6 +364,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
                     displays.forEach { it.remove() }
                 }
 
+                WorldNPC.refreshPodium()
                 eventController().sidebarManager.update()
             }
         }

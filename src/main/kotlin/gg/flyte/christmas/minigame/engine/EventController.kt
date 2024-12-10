@@ -47,7 +47,7 @@ class EventController {
     val sidebarManager = SidebarManager().also { it.dataSupplier = points }
     val donors = mutableSetOf<UUID>()
     var totalDonations = 0
-    var donationGoal = 2000
+    var donationGoal = 10000
     var donationBossBar = BossBar.bossBar(
         getBossBarMessage(),
         0F,
@@ -92,7 +92,7 @@ class EventController {
             when (seconds) {
                 0 -> {
                     currentGame!!.startGameOverview()
-                    currentGame!!.state = GameState.LIVE
+                    currentGame!!.state = GameState.OVERVIEWING
                     cancel()
                 }
 
@@ -101,6 +101,7 @@ class EventController {
                         countdownMap[seconds]?.let { number ->
                             it.title(number, Component.empty(), titleTimes(Duration.ZERO, Duration.ofMillis(1100), Duration.ZERO))
                             it.playSound(Sound.UI_BUTTON_CLICK)
+                            it.sendMessage("<grey>Game starting in <0> seconds...".style(number))
                         }
                     }
                     seconds--
@@ -124,17 +125,27 @@ class EventController {
      */
     fun onPlayerJoin(player: Player) {
         if (currentGame == null) {
-            player.showBossBar(eventController().donationBossBar)
             player.teleport(ChristmasEventPlugin.instance.lobbySpawn)
+            player.showBossBar(eventController().donationBossBar)
         } else {
-            if (currentGame!!.state == GameState.WAITING_FOR_PLAYERS) {
-                if (enoughPlayers()) {
-                    currentGame!!.state = GameState.COUNTDOWN
-                    countdown()
+            when (currentGame!!.state) {
+                GameState.IDLE, GameState.COUNTDOWN -> {
+                    player.teleport(ChristmasEventPlugin.instance.lobbySpawn)
+                    player.showBossBar(eventController().donationBossBar)
                 }
-            }
 
-            if (currentGame!!.state == GameState.LIVE) currentGame!!.onPlayerJoin(player)
+                GameState.WAITING_FOR_PLAYERS -> {
+                    player.teleport(ChristmasEventPlugin.instance.lobbySpawn)
+                    player.showBossBar(eventController().donationBossBar)
+
+                    if (enoughPlayers()) {
+                        currentGame!!.state = GameState.COUNTDOWN
+                        countdown()
+                    }
+                }
+                GameState.LIVE -> currentGame!!.onPlayerJoin(player)
+                else -> return
+            }
         }
     }
 
@@ -146,7 +157,6 @@ class EventController {
         sidebarManager.remove(player)
 
         when (currentGame?.state) {
-
             GameState.COUNTDOWN -> {
                 delay(1) { // getOnlinePlayers [called through enoughPlayers()] does not update until the next tick
                     if (!enoughPlayers()) {
@@ -163,7 +173,9 @@ class EventController {
                     }
                 }
             }
-            GameState.LIVE -> currentGame!!.onPlayerQuit(player)
+
+            GameState.LIVE, GameState.OVERVIEWING -> currentGame!!.onPlayerQuit(player)
+
             else -> return
         }
     }
@@ -224,12 +236,10 @@ class EventController {
      * @see EventMiniGame.handleDonation
      */
     fun handleDonation(event: DonateEvent) {
-
-        if (event.value == null) return // no clue why this would happen, but just in case
-        val value = event.value.toDouble()
+        if (event.amount == null) return // no clue why this would happen, but just in case
+        var value = event.amount.toDouble()
         if (value < 0) return // no negative donations (don't think this is possible)
 
-        totalDonations += value.toInt()
         updateDonationBar()
 
         Bukkit.getOnlinePlayers().forEach {
@@ -250,18 +260,14 @@ class EventController {
 
             // announce donation
             val charitableDonor = event.donorName ?: "mysterious donor"
-            val numberValue = event.value
-            val currency = event.currency
-            it.sendMessage("<grey><gradient:#2c8c99:#42D9C8>ᴅᴏɴᴀᴛɪᴏɴ ᴍᴀᴅᴇ ––> ᴛʜᴀɴᴋ ʏᴏᴜ,<#FF72A6> $charitableDonor<gradient:#00FFF4:#00FFF4>, <gradient:#42D9C8:#2c8c99>ꜰᴏʀ ᴅᴏɴᴀᴛɪɴɢ $numberValue $currency.".style())
+            val numberValue = event.amount
+            it.sendMessage("<grey><gradient:#A3ADFF:#00FFF4>DONATION MADE ––> Thank you,</gradient><#FF72A6> $charitableDonor<gradient:#00FFF4:#00FFF4>, <gradient:#00FFF4:#A3ADFF>for donating $$numberValue.</gradient>".style())
         }
 
         async {
             event.donorName?.let {
                 Bukkit.getOfflinePlayer(it).let { donors.add(it.uniqueId) }
             }
-
-            ChristmasEventPlugin.instance.config.set("donations.totalDonations", totalDonations)
-            ChristmasEventPlugin.instance.saveConfig()
         }
 
         currentGame?.handleDonation(DonationTier.getTier(value))

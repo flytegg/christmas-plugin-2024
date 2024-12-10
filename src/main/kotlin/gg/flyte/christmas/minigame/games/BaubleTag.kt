@@ -23,8 +23,6 @@ import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.CompassMeta
 import org.bukkit.inventory.meta.SkullMeta
-import org.bukkit.potion.PotionEffect
-import org.bukkit.potion.PotionEffectType
 import java.util.*
 
 class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
@@ -47,6 +45,7 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
         player.formatInventory()
         player.gameMode = GameMode.ADVENTURE
         player.teleport(gameConfig.spawnPoints.random().randomLocation())
+        player.walkSpeed = 0.30F
     }
 
     override fun startGame() {
@@ -111,6 +110,9 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
             player.world.playSound(player.location, Sound.BLOCK_GLASS_BREAK, 1F, 1F)
             player.world.spawnParticle(Particle.BLOCK, player.eyeLocation, 10000, 0.5, 0.5, 0.5, Bukkit.createBlockData(Material.GLASS))
             player.teleport(gameConfig.spawnPoints.random().randomLocation())
+            player.formatInventory()
+            player.clearActivePotionEffects()
+            player.walkSpeed = 0.2F
         }
 
         super.eliminate(player, reason)
@@ -127,10 +129,14 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
 
     override fun endGame() {
         eventController().addPoints(remainingPlayers().first().uniqueId, 15)
+        Util.runAction(PlayerType.PARTICIPANT) { it.walkSpeed = 0.2F }
         super.endGame()
     }
 
     private fun tagPlayer(newTagger: Player, oldTagger: Player? = null) {
+        if (remainingPlayers().none { it.uniqueId == newTagger.uniqueId }) return
+        if (oldTagger != null && remainingPlayers().none { it.uniqueId == oldTagger.uniqueId }) return
+
         this.taggedPlayers.add(newTagger.uniqueId)
 
         if (oldTagger != null) {
@@ -139,7 +145,7 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
             oldTagger.formatInventory()
 
             oldTagger.clearActivePotionEffects()
-            oldTagger.addPotionEffect(PotionEffect(PotionEffectType.SPEED, 1000000, 2, false, false, false))
+            oldTagger.walkSpeed = 0.30F // use walkSpeed rather than potions to prevent stephen-like FOV changes
 
             newTagger.sendMessage("<red>ʏᴏᴜ ʜᴀᴠᴇ ʙᴇᴇɴ ᴛᴀɢɢᴇᴅ ʙʏ <game_colour>${oldTagger.name}!".style())
         } else newTagger.sendMessage("« <red><b>ʏᴏᴜ <game_colour>ʜᴀᴠᴇ ѕᴛᴀʀᴛᴇᴅ ᴛʜɪѕ ʀᴏᴜɴᴅ ʙᴇɪɴɢ <red>ᴛʜᴇ ɪᴛ!<reset> »".style())
@@ -151,7 +157,7 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
         newTagger.equipment.helmet = baubleForRound
 
         newTagger.clearActivePotionEffects()
-        newTagger.addPotionEffect(PotionEffect(PotionEffectType.SPEED, 1000000, 3, false, false, false))
+        delay(20) { newTagger.walkSpeed = 0.40F }
 
         newTagger.world.spawn(newTagger.location, Firework::class.java) {
             it.fireworkMeta = it.fireworkMeta.apply {
@@ -209,7 +215,13 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
                 damage = 0.0
             }
 
-            if (taggedPlayers.contains(damager.uniqueId)) tagPlayer(entity as Player, damager)
+            if (taggedPlayers.contains(damager.uniqueId)) {
+                if (taggedPlayers.contains(entity.uniqueId)) {
+                    return@event
+                } else {
+                    tagPlayer(entity as Player, damager)
+                }
+            }
         }
     }
 

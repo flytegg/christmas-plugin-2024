@@ -84,6 +84,7 @@ fun Player.formatInventory() {
         }
     }
 
+    this.closeInventory()
     this.inventory.clear()
     this.equipment.helmet = applyChristmasHat()
 }
