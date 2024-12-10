@@ -417,6 +417,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
     private fun powerfulSnowballs(name: String?) {
         remainingPowerfulSnowballTicks += 20 * 10
+        snowballBarTicks += 20 * 10
 
         remainingPlayers().forEach {
             if (name != null) {
