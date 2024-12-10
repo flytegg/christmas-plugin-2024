@@ -290,6 +290,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             if (entity !is Snowball) return@event
 
             if (powerfulSnowballs) {
+                Bukkit.broadcastMessage("SNOWBALL IS POWERFUL")
                 entity.velocity = entity.velocity.multiply(2)
             }
         }
@@ -300,6 +301,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
             if (floorLevelBlocks.any { it.block == hitBlock }) {
                 if (powerfulSnowballs) {
+                    Bukkit.broadcastMessage("SNOWBALL IS POWERFUL")
                     hitBlock!!.type = Material.AIR
                 } else {
                     wearDownSnowBlock(hitBlock!!)
