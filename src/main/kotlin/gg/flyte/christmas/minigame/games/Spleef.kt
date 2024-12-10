@@ -49,15 +49,20 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
     private var secondsElapsed = 0
 
-    private val bossbar = BossBar.bossBar("<gold><b>UNLIMITED DOUBLE JUMPS".style(), 1.0F, BossBar.Color.BLUE, BossBar.Overlay.NOTCHED_6)
-    private var bossbarMaxTicks = 0.0F
-
     private var doubleJumps = mutableMapOf<UUID, Int>()
+
     private var unlimitedJumps = false
     private var remainingUnlimitedJumpTicks = 0
 
+    private val unlimitedJumpBar = BossBar.bossBar("<gold><b>UNLIMITED DOUBLE JUMPS".style(), 1.0F, BossBar.Color.BLUE, BossBar.Overlay.NOTCHED_6)
+    private var unlimitedJumpBarTicks = 0.0F
+
     private var powerfulSnowballs = false
     private var remainingPowerfulSnowballTicks = 0
+
+    private val snowballBar = BossBar.bossBar("<gold><b>POWERFUL SNOWBALLS".style(), 1.0F, BossBar.Color.WHITE, BossBar.Overlay.NOTCHED_6)
+    private var snowballBarTicks = 0.0F
+
 
     override fun startGameOverview() {
         super.startGameOverview()
@@ -131,7 +136,8 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
         player.apply {
             allowFlight = false
-            bossbar.removeViewer(player)
+            unlimitedJumpBar.removeViewer(player)
+            snowballBar.removeViewer(player)
 
             @Suppress("DuplicatedCode") // yes ik but im lazy and can't think of any other animations
             if (reason == EliminationReason.ELIMINATED) {
@@ -184,7 +190,8 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
         remainingPlayers().forEach {
             it.allowFlight = false
-            bossbar.removeViewer(it)
+            unlimitedJumpBar.removeViewer(it)
+            snowballBar.removeViewer(it)
         }
 
         super.endGame()
@@ -219,7 +226,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
                 remainingPlayers().forEach {
                     it.allowFlight = true
-                    bossbar.addViewer(it)
+                    unlimitedJumpBar.addViewer(it)
                 }
             }
 
@@ -227,15 +234,15 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 return@repeatingTask
             }
 
-            bossbar.progress(Math.clamp(remainingUnlimitedJumpTicks / bossbarMaxTicks, 0.0F, 1.0F))
+            unlimitedJumpBar.progress(Math.clamp(remainingUnlimitedJumpTicks / unlimitedJumpBarTicks, 0.0F, 1.0F))
 
             if (remainingUnlimitedJumpTicks-- <= 0) {
                 unlimitedJumps = false
-                bossbarMaxTicks = 0.0F
+                unlimitedJumpBarTicks = 0.0F
 
                 remainingPlayers().forEach {
                     it.allowFlight = doubleJumps[it.uniqueId]!! > 0
-                    bossbar.removeViewer(it)
+                    unlimitedJumpBar.removeViewer(it)
                 }
             }
         }
@@ -251,8 +258,15 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 return@repeatingTask
             }
 
+            snowballBar.progress(Math.clamp(remainingPowerfulSnowballTicks / snowballBarTicks, 0.0F, 1.0F))
+
             if (remainingPowerfulSnowballTicks-- <= 0) {
                 powerfulSnowballs = false
+                snowballBarTicks = 0.0F
+
+                remainingPlayers().forEach {
+                    snowballBar.removeViewer(it)
+                }
             }
         }
     }
@@ -290,7 +304,6 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             if (entity !is Snowball) return@event
 
             if (powerfulSnowballs) {
-                Bukkit.broadcastMessage("SNOWBALL IS POWERFUL")
                 entity.velocity = entity.velocity.multiply(2)
             }
         }
@@ -301,7 +314,6 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
             if (floorLevelBlocks.any { it.block == hitBlock }) {
                 if (powerfulSnowballs) {
-                    Bukkit.broadcastMessage("SNOWBALL IS POWERFUL")
                     hitBlock!!.type = Material.AIR
                 } else {
                     wearDownSnowBlock(hitBlock!!)
@@ -361,7 +373,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     }
 
     private fun lowTierDonation(donorName: String?) {
-        val random = (0..2).random();
+        val random = (0..2).random()
 
         when (random) {
             0 -> extraDoubleJumps(donorName)
@@ -388,7 +400,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
     private fun unlimitedDoubleJumps(name: String?) {
         remainingUnlimitedJumpTicks += 20 * 5
-        bossbarMaxTicks += 20 * 5
+        unlimitedJumpBarTicks += 20 * 5
 
         remainingPlayers().forEach {
             if (name != null) {
