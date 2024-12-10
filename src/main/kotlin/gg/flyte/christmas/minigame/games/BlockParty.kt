@@ -367,7 +367,7 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
             location.y += 1
 
             val randomColour: String = listOf("4", "c", "6", "2", "a", "9").random()
-            val displayName: String = "&$randomColour${player.name}".colourise()
+            val displayName: String = "§$randomColour${player.name}".colourise()
 
             val npc = WorldNPC.createFromLive(displayName, player, location).also {
                 worldNPCs.add(it)

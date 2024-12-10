@@ -396,7 +396,7 @@ class MusicalMinecarts : EventMiniGame(GameConfig.MUSICAL_MINECARTS) {
                     minecart.velocity = direction.normalize()
                     minecarts.add(minecart)
 
-                    val displayName = "&${listOf("4", "c", "6", "2", "a", "9").random()}${player.name}".colourise()
+                    val displayName = "§${listOf("4", "c", "6", "2", "a", "9").random()}${player.name}".colourise()
                     val npc = WorldNPC.createFromLive(displayName, player, location).also {
                         worldNPCs.add(it)
                         it.spawnForAll()

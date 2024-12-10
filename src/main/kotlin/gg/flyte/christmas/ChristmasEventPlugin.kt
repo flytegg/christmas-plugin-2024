@@ -118,7 +118,7 @@ class ChristmasEventPlugin : JavaPlugin() {
                 "<blue>" to "9",
             ).entries.random()
 
-            val displayName = "&${randomColour.value}${MojangAPIUtil.requestPlayerName(uniqueId)}".colourise()
+            val displayName = "§${randomColour.value}${MojangAPIUtil.requestPlayerName(uniqueId)}".colourise()
 
             val contributorNPC = WorldNPC.createFromUniqueId(displayName, uniqueId, location).also { worldNPCs += it }
             contributorNPC.npc.prefixName = "${randomColour.key}<obf>W ".style()
