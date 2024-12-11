@@ -106,6 +106,16 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             addUnlimitedJumpsTask()
             addPowerfulSnowballsTask()
 
+            tasks += repeatingTask(1) {
+                remainingPlayers().forEach {
+                    if (it.location.blockY < 70) {
+                        if (remainingPlayers().contains(it)) {
+                            eliminate(it, EliminationReason.ELIMINATED)
+                        }
+                    }
+                }
+            }
+
             tasks += repeatingTask(20) {
                 secondsElapsed++
 
@@ -321,14 +331,6 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                     hitBlock!!.type = Material.AIR
                 } else {
                     wearDownSnowBlock(hitBlock!!)
-                }
-            }
-        }
-
-        listeners += event<PlayerMoveEvent> {
-            if (player.location.blockY < 70) {
-                if (remainingPlayers().contains(player)) {
-                    eliminate(player, EliminationReason.ELIMINATED)
                 }
             }
         }
