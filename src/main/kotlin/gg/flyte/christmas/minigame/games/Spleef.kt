@@ -1,6 +1,5 @@
 package gg.flyte.christmas.minigame.games
 
-import com.destroystokyo.paper.entity.ai.VanillaGoal
 import gg.flyte.christmas.ChristmasEventPlugin
 import gg.flyte.christmas.donation.DonationTier
 import gg.flyte.christmas.minigame.engine.EventMiniGame
@@ -21,7 +20,15 @@ import gg.flyte.twilight.scheduler.delay
 import gg.flyte.twilight.scheduler.repeatingTask
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
+import net.minecraft.server.level.ServerLevel
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.ai.goal.RangedAttackGoal
+import net.minecraft.world.entity.animal.SnowGolem
+import net.minecraft.world.entity.projectile.Projectile
+import net.minecraft.world.item.Items
+import net.minecraft.world.level.Level
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Material
@@ -29,7 +36,6 @@ import org.bukkit.Sound
 import org.bukkit.attribute.Attribute
 import org.bukkit.block.Block
 import org.bukkit.block.data.type.Snow
-import org.bukkit.craftbukkit.entity.CraftSnowman
 import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
 import org.bukkit.entity.Snowball
@@ -43,6 +49,7 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.util.Vector
 import java.util.*
+import kotlin.math.sqrt
 
 class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     private var overviewTasks = mutableListOf<TwilightRunnable>()
@@ -219,6 +226,8 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             unlimitedJumpBar.removeViewer(it)
             snowballBar.removeViewer(it)
         }
+
+        snowmen.forEach { it.remove() }
 
         super.endGame()
     }
@@ -460,20 +469,15 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     }
 
     private fun spawnSnowGolem(name: String?) {
-        ChristmasEventPlugin.instance.serverWorld.spawn(gameConfig.centrePoint, Snowman::class.java) {
+        CustomSnowGolem(ChristmasEventPlugin.instance.nmsServerWorld).spawn().let {
             it.customName(if (name != null) "$name's Snow Golem".style() else "Angry Snow Golem".style())
+
             it.getAttribute(Attribute.FOLLOW_RANGE)!!.baseValue = 64.0
 
-            val nmsSnowman = (it as CraftSnowman).handle
-            val goalManager = ChristmasEventPlugin.instance.server.mobGoals
-            goalManager.removeGoal(it, VanillaGoal.RANGED_ATTACK)
-
-            nmsSnowman.goalSelector.removeAllGoals {
-                goal -> goal is RangedAttackGoal
-            }
-
-            nmsSnowman.goalSelector.addGoal(1, RangedAttackGoal(
-                nmsSnowman, 2.25, 2, 25.0F))
+            it.location.set(
+                gameConfig.centrePoint.x.toDouble(),
+                gameConfig.centrePoint.y.toDouble(),
+                gameConfig.centrePoint.z.toDouble())
 
             snowmen.add(it)
         }
@@ -484,6 +488,45 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             } else {
                 it.sendMessage("<green>A snowman has joined the game! (donation)".style())
             }
+        }
+    }
+
+    private class CustomSnowGolem(world: Level) : SnowGolem(EntityType.SNOW_GOLEM, world) {
+        fun spawn(): Snowman {
+            level().addFreshEntity(this)
+
+            return bukkitEntity as Snowman
+        }
+
+        override fun registerGoals() {
+            super.registerGoals()
+
+            val attackGoal = RangedAttackGoal(this, 2.25, 2, 25.0F)
+
+            goalSelector.removeAllGoals { goal -> goal is RangedAttackGoal }
+            goalSelector.addGoal(1, attackGoal)
+        }
+
+        override fun performRangedAttack(target: LivingEntity, pullProgress: Float) {
+            val dx = target.x - this.x
+            val dz = target.z - this.z
+            val targetY = target.y
+
+            val distanceFactor = sqrt(dx * dx + dz * dz) * 0.2
+            val world = this.level()
+
+            if (world is ServerLevel) {
+                val item = Items.SNOWBALL.defaultInstance
+                val snowball = net.minecraft.world.entity.projectile.Snowball(world, this, item)
+
+                Projectile.spawnProjectile(snowball, world, item) { snowballEntity ->
+                    val dy = targetY + distanceFactor - snowballEntity.y
+
+                    snowballEntity.shoot(dx, dy, dz, 1.6f, 12.0f)
+                }
+            }
+
+            playSound(SoundEvents.SNOW_GOLEM_SHOOT, 1.0f, 0.4f / (getRandom().nextFloat() * 0.4f + 0.8f))
         }
     }
 }
