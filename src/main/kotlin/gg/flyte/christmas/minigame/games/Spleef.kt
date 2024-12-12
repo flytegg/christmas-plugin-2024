@@ -29,10 +29,7 @@ import net.minecraft.world.entity.animal.SnowGolem
 import net.minecraft.world.entity.projectile.Projectile
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.Level
-import org.bukkit.Bukkit
-import org.bukkit.GameMode
-import org.bukkit.Material
-import org.bukkit.Sound
+import org.bukkit.*
 import org.bukkit.attribute.Attribute
 import org.bukkit.block.Block
 import org.bukkit.block.data.type.Snow
@@ -41,6 +38,7 @@ import org.bukkit.entity.Player
 import org.bukkit.entity.Snowball
 import org.bukkit.entity.Snowman
 import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.entity.CreatureSpawnEvent
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.event.entity.ProjectileLaunchEvent
 import org.bukkit.event.player.PlayerToggleFlightEvent
@@ -471,16 +469,11 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     }
 
     private fun spawnSnowGolem(name: String?) {
-        CustomSnowGolem(ChristmasEventPlugin.instance.nmsServerWorld).spawn().let {
+        CustomSnowGolem(ChristmasEventPlugin.instance.nmsServerWorld, gameConfig.centrePoint).spawn().let {
             it.customName(if (name != null) "<aqua>$name's</aqua> <game_colour>Snow Golem".style() else "<game_colour>Angry Snow Golem".style())
             it.isCustomNameVisible = true
 
             it.getAttribute(Attribute.FOLLOW_RANGE)!!.baseValue = 64.0
-
-            it.location.set(
-                gameConfig.centrePoint.x.toDouble(),
-                gameConfig.centrePoint.y.toDouble(),
-                gameConfig.centrePoint.z.toDouble())
 
             snowmen.add(it)
         }
@@ -494,9 +487,13 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
     }
 
-    private class CustomSnowGolem(private val world: Level) : SnowGolem(EntityType.SNOW_GOLEM, world) {
+    private class CustomSnowGolem(private val world: Level, location: Location) : SnowGolem(EntityType.SNOW_GOLEM, world) {
+        init {
+            setPos(location.x, location.y, location.z)
+        }
+
         fun spawn(): Snowman {
-            world.addFreshEntity(this)
+            world.addFreshEntity(this, CreatureSpawnEvent.SpawnReason.CUSTOM)
 
             return bukkitEntity as Snowman
         }
