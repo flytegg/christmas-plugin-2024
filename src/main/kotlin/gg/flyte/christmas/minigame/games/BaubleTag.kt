@@ -55,6 +55,7 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
         simpleCountdown {
             newRound()
             manageActionBars()
+            donationEventsEnabled = true
         }
     }
 
@@ -77,7 +78,7 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
 
         tasks += repeatingTask(1, TimeUnit.SECONDS) {
             Bukkit.getOnlinePlayers().forEach {
-                var isTagger = taggedPlayers.contains(it.uniqueId)
+                val isTagger = taggedPlayers.contains(it.uniqueId)
                 eventController().sidebarManager.updateLines(
                     it, listOf(
                         Component.empty(),
@@ -106,33 +107,29 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
     }
 
     override fun eliminate(player: Player, reason: EliminationReason) {
-        Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) { it.sendMessage("<red>${player.name} <grey>has been eliminated!".style()) }
-
-        if (reason == EliminationReason.ELIMINATED) {
-            player.world.createExplosion(player.location, 3F, false, false)
-            player.world.playSound(player.location, Sound.BLOCK_GLASS_BREAK, 1F, 1F)
-            player.world.spawnParticle(Particle.BLOCK, player.eyeLocation, 10000, 0.5, 0.5, 0.5, Bukkit.createBlockData(Material.GLASS))
-            player.teleport(gameConfig.spawnPoints.random().randomLocation())
-            player.formatInventory()
-            player.clearActivePotionEffects()
-            player.walkSpeed = 0.2F
-        }
-
+        Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) { it.sendMessage("<red>${player.name} <grey>ʜᴀѕ ʙᴇᴇɴ ᴇʟɪᴍɪɴᴀᴛᴇᴅ!".style()) }
+        player.walkSpeed = 0.2F
+        player.world.createExplosion(player.location, 3F, false, false)
+        player.world.playSound(player.location, Sound.BLOCK_GLASS_BREAK, 1F, 1F)
+        player.world.spawnParticle(Particle.BLOCK, player.eyeLocation, 10000, 0.5, 0.5, 0.5, Bukkit.createBlockData(Material.GLASS))
         super.eliminate(player, reason)
         when (remainingPlayers().size) {
             1 -> {
-                formattedWinners.put(player.uniqueId, "2nd Place!")
-                formattedWinners.put(remainingPlayers().first().uniqueId, "1st Place!")
+                formattedWinners[player.uniqueId] = "2ѕᴛ ᴘʟᴀᴄᴇ!"
+                formattedWinners[remainingPlayers().first().uniqueId] = "1ѕᴛ ᴘʟᴀᴄᴇ!"
                 endGame()
             }
 
-            2 -> formattedWinners.put(player.uniqueId, "3nd Place!")
+            2 -> formattedWinners[player.uniqueId] = "3ѕᴛ ᴘʟᴀᴄᴇ!"
         }
     }
 
     override fun endGame() {
+        donationEventsEnabled = false
+
         eventController().addPoints(remainingPlayers().first().uniqueId, 15)
         Util.runAction(PlayerType.PARTICIPANT) { it.walkSpeed = 0.2F }
+
         super.endGame()
     }
 
@@ -144,14 +141,14 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
 
         if (oldTagger != null) {
             this.taggedPlayers.remove(oldTagger.uniqueId)
-            oldTagger.sendMessage("<game_colour>You have tagged <red>${newTagger.name}!".style())
+            oldTagger.sendMessage("<game_colour>ʏᴏᴜ ʜᴀᴠᴇ ᴛᴀɢɢᴇᴅ <red>${newTagger.name}!".style())
             oldTagger.formatInventory()
 
             oldTagger.clearActivePotionEffects()
             oldTagger.walkSpeed = 0.30F // use walkSpeed rather than potions to prevent stephen-like FOV changes
 
-            newTagger.sendMessage("<red>You have been tagged by <game_colour>${oldTagger.name}!".style())
-        } else newTagger.sendMessage("« <red><b>You <game_colour>have started this round being <red>the IT!<reset> »".style())
+            newTagger.sendMessage("<red>ʏᴏᴜ ʜᴀᴠᴇ ʙᴇᴇɴ ᴛᴀɢɢᴇᴅ ʙʏ <game_colour>${oldTagger.name}!".style())
+        } else newTagger.sendMessage("« <red><b>ʏᴏᴜ <game_colour>ʜᴀᴠᴇ ѕᴛᴀʀᴛᴇᴅ ᴛʜɪѕ ʀᴏᴜɴᴅ ʙᴇɪɴɢ <red>ᴛʜᴇ ɪᴛ!<reset> »".style())
 
         newTagger.playSound(Sound.BLOCK_NOTE_BLOCK_PLING)
         newTagger.formatInventory()
@@ -192,7 +189,7 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
     private fun randomBaubleItem(): ItemStack {
         return MenuItem(ItemStack(Material.PLAYER_HEAD).apply {
             (itemMeta as SkullMeta).apply {
-                displayName("<!i><game_colour><b>Bauble".style())
+                displayName("<!i><game_colour><b>ʙᴀᴜʙʟᴇ".style())
             }
         }).setSkullTexture(baubleTextureURLs.random()).itemStack
     }
@@ -200,7 +197,7 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
     private fun getPointer(): ItemStack {
         return ItemStack(Material.COMPASS).apply {
             itemMeta = (itemMeta as CompassMeta).apply {
-                displayName("<!i><b><game_colour>Player Pointer".style())
+                displayName("<!i><b><game_colour>ᴘʟᴀʏᴇʀ ᴘᴏɪɴᴛᴇʀ".style())
             }
         }
     }
@@ -209,7 +206,7 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
         listeners += event<EntityDamageEvent>(priority = EventPriority.HIGHEST) {
             // return@event -> already cancelled by lower priority [HousekeepingEventListener]
 
-            entity as? Player ?: return@event
+            if (entity !is Player) return@event
             val damager = (this as? EntityDamageByEntityEvent)?.damager as? Player ?: return@event
 
             // allows an actual hit to go happen

@@ -107,7 +107,10 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
 
     override fun startGame() {
         overviewTask.cancel()
-        simpleCountdown { newRound() }
+        simpleCountdown {
+            newRound()
+            donationEventsEnabled = true
+        }
     }
 
     private fun newRound() {
@@ -122,12 +125,12 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
             Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) { it.playSound(Sound.ENTITY_ENDER_DRAGON_GROWL) }
             Util.runAction(PlayerType.PARTICIPANT) {
                 it.title(
-                    "<game_colour>Hard Mode!".style(), Component.empty(),
+                    "<game_colour>ʜᴀʀᴅ ᴍᴏᴅᴇ!".style(), Component.empty(),
                     titleTimes(Duration.ofMillis(300), Duration.ofSeconds(3), Duration.ofMillis(300))
                 )
-                it.sendMessage("<red><b>The floor will now change right before the timer starts... stay quick!".style())
+                it.sendMessage("<red><b>ᴛʜᴇ ꜰʟᴏᴏʀ ᴡɪʟʟ ɴᴏᴡ ᴄʜᴀɴɢᴇ ʀɪɢʜᴛ ʙᴇꜰᴏʀᴇ ᴛʜᴇ ᴛɪᴍᴇʀ ѕᴛᴀʀᴛѕ... ѕᴛᴀʏ ǫᴜɪᴄᴋ!".style())
             }
-            Util.runAction(PlayerType.OPTED_OUT) { it.sendMessage("<game_colour>The game is getting harder!".style()) }
+            Util.runAction(PlayerType.OPTED_OUT) { it.sendMessage("<game_colour>ᴛʜᴇ ɢᴀᴍᴇ ɪѕ ɢᴇᴛᴛɪɴɢ ʜᴀʀᴅᴇʀ!".style()) }
         }
 
         // let song play for a few rounds
@@ -168,7 +171,7 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
         }
 
         val timerBar: BossBar = BossBar.bossBar(
-            "<game_colour><b>Time left: $secondsForRound".style(), 1.0f, BossBar.Color.RED, BossBar.Overlay.PROGRESS
+            "<game_colour><b>ᴛɪᴍᴇ ʟᴇꜰᴛ: $secondsForRound".style(), 1.0f, BossBar.Color.RED, BossBar.Overlay.PROGRESS
         ).also { currentBossBar = it }
 
         Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) { it.showBossBar(timerBar) }
@@ -219,7 +222,7 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
                 timerBar.progress(progress.toFloat())
 
                 val secondsRemaining = ceil(remainingTicks / 20.0).toInt()
-                timerBar.name("<game_colour><b>Time left: $secondsRemaining".style())
+                timerBar.name("<game_colour><b>ᴛɪᴍᴇ ʟᴇꜰᴛ: $secondsRemaining".style())
                 remainingTicks--
             }
         }
@@ -230,56 +233,54 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
 
     override fun eliminate(player: Player, reason: EliminationReason) {
         Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) {
-            it.sendMessage("<red>${player.name} <grey>has been eliminated!".style())
+            it.sendMessage("<red>${player.name} <grey>ʜᴀѕ ʙᴇᴇɴ ᴇʟɪᴍɪɴᴀᴛᴇᴅ!".style())
             it.playSound(Sound.ENTITY_PLAYER_HURT)
         }
 
-        player.apply {
-            currentBossBar?.let { hideBossBar(it) }
-            if (allowFlight) allowFlight = false // if had double-jump
+        currentBossBar?.let { player.hideBossBar(it) }
+        if (player.allowFlight) player.allowFlight = false // if had double-jump
+        if (player.gameMode != GameMode.SPECTATOR) player.world.strikeLightning(player.location) // don't strike if in camera sequence
 
-            if (reason == EliminationReason.ELIMINATED) {
-                if (gameMode != GameMode.SPECTATOR) world.strikeLightning(location) // don't strike if in camera sequence
+        // animate death
+        if (reason == EliminationReason.ELIMINATED) {
+            player.addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, 20 * 4, 1, false, false, false))
 
-                val itemDisplay = world.spawn(location, ItemDisplay::class.java) {
-                    it.setItemStack(ItemStack(Material.AIR))
-                    it.teleportDuration = 59 // max (minecraft limitation)
+            val itemDisplay = player.world.spawn(player.location, ItemDisplay::class.java) {
+                it.setItemStack(ItemStack(Material.AIR))
+                it.teleportDuration = 59 // max (minecraft limitation)
+            }
+            delay(1) {
+                val randomSpecLocation = gameConfig.spectatorSpawnLocations.random()
+                itemDisplay.teleport(randomSpecLocation)
+                itemDisplay.addPassenger(player)
+                player.hidePlayer()
+
+                delay(59) {
+                    itemDisplay.remove()
+                    player.teleport(randomSpecLocation)
+                    player.showPlayer()
                 }
-
-                addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, 20 * 4, 1, false, false, false))
-
-                delay(1) {
-                    val randomSpecLocation = gameConfig.spectatorSpawnLocations.random()
-                    itemDisplay.teleport(randomSpecLocation)
-                    itemDisplay.addPassenger(player)
-                    player.hidePlayer()
-
-                    delay(59) {
-                        itemDisplay.remove()
-                        player.teleport(randomSpecLocation)
-                        player.showPlayer()
-                    }
-                }
-            } // animate death
+            }
         }
 
         super.eliminate(player, reason)
 
         // hard mode starts at round 12 but dials back to round 8 for adjusted time.
-        val value = "${if (harder) roundNumber + 12 else roundNumber} round${if (roundNumber > 1) "s" else ""}"
+        val value = "${if (harder) roundNumber + 12 else roundNumber} ʀᴏᴜɴᴅ${if (roundNumber > 1) "ѕ" else ""}"
         when (remainingPlayers().size) {
             1 -> {
-                formattedWinners.put(player.uniqueId, value)
-                formattedWinners.put(remainingPlayers().first().uniqueId, "$value (1st Place!)")
+                formattedWinners[player.uniqueId] = value
+                formattedWinners[remainingPlayers().first().uniqueId] = "$value (1ѕᴛ ᴘʟᴀᴄᴇ!)"
                 endGame()
             }
 
-            2 -> formattedWinners.put(player.uniqueId, value)
+            2 -> formattedWinners[player.uniqueId] = value
         }
     }
 
     override fun endGame() {
-        tasks.forEach { it?.cancel() } // this will cancel all game tasks.
+        tasks.forEach { it?.cancel() }.also { tasks.clear() } // this will cancel all game tasks.
+        donationEventsEnabled = false
 
         val winner = remainingPlayers().first()
         eventController().addPoints(winner.uniqueId, 15)
@@ -301,7 +302,7 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
 
         groupedSquares.forEachIndexed { index, groupedSquareRegion ->
             val mat: Material = if (index == safeSquare1 || index == safeSquare2) selectedMaterial else colourMap.keys.random()
-            var blockLocations = groupedSquareRegion.toSingleBlockLocations()
+            val blockLocations = groupedSquareRegion.toSingleBlockLocations()
 
             if (mat == selectedMaterial) safeBlocks.addAll(blockLocations)
 
@@ -314,8 +315,8 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
     }
 
     private fun handlePowerUp() {
-        var reducedFrequency = remainingPlayers().size < 4 && roundNumber % 4 == 0 // 4 remaining -> every 4th round
-        var regularPowerUp = remainingPlayers().size > 4 && roundNumber % 2 == 0 // 5+ remaining -> every 2nd round
+        val reducedFrequency = remainingPlayers().size < 4 && roundNumber % 4 == 0 // 4 remaining -> every 4th round
+        val regularPowerUp = remainingPlayers().size > 4 && roundNumber % 2 == 0 // 5+ remaining -> every 2nd round
 
         if (reducedFrequency || regularPowerUp) {
 
@@ -333,10 +334,10 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
                 it.detonate()
             }
 
-            val notification = "<game_colour><b>« A mysterious power-up has spawned on the floor! »".style()
+            val notification = "<game_colour><b>« ᴀ ᴍʏѕᴛᴇʀɪᴏᴜѕ ᴘᴏᴡᴇʀ-ᴜᴘ ʜᴀѕ ѕᴘᴀᴡɴᴇᴅ ᴏɴ ᴛʜᴇ ꜰʟᴏᴏʀ! »".style()
             Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) { it.sendMessage(notification) }
             Util.runAction(PlayerType.PARTICIPANT) {
-                it.sendMessage("<grey>Find the beacon on the map to unlock it!".style())
+                it.sendMessage("<grey>ꜰɪɴᴅ ᴛʜᴇ ʙᴇᴀᴄᴏɴ ᴏɴ ᴛʜᴇ ᴍᴀᴘ ᴛᴏ ᴜɴʟᴏᴄᴋ ɪᴛ!".style())
                 it.playSound(Sound.BLOCK_NOTE_BLOCK_PLING)
             }
         }
@@ -360,13 +361,22 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
         val animationTasks = mutableListOf<TwilightRunnable>()
 
         repeat(25) {
-            var location = groupedSquares.random().randomLocation()
+            val location = groupedSquares.random().randomLocation()
             location.yaw = (0..360).random().toFloat()
             location.pitch = (-25..0).random().toFloat()
             location.y += 1
 
-            var randomColour: String = listOf("4", "c", "6", "2", "a", "9").random()
-            val displayName: String = "§$randomColour${player.name}".colourise()
+            val randomColour = listOf(
+                "<colour:#fcba03>",
+                "<colour:#b7ffab>",
+                "<colour:#0098b3>",
+                "<colour:#3d3dff>",
+                "<colour:#ebadff>",
+                "<colour:#ff3333>",
+                "<colour:#50e669>",
+                "<game_colour>"
+            ).random()
+            val displayName = "$randomColour${player.name}".style()
 
             val npc = WorldNPC.createFromLive(displayName, player, location).also {
                 worldNPCs.add(it)
@@ -437,19 +447,21 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
         listeners += event<PlayerInteractEvent> {
             if (clickedBlock?.type == Material.BEACON) {
                 clickedBlock?.type = Material.AIR
-                var randomPowerUp = PowerUp.entries.random()
+                val randomPowerUp = PowerUp.entries.random()
 
                 Util.runAction(PlayerType.PARTICIPANT) {
                     if (it == player) {
-                        it.sendMessage("<green><b>You've found a ${randomPowerUp.displayName} power-up!".style())
+                        it.sendMessage("<green><b>ʏᴏᴜ'ᴠᴇ ꜰᴏᴜɴᴅ ᴀ ${randomPowerUp.displayName} ᴘᴏᴡᴇʀ-ᴜᴘ!".style())
                     } else {
-                        it.sendMessage("<green><b>« ${player.name} has found a {${randomPowerUp.displayName} power-up! »".style())
+                        it.sendMessage("<green><b>« ${player.name} ʜᴀѕ ꜰᴏᴜɴᴅ ᴀ {${randomPowerUp.displayName} ᴘᴏᴡᴇʀ-ᴜᴘ! »".style())
                     }
                 }
-                Util.runAction(PlayerType.OPTED_OUT) { it.sendMessage("<green><b>« ${player.name} has found a {${randomPowerUp.displayName} power-up! »".style()) }
+                Util.runAction(PlayerType.OPTED_OUT) {
+                    it.sendMessage("<green><b>« ${player.name} ʜᴀѕ ꜰᴏᴜɴᴅ ᴀ {${randomPowerUp.displayName} ᴘᴏᴡᴇʀ-ᴜᴘ! »".style())
+                }
 
                 when (randomPowerUp) {
-                    PowerUp.ENDER_PEARL -> setNextAvailableSlot(player, ItemStack(Material.ENDER_PEARL))
+                    PowerUp.BLINDNESS -> player.addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2, false, false, false))
 
                     PowerUp.COLOR_BOMB -> {
                         val x = clickedBlock!!.location.blockX
@@ -495,28 +507,28 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
                         clickedBlock!!.world.playSound(clickedBlock!!.location, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f)
                     }
 
-                    PowerUp.JUMP_BOOST -> player.addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, 20 * 8, 3, false, false, false))
+                    PowerUp.DOUBLE_JUMP -> player.allowFlight = true
+
+                    PowerUp.ENDER_PEARL -> setNextAvailableSlot(player, ItemStack(Material.ENDER_PEARL))
 
                     PowerUp.FISHING_ROD -> setNextAvailableSlot(player, ItemStack(Material.FISHING_ROD))
 
-                    PowerUp.SLOWNESS -> player.addPotionEffect(PotionEffect(PotionEffectType.SLOWNESS, 20 * 10, 2, false, false, false))
-
-                    PowerUp.BLINDNESS -> player.addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2, false, false, false))
-
-                    PowerUp.RANDOM_TP -> player.teleport(groupedSquares.random().randomLocation().add(0.0, 1.5, 0.0))
-
-                    PowerUp.PUSH_SELF -> player.velocity = player.location.direction.multiply(2).add(Vector(0.0, 1.5, 0.0))
+                    PowerUp.JUMP_BOOST -> player.addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, 20 * 8, 3, false, false, false))
 
                     PowerUp.PUSH_RANDOM -> {
-                        var eventPlayer = player // prevent shadowing
+                        val eventPlayer = player // prevent shadowing
                         remainingPlayers().random().apply {
                             velocity = this.location.direction.multiply(2).add(Vector(0.0, 1.5, 0.0))
-                            sendMessage("<game_colour>You've been pushed by a power-up!".style())
-                            eventPlayer.sendMessage("<game_colour>You've pushed a random player ($name) with the power-up!".style())
+                            sendMessage("<game_colour>ʏᴏᴜ'ᴠᴇ ʙᴇᴇɴ ᴘᴜѕʜᴇᴅ ʙʏ ᴀ ᴘᴏᴡᴇʀ-ᴜᴘ!".style())
+                            eventPlayer.sendMessage("<game_colour>ʏᴏᴜ'ᴠᴇ ᴘᴜѕʜᴇᴅ ᴀ ʀᴀɴᴅᴏᴍ ᴘʟᴀʏᴇʀ (${name}) ᴡɪᴛʜ ᴛʜᴇ ᴘᴏᴡᴇʀ-ᴜᴘ!".style())
                         }
                     }
 
-                    PowerUp.DOUBLE_JUMP -> player.allowFlight = true
+                    PowerUp.PUSH_SELF -> player.velocity = player.location.direction.multiply(2).add(Vector(0.0, 1.5, 0.0))
+
+                    PowerUp.RANDOM_TP -> player.teleport(groupedSquares.random().randomLocation().add(0.0, 1.5, 0.0))
+
+                    PowerUp.SLOWNESS -> player.addPotionEffect(PotionEffect(PotionEffectType.SLOWNESS, 20 * 10, 2, false, false, false))
                 }
 
                 return@event // could be holding fireball. don't wanna trigger both
@@ -584,15 +596,15 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
     }
 
     private enum class PowerUp(val displayName: String) {
-        BLINDNESS("Blindness"),
-        COLOR_BOMB("Colour Bomb"),
-        DOUBLE_JUMP("Double Jump"),
-        ENDER_PEARL("Ender Pearl"),
-        FISHING_ROD("Fishing Rod"),
-        JUMP_BOOST("Jump Boost"),
-        PUSH_RANDOM("Random Player Boost"),
-        PUSH_SELF("Random Self-Boost"),
-        RANDOM_TP("Random TP"),
-        SLOWNESS("Slowness")
+        BLINDNESS("ʙʟɪɴᴅɴᴇѕѕ"),
+        COLOR_BOMB("ᴄᴏʟᴏᴜʀ ʙᴏᴍʙ"),
+        DOUBLE_JUMP("ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘ"),
+        ENDER_PEARL("ᴇɴᴅᴇʀ ᴘᴇᴀʀʟ"),
+        FISHING_ROD("ꜰɪѕʜɪɴɢ ʀᴏᴅ"),
+        JUMP_BOOST("ᴊᴜᴍᴘ ʙᴏᴏѕᴛ"),
+        PUSH_RANDOM("ʀᴀɴᴅᴏᴍ ᴘʟᴀʏᴇʀ ʙᴏᴏѕᴛ"),
+        PUSH_SELF("ʀᴀɴᴅᴏᴍ ѕᴇʟꜰ-ʙᴏᴏѕᴛ"),
+        RANDOM_TP("ʀᴀɴᴅᴏᴍ ᴛᴘ"),
+        SLOWNESS("ѕʟᴏᴡɴᴇѕѕ")
     }
 }

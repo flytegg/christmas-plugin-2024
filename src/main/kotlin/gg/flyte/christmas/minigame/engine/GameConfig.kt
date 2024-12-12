@@ -33,9 +33,9 @@ enum class GameConfig(
         "<colour:#33ff8b>ᴀᴠᴀʟᴀɴᴄʜᴇ".style(),
         ItemStack(Material.SNOWBALL),
         TextColor.fromHexString("#33ff8b")!!,
-        " • Dance around the icy platform until the christmas music stops.\n\n" +
-                " • Run and stand under shelter as the snowballs fall from the sky.\n\n" +
-                " • If you are hit by a falling snowball, you will be eliminated!",
+        " • ᴅᴀɴᴄᴇ ᴀʀᴏᴜɴᴅ ᴛʜᴇ ɪᴄʏ ᴘʟᴀᴛꜰᴏʀᴍ ᴜɴᴛɪʟ ᴛʜᴇ ᴄʜʀɪѕᴛᴍᴀѕ ᴍᴜѕɪᴄ ѕᴛᴏᴘѕ.\n\n" +
+                " • ʀᴜɴ ᴀɴᴅ ѕᴛᴀɴᴅ ᴜɴᴅᴇʀ ѕʜᴇʟᴛᴇʀ ᴀѕ ᴛʜᴇ ѕɴᴏᴡʙᴀʟʟѕ ꜰᴀʟʟ ꜰʀᴏᴍ ᴛʜᴇ ѕᴋʏ.\n\n" +
+                " • ɪꜰ ʏᴏᴜ ᴀʀᴇ ʜɪᴛ ʙʏ ᴀ ꜰᴀʟʟɪɴɢ ѕɴᴏᴡʙᴀʟʟ, ʏᴏᴜ ᴡɪʟʟ ʙᴇ ᴇʟɪᴍɪɴᴀᴛᴇᴅ!",
         2,
         MapSinglePoint(616.5, 140.0, 800.5, 0F, 90F),
         listOf(
@@ -88,10 +88,10 @@ enum class GameConfig(
         "<colour:#aed3d8>ʙᴀᴜʙʟᴇ ᴛᴀɢ".style(),
         MenuItem(Material.PLAYER_HEAD).setSkullTexture("1e3ad039e903e30f90daa68cebfc5cee72b5ed84d6044382409c67f374d1732b").itemStack,
         TextColor.fromHexString("#aed3d8")!!,
-        " • Run away from the players with baubles on their head.\n\n" +
-                " • If you are tagged, you will become the new bauble holder.\n\n" +
-                " • The baubles will shatter at the end of each round.\n\n" +
-                " • To win, survive the most rounds!",
+        " • ʀᴜɴ ᴀᴡᴀʏ ꜰʀᴏᴍ ᴛʜᴇ ᴘʟᴀʏᴇʀѕ ᴡɪᴛʜ ʙᴀᴜʙʟᴇѕ ᴏɴ ᴛʜᴇɪʀ ʜᴇᴀᴅ.\n\n" +
+                " • ɪꜰ ʏᴏᴜ ᴀʀᴇ ᴛᴀɢɢᴇᴅ, ʏᴏᴜ ᴡɪʟʟ ʙᴇᴄᴏᴍᴇ ᴛʜᴇ ɴᴇᴡ ʙᴀᴜʙʟᴇ ʜᴏʟᴅᴇʀ.\n\n" +
+                " • ᴛʜᴇ ʙᴀᴜʙʟᴇѕ ᴡɪʟʟ ѕʜᴀᴛᴛᴇʀ ᴀᴛ ᴛʜᴇ ᴇɴᴅ ᴏꜰ ᴇᴀᴄʜ ʀᴏᴜɴᴅ.\n\n" +
+                " • ᴛᴏ ᴡɪɴ, ѕᴜʀᴠɪᴠᴇ ᴛʜᴇ ᴍᴏѕᴛ ʀᴏᴜɴᴅѕ!",
         2,
         MapSinglePoint(208, 170, 1282, 123, 90),
         listOf(
@@ -142,9 +142,9 @@ enum class GameConfig(
         "<colour:#e05c6f>ʙʟᴏᴄᴋ ᴘᴀʀᴛʏ".style(),
         ItemStack(Material.MAGENTA_GLAZED_TERRACOTTA),
         TextColor.fromHexString("#e05c6f")!!,
-        " • Dance around the colourful floor until the christmas music stops.\n\n" +
-                " • Run and stand on the colour which has been chosen (check hotbar) before the timer ends.\n\n" +
-                " • After the timer, the map will clear all blocks except the chosen colour blocks. To win, survive the most rounds!",
+        " • ᴅᴀɴᴄᴇ ᴀʀᴏᴜɴᴅ ᴛʜᴇ ᴄᴏʟᴏᴜʀꜰᴜʟ ꜰʟᴏᴏʀ ᴜɴᴛɪʟ ᴛʜᴇ ᴄʜʀɪѕᴛᴍᴀѕ ᴍᴜѕɪᴄ ѕᴛᴏᴘѕ.\n\n" +
+                " • ʀᴜɴ ᴀɴᴅ ѕᴛᴀɴᴅ ᴏɴ ᴛʜᴇ ᴄᴏʟᴏᴜʀ ᴡʜɪᴄʜ ʜᴀѕ ʙᴇᴇɴ ᴄʜᴏѕᴇɴ (ᴄʜᴇᴄᴋ ʜᴏᴛʙᴀʀ) ʙᴇꜰᴏʀᴇ ᴛʜᴇ ᴛɪᴍᴇʀ ᴇɴᴅѕ.\n\n" +
+                " • ᴀꜰᴛᴇʀ ᴛʜᴇ ᴛɪᴍᴇʀ, ᴛʜᴇ ᴍᴀᴘ ᴡɪʟʟ ᴄʟᴇᴀʀ ᴀʟʟ ʙʟᴏᴄᴋѕ ᴇxᴄᴇᴘᴛ ᴛʜᴇ ᴄʜᴏѕᴇɴ ᴄᴏʟᴏᴜʀ ʙʟᴏᴄᴋѕ. ᴛᴏ ᴡɪɴ, ѕᴜʀᴠɪᴠᴇ ᴛʜᴇ ᴍᴏѕᴛ ʀᴏᴜɴᴅѕ!",
         2,
         MapSinglePoint(616.5, 140.0, 800.5, 0F, 90F),
         listOf(
@@ -200,9 +200,9 @@ enum class GameConfig(
         "<colour:#f70123>ᴋɪɴɢ ᴏꜰ ᴛʜᴇ ʜɪʟʟ".style(),
         ItemStack(Material.STICK),
         TextColor.fromHexString("#f70123")!!,
-        " • Be the King of The Hill! Stand in the centre of the map to gain points every second.\n\n" +
-                " • Knock other players off the map with your knockback stick. Avoid falling off yourself!\n\n" +
-                " • The player stood in the centre of the map for the longest time, wins!",
+        " • ʙᴇ ᴛʜᴇ ᴋɪɴɢ ᴏꜰ ᴛʜᴇ ʜɪʟʟ! ѕᴛᴀɴᴅ ɪɴ ᴛʜᴇ ᴄᴇɴᴛʀᴇ ᴏꜰ ᴛʜᴇ ᴍᴀᴘ ᴛᴏ ɢᴀɪɴ ᴘᴏɪɴᴛѕ ᴇᴠᴇʀʏ ѕᴇᴄᴏɴᴅ.\n\n" +
+                " • ᴋɴᴏᴄᴋ ᴏᴛʜᴇʀ ᴘʟᴀʏᴇʀѕ ᴏꜰꜰ ᴛʜᴇ ᴍᴀᴘ ᴡɪᴛʜ ʏᴏᴜʀ ᴋɴᴏᴄᴋʙᴀᴄᴋ ѕᴛɪᴄᴋ. ᴀᴠᴏɪᴅ ꜰᴀʟʟɪɴɢ ᴏꜰꜰ ʏᴏᴜʀѕᴇʟꜰ!\n\n" +
+                " • ᴛʜᴇ ᴘʟᴀʏᴇʀ ѕᴛᴏᴏᴅ ɪɴ ᴛʜᴇ ᴄᴇɴᴛʀᴇ ᴏꜰ ᴛʜᴇ ᴍᴀᴘ ꜰᴏʀ ᴛʜᴇ ʟᴏɴɢᴇѕᴛ ᴛɪᴍᴇ, ᴡɪɴѕ!",
         1,
         MapSinglePoint(827.5, 111, 630.5, -90F, 90F),
         listOf(
@@ -285,10 +285,10 @@ enum class GameConfig(
         "<colour:#a1a4ff>ᴍᴜꜱɪᴄᴀʟ ᴍɪɴᴇᴄᴀʀᴛꜱ".style(),
         ItemStack(Material.MINECART),
         TextColor.fromHexString("#a1a4ff")!!,
-        " • Dance around the platform until the christmas music stops.\n\n" +
-                " • Run to the nearest minecart and get inside before the timer ends.\n\n" +
-                " • If you fail to find a minecart before the timer ends, you will be ELIMINATED!\n\n" +
-                " • Do NOT click the minecarts until the music has stopped... or else you will be STUNNED!",
+        " • ᴅᴀɴᴄᴇ ᴀʀᴏᴜɴᴅ ᴛʜᴇ ᴘʟᴀᴛꜰᴏʀᴍ ᴜɴᴛɪʟ ᴛʜᴇ ᴄʜʀɪѕᴛᴍᴀѕ ᴍᴜѕɪᴄ ѕᴛᴏᴘѕ.\n\n" +
+                " • ʀᴜɴ ᴛᴏ ᴛʜᴇ ɴᴇᴀʀᴇѕᴛ ᴍɪɴᴇᴄᴀʀᴛ ᴀɴᴅ ɢᴇᴛ ɪɴѕɪᴅᴇ ʙᴇꜰᴏʀᴇ ᴛʜᴇ ᴛɪᴍᴇʀ ᴇɴᴅѕ.\n\n" +
+                " • ɪꜰ ʏᴏᴜ ꜰᴀɪʟ ᴛᴏ ꜰɪɴᴅ ᴀ ᴍɪɴᴇᴄᴀʀᴛ ʙᴇꜰᴏʀᴇ ᴛʜᴇ ᴛɪᴍᴇʀ ᴇɴᴅѕ, ʏᴏᴜ ᴡɪʟʟ ʙᴇ <b>ᴇʟɪᴍɪɴᴀᴛᴇᴅ!\n\n" +
+                " • ᴅᴏ <b>ɴᴏᴛ</b> ᴄʟɪᴄᴋ ᴛʜᴇ ᴍɪɴᴇᴄᴀʀᴛѕ ᴜɴᴛɪʟ ᴛʜᴇ ᴍᴜѕɪᴄ ʜᴀѕ ѕᴛᴏᴘᴘᴇᴅ... ᴏʀ ᴇʟѕᴇ ʏᴏᴜ ᴡɪʟʟ ʙᴇ <b>ѕᴛᴜɴɴᴇᴅ!",
         2,
         MapSinglePoint(616.5, 140.0, 800.5, 0F, 90F),
         listOf(
@@ -342,9 +342,9 @@ enum class GameConfig(
         "<colour:#89bdf5>ᴘᴀɪɴᴛʙᴀʟʟ".style(),
         ItemStack(Material.HEART_OF_THE_SEA),
         TextColor.fromHexString("#89bdf5")!!,
-        " • Shoot other players with your paintball gun to get a point.\n\n" +
-                " • Avoid being shot by other players to survive the longest.\n\n" +
-                " • To win, hit the most players and get the most points!",
+        " • ѕʜᴏᴏᴛ ᴏᴛʜᴇʀ ᴘʟᴀʏᴇʀѕ ᴡɪᴛʜ ʏᴏᴜʀ ᴘᴀɪɴᴛʙᴀʟʟ ɢᴜɴ ᴛᴏ ɢᴇᴛ ᴀ ᴘᴏɪɴᴛ.\n\n" +
+                " • ᴀᴠᴏɪᴅ ʙᴇɪɴɢ ѕʜᴏᴛ ʙʏ ᴏᴛʜᴇʀ ᴘʟᴀʏᴇʀѕ ᴛᴏ ѕᴜʀᴠɪᴠᴇ ᴛʜᴇ ʟᴏɴɢᴇѕᴛ.\n\n" +
+                " • ᴛᴏ ᴡɪɴ, ʜɪᴛ ᴛʜᴇ ᴍᴏѕᴛ ᴘʟᴀʏᴇʀѕ ᴀɴᴅ ɢᴇᴛ ᴛʜᴇ ᴍᴏѕᴛ ᴘᴏɪɴᴛѕ!",
         2,
         MapSinglePoint(181.5, 140.0, 300.5, -135, 90),
         listOf(
@@ -412,9 +412,9 @@ enum class GameConfig(
         "<colour:#75e01d>ᴘᴀɪɴᴛ ᴡᴀʀꜱ".style(),
         ItemStack(Material.BRUSH),
         TextColor.fromHexString("#75e01d")!!,
-        " • Use your Paint Gun to shoot blocks around the map into your chosen block.\n\n" +
-                " • You can shoot over other player's blocks to reduce their score!\n\n" +
-                " • To win, cover the most amount of the map with your block/colour!",
+        " • ᴜѕᴇ ʏᴏᴜʀ ᴘᴀɪɴᴛ ɢᴜɴ ᴛᴏ ѕʜᴏᴏᴛ ʙʟᴏᴄᴋѕ ᴀʀᴏᴜɴᴅ ᴛʜᴇ ᴍᴀᴘ ɪɴᴛᴏ ʏᴏᴜʀ ᴄʜᴏѕᴇɴ ʙʟᴏᴄᴋ.\n\n" +
+                " • ʏᴏᴜ ᴄᴀɴ ѕʜᴏᴏᴛ ᴏᴠᴇʀ ᴏᴛʜᴇʀ ᴘʟᴀʏᴇʀ'ѕ ʙʟᴏᴄᴋѕ ᴛᴏ ʀᴇᴅᴜᴄᴇ ᴛʜᴇɪʀ ѕᴄᴏʀᴇ!\n\n" +
+                " • ᴛᴏ ᴡɪɴ, ᴄᴏᴠᴇʀ ᴛʜᴇ ᴍᴏѕᴛ ᴀᴍᴏᴜɴᴛ ᴏꜰ ᴛʜᴇ ᴍᴀᴘ ᴡɪᴛʜ ʏᴏᴜʀ ʙʟᴏᴄᴋ/ᴄᴏʟᴏᴜʀ!",
         1,
         MapSinglePoint(622.5, 98, -150.5, 180, 90),
         listOf(
@@ -488,10 +488,10 @@ enum class GameConfig(
             }
         },
         TextColor.fromHexString("#80ffea")!!,
-        " • Follow the icy path to the end of the map with your sled.\n\n" +
-                " • 3 laps must be completed. To reset, sneak out of your sled.\n\n" +
-                " • To win, be the first player to finish all 3 laps!\n\n" +
-                " • \uD83C\uDFB5 Come on, it's lovely weather for a sleigh ride together with you! \uD83C\uDFB6 🛷",
+        " • ꜰᴏʟʟᴏᴡ ᴛʜᴇ ɪᴄʏ ᴘᴀᴛʜ ᴛᴏ ᴛʜᴇ ᴇɴᴅ ᴏꜰ ᴛʜᴇ ᴍᴀᴘ ᴡɪᴛʜ ʏᴏᴜʀ sʟᴇᴅ.\n\n" +
+                " • 3 ʟᴀᴘs ᴍᴜsᴛ ʙᴇ ᴄᴏᴍᴘʟᴇᴛᴇᴅ. ᴛᴏ ʀᴇsᴇᴛ, sɴᴇᴀᴋ ᴏᴜᴛ ᴏꜰ ʏᴏᴜʀ sʟᴇᴅ.\n\n" +
+                " • ᴛᴏ ᴡɪɴ, ʙᴇ ᴛʜᴇ ꜰɪʀsᴛ ᴘʟᴀʏᴇʀ ᴛᴏ ꜰɪɴɪsʜ ᴀʟʟ 3 ʟᴀᴘs!\n\n" +
+                " • \uD83C\uDFB5 ᴄᴏᴍᴇ ᴏɴ, ɪᴛ's ʟᴏᴠᴇʟʏ ᴡᴇᴀᴛʜᴇʀ ꜰᴏʀ ᴀ sʟᴇɪɢʜ ʀɪᴅᴇ ᴛᴏɢᴇᴛʜᴇʀ ᴡɪᴛʜ ʏᴏᴜ! \uD83C\uDFB6 🛷",
         1,
         MapSinglePoint(523, 150, 1842, 127F, 90F),
         listOf(
@@ -529,9 +529,9 @@ enum class GameConfig(
         "<colour:#ffc642>ꜱᴘʟᴇᴇꜰ".style(),
         ItemStack(Material.DIAMOND_SHOVEL),
         TextColor.fromHexString("#ffc642")!!,
-        " • Destroy the snow blocks under other players to eliminate them.\n\n" +
-                " • Avoid falling into the lava by jumping over holes in the ground.\n\n" +
-                " • To win, be the last player standing on the map!",
+        " • ᴅᴇѕᴛʀᴏʏ ᴛʜᴇ ѕɴᴏᴡ ʙʟᴏᴄᴋѕ ᴜɴᴅᴇʀ ᴏᴛʜᴇʀ ᴘʟᴀʏᴇʀѕ ᴛᴏ ᴇʟɪᴍɪɴᴀᴛᴇ ᴛʜᴇᴍ.\n\n" +
+                " • ᴀᴠᴏɪᴅ ꜰᴀʟʟɪɴɢ ɪɴᴛᴏ ᴛʜᴇ ʟᴀᴠᴀ ʙʏ ᴊᴜᴍᴘɪɴɢ ᴏᴠᴇʀ ʜᴏʟᴇѕ ɪɴ ᴛʜᴇ ɢʀᴏᴜɴᴅ.\n\n" +
+                " • ᴛᴏ ᴡɪɴ, ʙᴇ ᴛʜᴇ ʟᴀѕᴛ ᴘʟᴀʏᴇʀ ѕᴛᴀɴᴅɪɴɢ ᴏɴ ᴛʜᴇ ᴍᴀᴘ!",
         2,
         MapSinglePoint(616.5, 140.0, 800.5, 0F, 90F),
         listOf(
@@ -579,6 +579,74 @@ enum class GameConfig(
             MapSinglePoint(635.5, 77, 800.5, 90, 35),
             MapSinglePoint(635.5, 77, 800.5, 90, 35),
         ),
+    ),
+    //endregion
+
+    //region TREE_DECORATE
+    TREE_DECORATE(
+        TreeDecorate::class,
+        "<colour:#c293db>ᴅᴇᴄᴏʀᴀᴛᴇ ᴛʜᴇ ᴛʀᴇᴇ".style(),
+        "<colour:#c293db>ᴅᴇᴄᴏʀᴀᴛᴇ ᴛʜᴇ ᴛʀᴇᴇ".style(),
+        ItemStack(Material.OAK_LEAVES),
+        TextColor.fromHexString("#c293db")!!,
+        " • ᴛʜᴇ ʟᴀsᴛ ᴇᴠᴇɴᴛ! ᴅᴇᴄᴏʀᴀᴛᴇ ᴛʜᴇ ʟᴏʙʙʏ ᴄʜʀɪsᴛᴍᴀs ᴛʀᴇᴇ ᴡɪᴛʜ ᴀssᴏʀᴛᴇᴅ ᴅᴇᴄᴏʀᴀᴛɪᴏɴs.\n\n" +
+                " • ᴅᴇᴄᴏʀᴀᴛɪᴏɴs ᴡɪʟʟ ʙᴇ ᴀᴠᴀɪʟᴀʙʟᴇ ᴛʜʀᴏᴜɢʜ ʏᴏᴜʀ ʜᴏᴛʙᴀʀ. ᴍᴏʀᴇ ᴄᴀɴ ʙᴇ ʙʀᴏᴜɢʜᴛ ɪɴ ᴛʜʀᴏᴜɢʜ ᴛʜᴇ ᴄʀᴇᴀᴛɪᴠᴇ ɪɴᴠᴇɴᴛᴏʀʏ!\n\n" +
+                " • ᴛʜᴀɴᴋ ʏᴏᴜ ꜰᴏʀ ᴊᴏɪɴɪɴɢ ᴜs ꜰᴏʀ ᴛʜɪs ᴇᴠᴇɴᴛ",
+        1,
+        MapSinglePoint(545, 115, 384, 0, -34),
+        listOf(
+            MapRegion.single(MapSinglePoint(586, 209, 442, 89.26306F, 2.8403294F)),
+            MapRegion.single(MapSinglePoint(575, 209, 461, 124.62903F, 0.25062752F)),
+            MapRegion.single(MapSinglePoint(562, 209, 475, 146.48047F, 2.5975444F)),
+            MapRegion.single(MapSinglePoint(543, 209, 483, -179.44702F, 3.164041F)),
+            MapRegion.single(MapSinglePoint(519, 209, 475, -139.14319F, 3.4068255F)),
+            MapRegion.single(MapSinglePoint(507, 209, 461, -116.7251F, 4.7826056F)),
+            MapRegion.single(MapSinglePoint(501, 209, 444, -95.68262F, 3.406826F)),
+            MapRegion.single(MapSinglePoint(503, 209, 427, -65.33313F, 4.7826056F)),
+            MapRegion.single(MapSinglePoint(517, 209, 409, -28.266235F, 6.1583858F)),
+            MapRegion.single(MapSinglePoint(539, 209, 403, -12.079834F, 3.3258967F)),
+            MapRegion.single(MapSinglePoint(559, 209, 410, 22.962524F, 6.1583834F)),
+            MapRegion.single(MapSinglePoint(583, 180, 432, 75.00098F, 0.4934106F)),
+            MapRegion.single(MapSinglePoint(571, 180, 460, 131.89368F, -1.1251532F)),
+            MapRegion.single(MapSinglePoint(497, 138, 453, -98.29736F, 5.7537436F)),
+            MapRegion.single(MapSinglePoint(524, 242, 448, -92.470215F, 6.967665F)),
+            MapRegion.single(MapSinglePoint(575, 242, 445, 87.837524F, 4.782604F)),
+        ),
+        listOf(
+            MapSinglePoint(548, 121, 384, 2.602295F, -21.333181F),
+            MapSinglePoint(555, 126, 384, 9.967163F, -18.257893F),
+            MapSinglePoint(563, 132, 389, 16.03711F, -14.211476F),
+            MapSinglePoint(571, 138, 400, 16.03711F, -14.211476F),
+            MapSinglePoint(585, 160, 426, 30.92871F, -9.679501F),
+            MapSinglePoint(592, 166, 448, 75.1156F, -4.581027F),
+            MapSinglePoint(580, 185, 473, 104.33093F, 2.2169394F),
+            MapSinglePoint(546, 211, 496, 136.37854F, 7.6391277F),
+            MapSinglePoint(526, 216, 498, 171.74475F, 11.280895F),
+            MapSinglePoint(512, 217, 490, -156.93433F, 12.494814F),
+            MapSinglePoint(508, 212, 477, -145.36096F, 12.737597F),
+            MapSinglePoint(510, 206, 465, -122.13342F, 9.824187F),
+            MapSinglePoint(508, 201, 456, -109.508545F, 9.824187F),
+            MapSinglePoint(506, 195, 448, -90.81641F, 7.4772716F),
+            MapSinglePoint(505, 189, 440, -83.77905F, 8.286553F),
+            MapSinglePoint(506, 184, 432, -64.761475F, 3.3499343F),
+            MapSinglePoint(511, 168, 422, -54.88965F, 1.245802F),
+            MapSinglePoint(521, 145, 408, -34.98291F, -6.1995897F),
+            MapSinglePoint(531, 139, 399, -9.330566F, -9.679501F),
+            MapSinglePoint(537, 134, 392, -1.9699707F, -12.107337F),
+            MapSinglePoint(543, 134, 386, 3.2045898F, -9.355779F),
+        ),
+        listOf(
+            MapSinglePoint(559.5, 103, 518.5, 135, 0)
+        ),
+        listOf(
+            MapSinglePoint(561, 269, 419, 35.624023F, 26.92271F),
+            MapSinglePoint(561, 234, 419, 35.624023F, 26.92271F),
+            MapSinglePoint(576, 205, 438, 78.59668F, 24.009295F),
+            MapSinglePoint(577, 180, 467, 119.5459F, 30.40262F),
+            MapSinglePoint(566, 154, 491, 149.0852F, 28.379414F),
+            MapSinglePoint(555, 129, 500, 175.46826F, 13.407703F),
+        ),
+        false
     )
     //endregion
 }

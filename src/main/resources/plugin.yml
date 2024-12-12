@@ -3,8 +3,7 @@ version: 1.0
 main: gg.flyte.christmas.ChristmasEventPlugin
 api-version: '1.21'
 description: Flyte x Carbon Christmas Event Plugin!
-authors: [Shreyas, Stephen, Josh, Kolja]
-website: https://carbon.christmas
+website: https://flyte.gg/donate
 prefix: ChristmasEventPlugin
 depend:
   - packetevents

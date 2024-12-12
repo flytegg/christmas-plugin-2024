@@ -30,7 +30,7 @@ import kotlin.reflect.full.primaryConstructor
  * The controller for the event, handling the current game (and its state), countdown, player management,
  * and other UI and event-related elements.
  */
-class EventController() {
+class EventController {
     var currentGame: EventMiniGame? = null
     var countdownTask: TwilightRunnable? = null
     val countdownMap = mapOf(
@@ -49,7 +49,7 @@ class EventController() {
     var totalDonations = 0
     var donationGoal = 10000
     var donationBossBar = BossBar.bossBar(
-        "<colour:#1DF1BC>ᴅᴏɴᴀᴛɪᴏɴ ɢᴏᴀʟ: <white>$<grey>${totalDonations}/${donationGoal}".style(),
+        getBossBarMessage(),
         0F,
         BossBar.Color.GREEN,
         BossBar.Overlay.PROGRESS
@@ -92,7 +92,7 @@ class EventController() {
             when (seconds) {
                 0 -> {
                     currentGame!!.startGameOverview()
-                    currentGame!!.state = GameState.LIVE
+                    currentGame!!.state = GameState.OVERVIEWING
                     cancel()
                 }
 
@@ -101,7 +101,7 @@ class EventController() {
                         countdownMap[seconds]?.let { number ->
                             it.title(number, Component.empty(), titleTimes(Duration.ZERO, Duration.ofMillis(1100), Duration.ZERO))
                             it.playSound(Sound.UI_BUTTON_CLICK)
-                            it.sendMessage("<grey>Game starting in <0> seconds...".style(number))
+                            it.sendMessage("<grey>ɢᴀᴍᴇ sᴛᴀʀᴛɪɴɢ ɪɴ <0> sᴇᴄᴏɴᴅs...".style(number))
                         }
                     }
                     seconds--
@@ -125,17 +125,28 @@ class EventController() {
      */
     fun onPlayerJoin(player: Player) {
         if (currentGame == null) {
-            player.showBossBar(eventController().donationBossBar)
             player.teleport(ChristmasEventPlugin.instance.lobbySpawn)
+            player.showBossBar(eventController().donationBossBar)
         } else {
-            if (currentGame!!.state == GameState.WAITING_FOR_PLAYERS) {
-                if (enoughPlayers()) {
-                    currentGame!!.state = GameState.COUNTDOWN
-                    countdown()
+            when (currentGame!!.state) {
+                GameState.IDLE, GameState.COUNTDOWN -> {
+                    player.teleport(ChristmasEventPlugin.instance.lobbySpawn)
+                    player.showBossBar(eventController().donationBossBar)
                 }
-            }
 
-            if (currentGame!!.state == GameState.LIVE) currentGame!!.onPlayerJoin(player)
+                GameState.WAITING_FOR_PLAYERS -> {
+                    player.teleport(ChristmasEventPlugin.instance.lobbySpawn)
+                    player.showBossBar(eventController().donationBossBar)
+
+                    if (enoughPlayers()) {
+                        currentGame!!.state = GameState.COUNTDOWN
+                        countdown()
+                    }
+                }
+
+                GameState.LIVE -> currentGame!!.onPlayerJoin(player)
+                else -> return
+            }
         }
     }
 
@@ -147,7 +158,6 @@ class EventController() {
         sidebarManager.remove(player)
 
         when (currentGame?.state) {
-
             GameState.COUNTDOWN -> {
                 delay(1) { // getOnlinePlayers [called through enoughPlayers()] does not update until the next tick
                     if (!enoughPlayers()) {
@@ -156,7 +166,7 @@ class EventController() {
 
                         Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) {
                             it.title(
-                                "<dark_red>⦅x⦆".style(), "<red>Waiting for more players...".style(),
+                                "<dark_red>⦅x⦆".style(), "<red>ᴡᴀɪᴛɪɴɢ ꜰᴏʀ ᴍᴏʀᴇ ᴘʟᴀʏᴇʀѕ...".style(),
                                 titleTimes(Duration.ZERO, Duration.ofSeconds(5), Duration.ofSeconds(1))
                             )
                             it.playSound(Sound.BLOCK_NOTE_BLOCK_BASS)
@@ -165,7 +175,7 @@ class EventController() {
                 }
             }
 
-            GameState.LIVE -> currentGame!!.onPlayerQuit(player)
+            GameState.LIVE, GameState.OVERVIEWING -> currentGame!!.onPlayerQuit(player)
 
             else -> return
         }
@@ -211,8 +221,10 @@ class EventController() {
      */
     fun serialisePoints() {
         async {
-            ChristmasEventPlugin.instance.config.set("points", null)
-            points.forEach { (uuid, points) -> ChristmasEventPlugin.instance.config.set("points.$uuid", points) }
+            ChristmasEventPlugin.instance.config.set("points", 0)
+            delay(5) {
+                points.forEach { (uuid, points) -> ChristmasEventPlugin.instance.config.set("points.$uuid", points) }
+            }
 
             ChristmasEventPlugin.instance.saveConfig()
         }
@@ -251,25 +263,31 @@ class EventController() {
 
             // announce donation
             val charitableDonor = event.donorName ?: "mysterious donor"
-            val numberValue = event.amount
-            it.sendMessage("<grey><gradient:#A3ADFF:#00FFF4>DONATION MADE ––> Thank you,</gradient><#FF72A6> $charitableDonor<gradient:#00FFF4:#00FFF4>, <gradient:#00FFF4:#A3ADFF>for donating $$numberValue.</gradient>".style())
+            it.sendMessage("<grey><gradient:#A3ADFF:#00FFF4>DONATION MADE ––> Thank you,</gradient><#FF72A6> $charitableDonor<gradient:#00FFF4:#00FFF4>, <gradient:#00FFF4:#A3ADFF>for donating $${event.amount} (matched to $${event.finalAmount}).</gradient>".style())
         }
 
         async {
             event.donorName?.let {
-                Bukkit.getOfflinePlayer(it).let { donors.add(it.uniqueId) }
+                Bukkit.getOfflinePlayer(it).let {
+                    donors.add(it.uniqueId)
+                    if (it.isOnline) (it as Player).formatInventory()
+                }
             }
         }
 
-        currentGame?.handleDonation(DonationTier.getTier(value), event.donorName)
+        if (currentGame?.donationEventsEnabled == true) currentGame?.handleDonation(DonationTier.getTier(value), event.donorName)
     }
 
     /**
      * Updates the donation bar with the current total donations and donation goal.
      */
     fun updateDonationBar() {
-        donationBossBar.name("<colour:#1DF1BC>ᴅᴏɴᴀᴛɪᴏɴ ɢᴏᴀʟ: <white>$<green>${totalDonations}/${donationGoal}".style())
+        donationBossBar.name(getBossBarMessage())
         val progress = (totalDonations.toFloat() / donationGoal)
         donationBossBar.progress(progress)
     }
+
+    private fun getBossBarMessage(): Component =
+        "<b><gradient:${Colours.LIGHT_PURPLE}:${Colours.MAGENTA}>ᴅᴏɴᴀᴛɪᴏɴ ɢᴏᴀʟ:</gradient></b> <white><b>$<light_purple>${totalDonations}<grey>/<magenta>${donationGoal}".style()
+
 }

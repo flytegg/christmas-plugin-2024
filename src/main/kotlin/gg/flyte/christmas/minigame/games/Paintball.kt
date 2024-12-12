@@ -85,7 +85,7 @@ class Paintball : EventMiniGame(GameConfig.PAINTBALL) {
 
         ItemStack(Material.GOLDEN_HOE).apply {
             itemMeta = itemMeta.apply {
-                displayName("<!i><game_colour>Paintball <gold>Gun!".style())
+                displayName("<!i><game_colour>ᴘᴀɪɴᴛʙᴀʟʟ <gold>ɢᴜɴ!".style())
             }
         }.apply { player.inventory.setItem(0, this) }
     }
@@ -94,9 +94,10 @@ class Paintball : EventMiniGame(GameConfig.PAINTBALL) {
         eventController().sidebarManager.dataSupplier = scores
         simpleCountdown {
             started = true
+            donationEventsEnabled = true
             Util.runAction(PlayerType.PARTICIPANT) {
                 it.title(
-                    "<game_colour>Shoot!".style(), Component.empty(),
+                    "<game_colour>ѕʜᴏᴏᴛ!".style(), Component.empty(),
                     titleTimes(Duration.ZERO, Duration.ofSeconds(2), Duration.ofMillis(300))
                 )
             }
@@ -115,12 +116,17 @@ class Paintball : EventMiniGame(GameConfig.PAINTBALL) {
     }
 
     override fun endGame() {
-        @Suppress("DuplicatedCode") // I'm lazy
+        donationEventsEnabled = false
+
         for (entry in scores) eventController().addPoints(entry.key, entry.value)
         scores.entries
             .sortedBy { it.value }
             .take(3)
-            .also { it.forEach { formattedWinners.put(it.key, it.value.toString() + " kill${if (it.value > 1) "s" else ""}") } }
+            .also {
+                it.forEach { entry ->
+                    formattedWinners[entry.key] = entry.value.toString() + " ᴋɪʟʟ${if (entry.value > 1) "ѕ" else ""}"
+                }
+            }
 
         Util.runAction(PlayerType.PARTICIPANT) { it.walkSpeed = 0.2F }
 
@@ -168,7 +174,7 @@ class Paintball : EventMiniGame(GameConfig.PAINTBALL) {
             hitPlayer.playSound(Sound.ENTITY_PLAYER_HURT)
 
             shooter.playSound(Sound.BLOCK_NOTE_BLOCK_PLING)
-            shooter.sendMessage("<green>You hit <red>${hitPlayer.name} <grey>— <green>+1".style())
+            shooter.sendMessage("<green>ʏᴏᴜ ʜɪᴛ <red>${hitPlayer.name} <grey>— <green>+1".style())
             scores[shooter.uniqueId] = scores[shooter.uniqueId]!! + 1
         }
     }

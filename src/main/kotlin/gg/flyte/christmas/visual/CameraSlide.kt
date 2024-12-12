@@ -99,8 +99,7 @@ class CameraSlide(slideTo: MapSinglePoint, onComplete: (() -> Unit)? = null) {
                     if (!hasComputedDuration) {
                         duration = (itemDisplay.location.distance(destination) * (0.5)).toInt().also {
                             hasComputedDuration = true
-                            if (it > 0.5) epsilon = 0.75
-                            // TODO TEST
+                            if (it > 250) epsilon = 0.75
                         }
                     }
 

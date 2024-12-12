@@ -73,7 +73,7 @@ class SidebarManager {
     /**
      * Returns a string representing the current game line for the sidebar.
      */
-    private fun currentGameLine() = "<aqua>ɢᴀᴍᴇ<grey>: <0>".style(eventController().currentGame?.gameConfig?.smallDisplayName ?: "<grey>ɴᴏɴᴇ".style())
+    private fun currentGameLine() = "<aqua>ɢᴀᴍᴇ: <0>".style(eventController().currentGame?.gameConfig?.smallDisplayName ?: "<grey>ɴᴏɴᴇ".style())
 
     /**
      * Returns a component representing the player at the provided position.
@@ -95,7 +95,7 @@ class SidebarManager {
         val nameComponent = when (uniqueIdAtPosition) {
             player.uniqueId -> "<colour:#ebadff><b>ʏᴏᴜ <reset><colour:#fcb3b3>(${dataSupplier[player.uniqueId]})".style()
             null -> "<white>ɴᴏɴᴇ".style()
-            else -> "<colour:#f5d6ff>${Bukkit.getOfflinePlayer(uniqueIdAtPosition).name ?: "Unknown"} <reset><colour:#fcb3b3>(${dataSupplier[uniqueIdAtPosition]})".style()
+            else -> "<colour:#f5d6ff>${Bukkit.getOfflinePlayer(uniqueIdAtPosition).name ?: "ᴜɴᴋɴᴏᴡɴ"} <reset><colour:#fcb3b3>(${dataSupplier[uniqueIdAtPosition]})".style()
         }
 
         return "${placeDefaultComponent[position]!!} <0>".style(nameComponent)

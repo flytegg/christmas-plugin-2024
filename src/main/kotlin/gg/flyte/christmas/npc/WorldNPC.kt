@@ -19,6 +19,7 @@ import gg.flyte.christmas.util.style
 import gg.flyte.twilight.scheduler.async
 import gg.flyte.twilight.scheduler.sync
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil
+import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.Location
@@ -32,13 +33,17 @@ import java.util.*
 /**
  * Wrapper for a Packet-based ServerPlayer (NPC) through PacketEvent's [NPC] implementation.
  */
-class WorldNPC private constructor(displayName: String, textureProperties: List<TextureProperty?>?, val location: Location) {
-
-    private val userProfile: UserProfile = UserProfile(UUID.randomUUID(), displayName, textureProperties)
+class WorldNPC private constructor(displayName: Component, textureProperties: List<TextureProperty?>?, val location: Location) {
     private var id: Int = SpigotReflectionUtil.generateEntityId()
-    private val tablistName = "NPC-$id".style()
+
+    val npc: NPC
     var scale = 0.5
-    val npc: NPC = NPC(userProfile, id, tablistName)
+
+    init {
+        val uniqueName = id.toString().map { "§$it" }.joinToString("")
+        this.npc = NPC(UserProfile(UUID.randomUUID(), uniqueName, textureProperties), id)
+        npc.prefixName = displayName
+    }
 
     /**
      * Spawns this NPC for the given player via packets
@@ -46,7 +51,10 @@ class WorldNPC private constructor(displayName: String, textureProperties: List<
      */
     fun spawnFor(player: Player) {
         this.npc.location = location.packetObj()
-        this.npc.spawn(PacketEvents.getAPI().playerManager.getUser(player).channel)
+        try {
+            this.npc.spawn(PacketEvents.getAPI().playerManager.getUser(player).channel)
+        } catch (_: Exception) {
+        } // try-catch to prevent very rare exception with netty channel being invalidated. (when player leaves)
 
         // skin packet
         WrapperPlayServerEntityMetadata(id, listOf(EntityData(17, EntityDataTypes.BYTE, 127.toByte()))).sendPacket(player)
@@ -57,7 +65,7 @@ class WorldNPC private constructor(displayName: String, textureProperties: List<
             scale,
             WrapperPlayServerUpdateAttributes.PropertyModifier.Operation.ADDITION
         )
-        var property = WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, scale, listOf(modifier))
+        val property = WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, scale, listOf(modifier))
         WrapperPlayServerUpdateAttributes(id, listOf(property)).sendPacket(player)
 
     }
@@ -123,7 +131,7 @@ class WorldNPC private constructor(displayName: String, textureProperties: List<
                     ChristmasEventPlugin.instance.worldNPCs.remove(leaderBoardNPCs[index])
 
                     async {
-                        leaderBoardNPCs[index] = createFromUniqueId("", uniqueId, leaderboardPositionToLocation[index]!!).apply {
+                        leaderBoardNPCs[index] = createFromUniqueId(Component.empty(), uniqueId, leaderboardPositionToLocation[index]!!).apply {
                             this.scale = when (index) {
                                 0 -> 2.5
                                 1 -> 2.0
@@ -133,9 +141,7 @@ class WorldNPC private constructor(displayName: String, textureProperties: List<
 
                             ChristmasEventPlugin.instance.worldNPCs += this
                         }
-                        sync {
-                            leaderBoardNPCs[index]?.spawnForAll()
-                        }
+                        sync { leaderBoardNPCs[index]?.spawnForAll() }
                     }
 
                     ChristmasEventPlugin.instance.serverWorld.spawn(leaderboardPositionToNamePlateLocation[index]!!, TextDisplay::class.java) {
@@ -155,7 +161,7 @@ class WorldNPC private constructor(displayName: String, textureProperties: List<
          * @param location the location to spawn the NPC at
          * @return the newly created [WorldNPC] instance
          */
-        fun createFromLive(displayName: String, modelAfter: Player, location: Location): WorldNPC {
+        fun createFromLive(displayName: Component, modelAfter: Player, location: Location): WorldNPC {
             val textureProperties = PacketEvents.getAPI().playerManager.getUser(modelAfter).profile.textureProperties
             return WorldNPC(displayName, textureProperties, location)
         }
@@ -167,7 +173,7 @@ class WorldNPC private constructor(displayName: String, textureProperties: List<
          * @param location the location to spawn the NPC at
          * @return the newly created [WorldNPC] instance
          */
-        fun createFromUniqueId(displayName: String, modelAfter: UUID, location: Location): WorldNPC {
+        fun createFromUniqueId(displayName: Component, modelAfter: UUID, location: Location): WorldNPC {
             // fetch texture properties from Mojang using player name
             val textureProperty = MojangAPIUtil.requestPlayerTextureProperties(modelAfter)
             return WorldNPC(displayName, textureProperty, location)

@@ -30,8 +30,6 @@ class DonationListener {
 
     /**
      * Continuously fetches donation data for a specified campaign at a 10-second interval.
-     *
-     * @param campaignId The ID of the campaign for which donations are being fetched.
      */
     @OptIn(DelicateCoroutinesApi::class)
     private fun fetchDonations() {
@@ -76,7 +74,7 @@ class DonationListener {
 
     /**
      * Handles the donation data received by processing each donation and fires a [DonateEvent] for each new donation.
-     * @param donationsData A JsonObject containing an array of donation data.
+     * @param donations A JsonObject containing an array of donation data.
      */
     private fun submitDataToEventFactory(donations: JsonArray) {
         donations.forEach { donationElement ->
@@ -86,11 +84,12 @@ class DonationListener {
                 val donorName = donation.get("name")?.asString
                 val comment = donation.get("comment")?.asString
                 val amount = donation.get("amount").asString
+                val finalAmount = donation.get("finalAmount").asString
                 val timestamp = donation.get("timestamp").asLong
 
                 sync {
                     Bukkit.getPluginManager().callEvent(
-                        DonateEvent(donationId, donorName, comment, amount, timestamp)
+                        DonateEvent(donationId, donorName, comment, amount, finalAmount, timestamp)
                     )
                 }
             }
