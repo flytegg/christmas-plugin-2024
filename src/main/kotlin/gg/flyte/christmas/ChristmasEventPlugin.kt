@@ -17,7 +17,9 @@ import gg.flyte.twilight.twilight
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import net.minecraft.world.level.Level
 import org.bukkit.*
+import org.bukkit.craftbukkit.CraftWorld
 import org.bukkit.entity.Display
 import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
@@ -33,6 +35,7 @@ import kotlin.reflect.full.primaryConstructor
 
 class ChristmasEventPlugin : JavaPlugin() {
     lateinit var serverWorld: World
+    lateinit var nmsServerWorld: Level
     lateinit var lobbySpawn: MapSinglePoint
     lateinit var scoreBoardTab: Scoreboard
     var cameraPlayer: UUID = UUID.fromString("a008c892-e7e1-48e1-8235-8aa389318b7a") // "devous" | Josh
@@ -125,6 +128,8 @@ class ChristmasEventPlugin : JavaPlugin() {
             difficulty = Difficulty.PEACEFUL
             time = 6000
         }
+
+        nmsServerWorld = (serverWorld as CraftWorld).handle
 
         // Create Podium Model
         serverWorld.spawn(MapSinglePoint(535.5, 105.0, 503.5), ItemDisplay::class.java) {
