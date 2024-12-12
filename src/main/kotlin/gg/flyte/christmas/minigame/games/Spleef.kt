@@ -131,7 +131,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                     }
                 }
 
-                snowmen.forEach {
+                snowmen.toList().forEach { //prevent concurrent modification
                     if (it.location.blockY < 70) {
                         it.remove()
                         snowmen.remove(it)
