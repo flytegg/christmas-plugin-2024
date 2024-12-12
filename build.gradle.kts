@@ -23,7 +23,7 @@ dependencies {
     implementation("io.ktor:ktor-client-core:3.0.0")
     implementation("io.ktor:ktor-client-cio:3.0.0")
 
-    paperweight.paperDevBundle("1.21.1-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.21.3-R0.1-SNAPSHOT")
 
     implementation("gg.flyte:twilight:1.1.16")
     implementation("io.github.revxrsal:lamp.common:4.0.0-beta.19")
@@ -70,7 +70,7 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.21.1")
+        minecraftVersion("1.21.3")
     }
 }
 
