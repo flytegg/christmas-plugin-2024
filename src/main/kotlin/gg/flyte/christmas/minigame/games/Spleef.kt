@@ -107,6 +107,8 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     override fun startGame() {
         overviewTasks.forEach { it.cancel() }
 
+        donationEventsEnabled = true
+
         for (point in floorLevelBlocks) {
             point.block.type = Material.SNOW_BLOCK
         } // reset after game overview
@@ -396,7 +398,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             Material.SNOW -> {
                 val blockData = block.blockData as Snow
 
-                if (blockData.layers == 2) {
+                if (blockData.layers <= 2) {
                     block.type = Material.AIR
                 } else {
                     blockData.layers -= 3
@@ -491,9 +493,9 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
     }
 
-    private class CustomSnowGolem(world: Level) : SnowGolem(EntityType.SNOW_GOLEM, world) {
+    private class CustomSnowGolem(private val world: Level) : SnowGolem(EntityType.SNOW_GOLEM, world) {
         fun spawn(): Snowman {
-            level().addFreshEntity(this)
+            world.addFreshEntity(this)
 
             return bukkitEntity as Snowman
         }
