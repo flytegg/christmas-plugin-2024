@@ -51,8 +51,7 @@
     - Spawn a fast-shooting snow golem on the layer 1 sweats
 - High-tier
     - Remove the bottom layer with a 5-second warning, can only be used once
-    - Start snowing snowballs
-    - Perform random low tier & medium tier action
+    - Start snowing snowballs from the sky
 
 ### Bauble Tag:
  - Low-tier
