@@ -508,12 +508,12 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
 
         override fun performRangedAttack(target: LivingEntity, pullProgress: Float) {
-            val dx = target.x - this.x
-            val dz = target.z - this.z
-            val targetY = target.y
+            val dx = target.x - x
+            val dz = target.z - z
+            val targetY = target.y // different from the original method; aim at feet instead of eyes
 
             val distanceFactor = sqrt(dx * dx + dz * dz) * 0.2
-            val world = this.level()
+            val world = level()
 
             if (world is ServerLevel) {
                 val item = Items.SNOWBALL.defaultInstance
@@ -521,7 +521,6 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
                 Projectile.spawnProjectile(snowball, world, item) { snowballEntity ->
                     val dy = targetY + distanceFactor - snowballEntity.y
-
                     snowballEntity.shoot(dx, dy, dz, 1.6f, 12.0f)
                 }
             }
