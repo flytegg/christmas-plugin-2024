@@ -1,5 +1,7 @@
 package gg.flyte.christmas.minigame.games
 
+import com.destroystokyo.paper.entity.ai.VanillaGoal
+import gg.flyte.christmas.ChristmasEventPlugin
 import gg.flyte.christmas.donation.DonationTier
 import gg.flyte.christmas.minigame.engine.EventMiniGame
 import gg.flyte.christmas.minigame.engine.GameConfig
@@ -10,6 +12,7 @@ import gg.flyte.christmas.util.eventController
 import gg.flyte.christmas.util.formatInventory
 import gg.flyte.christmas.util.style
 import gg.flyte.twilight.event.event
+import gg.flyte.twilight.extension.getNearestPlayer
 import gg.flyte.twilight.extension.hidePlayer
 import gg.flyte.twilight.extension.playSound
 import gg.flyte.twilight.extension.showPlayer
@@ -18,19 +21,22 @@ import gg.flyte.twilight.scheduler.delay
 import gg.flyte.twilight.scheduler.repeatingTask
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
+import net.minecraft.world.entity.ai.goal.RangedAttackGoal
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.Sound
+import org.bukkit.attribute.Attribute
 import org.bukkit.block.Block
 import org.bukkit.block.data.type.Snow
+import org.bukkit.craftbukkit.entity.CraftSnowman
 import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
 import org.bukkit.entity.Snowball
+import org.bukkit.entity.Snowman
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.event.entity.ProjectileLaunchEvent
-import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerToggleFlightEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
@@ -62,6 +68,8 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
     private val snowballBar = BossBar.bossBar("<gold><b>POWERFUL SNOWBALLS".style(), 1.0F, BossBar.Color.WHITE, BossBar.Overlay.NOTCHED_6)
     private var snowballBarTicks = 0.0F
+
+    private val snowmen = mutableListOf<Snowman>()
 
 
     override fun startGameOverview() {
@@ -105,6 +113,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             addActionBarTask()
             addUnlimitedJumpsTask()
             addPowerfulSnowballsTask()
+            addSnowmenSetTargetTask()
 
             tasks += repeatingTask(1) {
                 remainingPlayers().forEach {
@@ -112,6 +121,13 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                         if (remainingPlayers().contains(it)) {
                             eliminate(it, EliminationReason.ELIMINATED)
                         }
+                    }
+                }
+
+                snowmen.forEach {
+                    if (it.location.blockY < 70) {
+                        it.remove()
+                        snowmen.remove(it)
                     }
                 }
             }
@@ -285,6 +301,19 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
     }
 
+    private fun addSnowmenSetTargetTask() {
+        tasks += repeatingTask(1) {
+            snowmen.removeIf(Snowman::isDead)
+
+            snowmen.forEach {
+                val target = it.getNearestPlayer(64.0, 64.0, 64.0)
+                if (target != null) {
+                    it.target = target
+                }
+            }
+        }
+    }
+
     override fun handleGameEvents() {
         listeners += event<BlockBreakEvent> {
             isCancelled = true
@@ -373,7 +402,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     override fun handleDonation(tier: DonationTier, donorName: String?) {
         when (tier) {
             DonationTier.LOW -> lowTierDonation(donorName)
-            DonationTier.MEDIUM -> TODO()
+            DonationTier.MEDIUM -> spawnSnowGolem(donorName)
             DonationTier.HIGH -> TODO()
         }
     }
@@ -426,6 +455,34 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 it.sendMessage("<green>+<red>10</red> seconds of powerful snowballs! (<aqua>$name's</aqua> donation)".style())
             } else {
                 it.sendMessage("<green>+<red>10</red> seconds of powerful snowballs! (donation)".style())
+            }
+        }
+    }
+
+    private fun spawnSnowGolem(name: String?) {
+        ChristmasEventPlugin.instance.serverWorld.spawn(gameConfig.centrePoint, Snowman::class.java) {
+            it.customName(if (name != null) "$name's Snow Golem".style() else "Angry Snow Golem".style())
+            it.getAttribute(Attribute.FOLLOW_RANGE)!!.baseValue = 64.0
+
+            val nmsSnowman = (it as CraftSnowman).handle
+            val goalManager = ChristmasEventPlugin.instance.server.mobGoals
+            goalManager.removeGoal(it, VanillaGoal.RANGED_ATTACK)
+
+            nmsSnowman.goalSelector.removeAllGoals {
+                goal -> goal is RangedAttackGoal
+            }
+
+            nmsSnowman.goalSelector.addGoal(1, RangedAttackGoal(
+                nmsSnowman, 2.25, 2, 25.0F))
+
+            snowmen.add(it)
+        }
+
+        remainingPlayers().forEach {
+            if (name != null) {
+                it.sendMessage("<green>A snowman has joined the game! (<aqua>$name's</aqua> donation)".style())
+            } else {
+                it.sendMessage("<green>A snowman has joined the game! (donation)".style())
             }
         }
     }
