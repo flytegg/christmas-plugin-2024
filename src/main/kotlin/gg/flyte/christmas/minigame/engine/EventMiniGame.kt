@@ -41,6 +41,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
     protected val listeners = mutableListOf<TwilightListener>()
     protected val tasks = mutableListOf<TwilightRunnable?>()
     protected val formattedWinners = linkedMapOf<UUID, String>()
+    var donationEventsEnabled = false
     val spectateEntities = mutableMapOf<Int, Entity>()
     var state: GameState = GameState.IDLE
 
@@ -77,7 +78,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
                 )
             }
 
-            var displayComponent = Component.empty()
+            val displayComponent = Component.empty()
                 .append("<st>\n   ".style())
                 .append("> ".style())
                 .append("<b><0>".style(gameConfig.displayName))
@@ -142,9 +143,9 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
             // spectate item
             ItemStack(Material.RECOVERY_COMPASS).apply {
                 itemMeta = itemMeta.apply {
-                    displayName("<!i><white>Spectate".style())
+                    displayName("<!i><white>ѕᴘᴇᴄᴛᴀᴛᴇ".style())
                     editMeta {
-                        lore(listOf("<grey>Click to Spectate!".style()))
+                        lore(listOf("<grey>ᴄʟɪᴄᴋ ᴛᴏ ѕᴘᴇᴄᴛᴀᴛᴇ!".style()))
                     }
                 }
             }.also { player.inventory.setItem(8, it) }
@@ -249,9 +250,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
     /**
      * @return A list of players who have not been eliminated from the game.
      */
-    fun remainingPlayers(): List<Player> {
-        return Util.runAction(PlayerType.PARTICIPANT) {}.filter { !(eliminatedPlayers.contains(it.uniqueId)) }
-    }
+    fun remainingPlayers(): List<Player> = Util.runAction(PlayerType.PARTICIPANT) {}.filter { !(eliminatedPlayers.contains(it.uniqueId)) }
 
     /**
      * Renders a cinematic sequence of the game results with the temporary podium NPCs.
@@ -267,15 +266,20 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
             // create podium NPCs
             val npcs = mutableListOf<WorldNPC>()
             val displays = mutableListOf<TextDisplay>()
-            val descendingColour = listOf("a", "c", "9")
+            val descendingColour = listOf(
+                "<colour:#ffcb1a>➊ ",
+                "<colour:#d0d0d0>➋ ",
+                "<colour:#a39341>➌ "
+            )
+
             formattedWinners.entries.take(3).reversed().forEachIndexed { index, keyValuePair ->
-                var uniqueId = keyValuePair.key
-                var value = keyValuePair.value
-                val displayName = "§${descendingColour[index]}${Bukkit.getPlayer(uniqueId)!!.name}"
-                var placeLocation = Util.getNPCSummaryLocation(index)
+                val uniqueId = keyValuePair.key
+                val value = keyValuePair.value
+                val displayName = "${descendingColour[index]}${Bukkit.getOfflinePlayer(uniqueId).name}"
+                val placeLocation = Util.getNPCSummaryLocation(index)
                 val animationTasks = mutableListOf<TwilightRunnable>()
 
-                WorldNPC.createFromUniqueId(displayName, uniqueId, placeLocation).also { npc ->
+                WorldNPC.createFromUniqueId(displayName.style(), uniqueId, placeLocation).also { npc ->
                     npc.spawnForAll()
 
                     placeLocation.world.spawn(placeLocation.add(0.0, 2.5, 0.0), TextDisplay::class.java).apply {

@@ -27,7 +27,6 @@ class TreeDecorate : EventMiniGame(GameConfig.TREE_DECORATE) {
         "5e39248b341c87ce3e4294ac214c6f74468889cb1273ae7412906fd28db097e8",
         "8e717b485d95b3bd14db1350c55a29da99ee1d3195c050617088a9677ac42",
         "47a985c31ad461e322b39c433eae79ff46fb64800cdecadf2f6d0f9727252",
-        // t
         "940da99ea4718907f17190eb15352c0da0de0cee186d4fabf6158f81926a504f",
         "2db24dc262631663ba1e3e3398645013dc5cd2331ec9b9f3eb26855a0b104baa",
         "1e3ad039e903e30f90daa68cebfc5cee72b5ed84d6044382409c67f374d1732b",
@@ -57,6 +56,8 @@ class TreeDecorate : EventMiniGame(GameConfig.TREE_DECORATE) {
     }
 
     override fun startGame() {
+        donationEventsEnabled = true
+
         Util.runAction(PlayerType.PARTICIPANT) {
             it.title(
                 "<game_colour>ʜᴀᴘᴘʏ ᴅᴇᴄᴏʀᴀᴛɪɴɢ!".style(), Component.empty(),
@@ -66,9 +67,7 @@ class TreeDecorate : EventMiniGame(GameConfig.TREE_DECORATE) {
             it.playSound(Sound.MUSIC_DISC_CHIRP)
         }
 
-        delay(15, TimeUnit.MINUTES) { // TODO
-            booleanCanDesecrate = true
-        }
+        delay(15, TimeUnit.MINUTES) { booleanCanDesecrate = true }
 
         delay(200, TimeUnit.SECONDS) {
             eventController().songPlayer?.isPlaying = true // Santa Tell Me would now be over.

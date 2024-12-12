@@ -74,6 +74,7 @@ class SledRacing : EventMiniGame(GameConfig.SLED_RACING) {
     override fun startGame() {
         simpleCountdown {
             hasStarted = true
+            donationEventsEnabled = true
 
             tasks += repeatingTask(1) {
                 Util.runAction(PlayerType.PARTICIPANT) {
@@ -96,6 +97,8 @@ class SledRacing : EventMiniGame(GameConfig.SLED_RACING) {
     }
 
     override fun endGame() {
+        donationEventsEnabled = false
+
         scores.entries.sortedBy { it.value }.take(3).forEachIndexed { index, (uuid, _) ->
             if (index == 0) {
                 formattedWinners.putIfAbsent(uuid, "1sᴛ ᴘʟᴀᴄᴇ")

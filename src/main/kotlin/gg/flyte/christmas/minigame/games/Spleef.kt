@@ -68,6 +68,8 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
     override fun startGame() {
         overviewTasks.forEach { it.cancel() }
+        donationEventsEnabled = true
+
         for (point in floorLevelBlocks) point.block.type = Material.SNOW_BLOCK // reset after game overview
 
         simpleCountdown {
@@ -82,7 +84,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 // every 30 seconds, they get points
                 if (seconds % 20 == 0) {
                     remainingPlayers().forEach {
-                        it.sendMessage("<green>+1 point for surviving 30 seconds!".style())
+                        it.sendMessage("<green>+1 ᴘᴏɪɴᴛ ꜰᴏʀ ѕᴜʀᴠɪᴠɪɴɢ 30 ѕᴇᴄᴏɴᴅѕ!".style())
                         eventController().addPoints(it.uniqueId, 1)
                     }
                 }
@@ -95,16 +97,16 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                         when (it.block.type) {
                             Material.SNOW_BLOCK -> {
                                 it.block.type = Material.SNOW
-                                it.block.blockData as? Snow ?: return@delay
+                                if (it.block.blockData !is Snow) return@delay
                                 it.block.blockData = (it.block.blockData as Snow).apply { layers = 5 }
                             }
 
                             Material.SNOW -> {
-                                var blockData = it.block.blockData as Snow
+                                val blockData = it.block.blockData as Snow
                                 if (blockData.layers == 2) {
                                     it.block.type = Material.AIR
                                 } else {
-                                    blockData.layers = blockData.layers - 3
+                                    blockData.layers -= 3
                                     it.block.blockData = blockData
                                 }
                             }
@@ -122,54 +124,51 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     override fun eliminate(player: Player, reason: EliminationReason) {
         Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) { it.sendMessage("<red>${player.name} <grey>has been eliminated!".style()) }
         doubleJumps.remove(player)
-        player.apply {
-            allowFlight = false
 
-            @Suppress("DuplicatedCode") // yes ik but im lazy and can't think of any other animations
-            if (reason == EliminationReason.ELIMINATED) {
-                if (gameMode != GameMode.SPECTATOR) {
-                    Util.runAction(PlayerType.PARTICIPANT, PlayerType.PARTICIPANT) { it.playSound(Sound.ENTITY_ITEM_BREAK) }
-                } // don't apply cosmetics if in camera sequence
+        player.allowFlight = false
+        if (player.gameMode != GameMode.SPECTATOR) {
+            Util.runAction(PlayerType.PARTICIPANT, PlayerType.PARTICIPANT) { it.playSound(Sound.ENTITY_ITEM_BREAK) }
+        } // don't apply cosmetics if in camera sequence
 
-                addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, 20 * 4, 1, false, false, false))
+        @Suppress("DuplicatedCode") // yes ik but im lazy and can't think of any other animations
+        if (reason == EliminationReason.ELIMINATED) {
+            player.addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, 20 * 4, 1, false, false, false))
 
-                val itemDisplay = world.spawn(location, ItemDisplay::class.java) {
-                    it.setItemStack(ItemStack(Material.AIR))
-                    it.teleportDuration = 59 // max (minecraft limitation)
+            val itemDisplay = player.world.spawn(player.location, ItemDisplay::class.java) {
+                it.setItemStack(ItemStack(Material.AIR))
+                it.teleportDuration = 59 // max (minecraft limitation)
+            }
+            delay(1) {
+                val randomSpecLocation = gameConfig.spectatorSpawnLocations.random()
+                itemDisplay.teleport(randomSpecLocation)
+                itemDisplay.addPassenger(player)
+                player.hidePlayer()
+
+                delay(59) {
+                    itemDisplay.remove()
+                    player.teleport(randomSpecLocation)
+                    player.showPlayer()
                 }
-
-                addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, 20 * 4, 1, false, false, false))
-
-                delay(1) {
-                    val randomSpecLocation = gameConfig.spectatorSpawnLocations.random()
-                    itemDisplay.teleport(randomSpecLocation)
-                    itemDisplay.addPassenger(player)
-                    player.hidePlayer()
-
-                    delay(59) {
-                        itemDisplay.remove()
-                        player.teleport(randomSpecLocation)
-                        player.showPlayer()
-                    }
-                }
-            } // animate death
-        }
+            }
+        } // animate death
 
         super.eliminate(player, reason)
 
-        val value = "$seconds second${if (seconds > 1) "s" else ""}"
+        val value = "$seconds ѕᴇᴄᴏɴᴅ${if (seconds > 1) "ѕ" else ""}"
         when (remainingPlayers().size) {
             1 -> {
-                formattedWinners.put(player.uniqueId, value)
-                formattedWinners.put(remainingPlayers().first().uniqueId, "$value (1st Place!)")
+                formattedWinners[player.uniqueId] = value
+                formattedWinners[remainingPlayers().first().uniqueId] = "$value (1ѕᴛ ᴘʟᴀᴄᴇ!)"
                 endGame()
             }
 
-            2 -> formattedWinners.put(player.uniqueId, value)
+            2 -> formattedWinners[player.uniqueId] = value
         }
     }
 
     override fun endGame() {
+        donationEventsEnabled = false
+
         for (point in floorLevelBlocks) point.block.type = Material.AIR
         super.endGame()
     }
@@ -183,7 +182,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         tasks += repeatingTask(10) {
             remainingPlayers().forEach {
                 if (doubleJumps[it]!! > 0) {
-                    it.sendActionBar("<green><b>${doubleJumps[it]!!} <reset><game_colour>double jumps left!".style())
+                    it.sendActionBar("<green><b>${doubleJumps[it]!!} <reset><game_colour>ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘѕ ʟᴇꜰᴛ!".style())
                 }
             }
         }
@@ -223,12 +222,12 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 when (hitBlock!!.type) {
                     Material.SNOW_BLOCK -> {
                         hitBlock!!.type = Material.SNOW
-                        hitBlock!!.blockData as? Snow ?: return@event
+                        if (hitBlock!!.blockData !is Snow) return@event
                         hitBlock!!.blockData = (hitBlock!!.blockData as Snow).apply { layers = 5 }
                     }
 
                     Material.SNOW -> {
-                        var blockData = hitBlock!!.blockData as Snow
+                        val blockData = hitBlock!!.blockData as Snow
                         if (blockData.layers == 2) {
                             hitBlock!!.type = Material.AIR
                         } else {
@@ -243,9 +242,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
 
         listeners += event<PlayerMoveEvent> {
-            if (player.location.blockY < 70) {
-                if (remainingPlayers().contains(player)) eliminate(player, EliminationReason.ELIMINATED)
-            }
+            if (player.location.blockY < 70 && remainingPlayers().contains(player)) eliminate(player, EliminationReason.ELIMINATED)
         }
     }
 

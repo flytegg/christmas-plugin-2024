@@ -14,7 +14,7 @@ object Util {
     /**
      * Wrapper class for contributors to the event.
      */
-    data class Contributor(val uniqueId: UUID, val contribution: String, val location: MapSinglePoint)
+    data class Contributor(val uniqueId: UUID, val contribution: String, val location: MapSinglePoint, val colour: String)
 
     /**
      * Gets the contributors to the event from the `config.yml` file.
@@ -24,9 +24,9 @@ object Util {
         val config = ChristmasEventPlugin.instance.config
 
         return config.getStringList("contributors").map { contributor ->
-            val (ign, contribution, coords) = contributor.substring(1, contributor.length - 1).split("><")
+            val (ign, contribution, coords, colour) = contributor.substring(1, contributor.length - 1).split("><")
             val (x, y, z) = coords.split(",").map { it.trim().toDouble() }
-            Contributor(UUID.fromString(ign), contribution, MapSinglePoint(x, y, z))
+            Contributor(UUID.fromString(ign), contribution, MapSinglePoint(x, y, z), colour)
         }
     }
 

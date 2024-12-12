@@ -100,29 +100,15 @@ class ChristmasEventPlugin : JavaPlugin() {
 
     private fun loadNPCs() {
         for (contributor in Util.getEventContributors()) {
-            val uniqueId = contributor.uniqueId
-            val contribution = contributor.contribution
-            val location = contributor.location
+            val (uniqueId, contribution, location, colour) = contributor
+            val displayName = "<$colour>${MojangAPIUtil.requestPlayerName(uniqueId)}".style()
 
-            var randomColour = mapOf(
-                "<dark_red>" to "4",
-                "<red>" to "c",
-                "<gold>" to "6",
-                "<dark_green>" to "2",
-                "<green>" to "a",
-                "<blue>" to "9",
-            ).entries.random()
-
-            val displayName = "§${randomColour.value}${MojangAPIUtil.requestPlayerName(uniqueId)}"
-
-            var contributorNPC = WorldNPC.createFromUniqueId(displayName, uniqueId, location).also { worldNPCs += it }
-            contributorNPC.npc.prefixName = "${randomColour.key}<obf>W ".style()
-            contributorNPC.npc.suffixName = " ${randomColour.key}<obf>W".style()
+            val contributorNPC = WorldNPC.createFromUniqueId(displayName, uniqueId, location).also { worldNPCs += it }
             contributorNPC.spawnForAll()
 
             location.world.spawn(location.clone().add(0.0, 2.5, 0.0), TextDisplay::class.java).apply {
-                text("<colour:#ffc4ff>$contribution".style())
-                backgroundColor = Color.fromRGB(84, 72, 84)
+                text("<pink>$contribution".style())
+                backgroundColor = Color.fromARGB(150, 0, 0, 0)
                 billboard = Display.Billboard.CENTER
             }
         }
