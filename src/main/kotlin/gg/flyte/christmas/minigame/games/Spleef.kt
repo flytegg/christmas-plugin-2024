@@ -501,7 +501,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         override fun registerGoals() {
             super.registerGoals()
 
-            val attackGoal = RangedAttackGoal(this, 2.25, 2, 25.0F)
+            val attackGoal = RangedAttackGoal(this, 2.25, 2, 12.0F)
 
             goalSelector.removeAllGoals { goal -> goal is RangedAttackGoal }
             goalSelector.addGoal(1, attackGoal)
@@ -510,7 +510,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         override fun performRangedAttack(target: LivingEntity, pullProgress: Float) {
             val dx = target.x - x
             val dz = target.z - z
-            val targetY = target.y // different from the original method; aim at feet instead of eyes
+            val targetY = target.y - 1.1 // different from the original method; aim at feet instead of eyes
 
             val distanceFactor = sqrt(dx * dx + dz * dz) * 0.2
             val world = level()
