@@ -17,6 +17,7 @@ class DonateEvent(
     val donorName: String?,
     val comment: String?,
     val amount: String,
+    val finalAmount: String,
     val timestamp: Long
 ) : Event() {
     override fun getHandlers(): HandlerList {

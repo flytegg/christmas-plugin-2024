@@ -153,17 +153,19 @@ class EventCommand(val menu: StandardMenu = StandardMenu("&c☃ ᴇᴠᴇɴᴛ �
         // TODO show leaderboard
     }
 
+    // Matched amount will == amount as calculations are handled by the API
     @Command("event mock-donation-now <amount>")
     @CommandPermission("event.mockdonation")
     fun mockDonation(sender: Player, amount: Double) {
-        var donationEvent = DonateEvent(UUID.randomUUID().toString(), null, null, amount.toString(), System.currentTimeMillis())
+        var donationEvent = DonateEvent(UUID.randomUUID().toString(), null, null, amount.toString(), amount.toString(), System.currentTimeMillis())
         Bukkit.getPluginManager().callEvent(donationEvent)
     }
 
+    // Matched amount will == amount as calculations are handled by the API
     @Command("event mock-donation-now <amount> <target>")
     @CommandPermission("event.mockdonation")
     fun mockDonation(sender: Player, amount: Double, target: Player) {
-        var donationEvent = DonateEvent(UUID.randomUUID().toString(), null, null, amount.toString(), System.currentTimeMillis())
+        var donationEvent = DonateEvent(UUID.randomUUID().toString(), null, null, amount.toString(), amount.toString(), System.currentTimeMillis())
         Bukkit.getPluginManager().callEvent(donationEvent)
     }
 

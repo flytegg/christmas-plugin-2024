@@ -263,8 +263,7 @@ class EventController {
 
             // announce donation
             val charitableDonor = event.donorName ?: "mysterious donor"
-            val numberValue = event.amount
-            it.sendMessage("<grey><gradient:#A3ADFF:#00FFF4>DONATION MADE ––> Thank you,</gradient><#FF72A6> $charitableDonor<gradient:#00FFF4:#00FFF4>, <gradient:#00FFF4:#A3ADFF>for donating $$numberValue.</gradient>".style())
+            it.sendMessage("<grey><gradient:#A3ADFF:#00FFF4>DONATION MADE ––> Thank you,</gradient><#FF72A6> $charitableDonor<gradient:#00FFF4:#00FFF4>, <gradient:#00FFF4:#A3ADFF>for donating $${event.amount} (matched to $${event.finalAmount}).</gradient>".style())
         }
 
         async {
