@@ -472,7 +472,8 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
     private fun spawnSnowGolem(name: String?) {
         CustomSnowGolem(ChristmasEventPlugin.instance.nmsServerWorld).spawn().let {
-            it.customName(if (name != null) "$name's Snow Golem".style() else "Angry Snow Golem".style())
+            it.customName(if (name != null) "<aqua>$name's</aqua> <game_colour>Snow Golem".style() else "<game_colour>Angry Snow Golem".style())
+            it.isCustomNameVisible = true
 
             it.getAttribute(Attribute.FOLLOW_RANGE)!!.baseValue = 64.0
 
