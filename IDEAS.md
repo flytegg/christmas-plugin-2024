@@ -83,3 +83,7 @@ Extra considerations:
 - streamline cameraslide
 - also rework avalanche roof designs/ideas.
 - work out scoring ratio (games like paint wars cant add 4000+ points)
+
+### Bugs which I don't want to spam on the discord
+- Terminating a game in its camera phase
+- Game starting changed colors??
