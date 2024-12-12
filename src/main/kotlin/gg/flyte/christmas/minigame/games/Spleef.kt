@@ -508,6 +508,8 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
 
         override fun performRangedAttack(target: LivingEntity, pullProgress: Float) {
+            if (!onGround) return
+
             val dx = target.x - x
             val dz = target.z - z
             val targetY = target.y - 1.4 // different from the original method; aim at feet instead of eyes
