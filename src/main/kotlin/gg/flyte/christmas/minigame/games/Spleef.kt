@@ -522,7 +522,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
             val dx = target.x - x
             val dz = target.z - z
-            val targetY = target.y - 1.4 // different from the original method; aim at feet instead of eyes
+            val targetY = target.y - 1.6 // different from the original method; aim at feet instead of eyes
 
             val distanceFactor = sqrt(dx * dx + dz * dz) * 0.2
             val world = level()
