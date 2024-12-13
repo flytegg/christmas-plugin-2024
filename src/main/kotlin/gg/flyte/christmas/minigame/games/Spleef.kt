@@ -580,7 +580,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
 
         override fun getFlyingSpeed(): Float {
-            return this.speed
+            return this.speed * 0.1F
         }
     }
 }
