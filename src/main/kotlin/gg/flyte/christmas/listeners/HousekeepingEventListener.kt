@@ -33,7 +33,6 @@ import io.papermc.paper.chat.ChatRenderer
 import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.Component.text
-import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.*
 import org.bukkit.entity.Player
@@ -97,15 +96,13 @@ class HousekeepingEventListener : Listener, PacketListener {
 
         event<AsyncChatEvent> {
             renderer(ChatRenderer.viewerUnaware { player, _, _ ->
-                val finalRender = text()
+                var finalRender = ""
 
-                if (player.isOp) finalRender.append("<red><b>ѕᴛᴀꜰꜰ ".style())
-                if (eventController().donors.contains(player.uniqueId)) finalRender.append("<b><gradient:#FFCF00:#FFF56C>ᴅᴏɴᴏʀ </gradient>".style())
+                if (player.isOp) finalRender += "<red><b>ѕᴛᴀꜰꜰ<!b> "
+                if (eventController().donors.contains(player.uniqueId)) finalRender += "<b><gradient:#FFCF00:#FFF56C>ᴅᴏɴᴏʀ</gradient><!b> "
 
-                finalRender.append(text(player.name, TextColor.color(209, 209, 209)))
-                    .append("<grey> » ".style())
-                    .append("<white> ${signedMessage().message()}".style())
-                    .build()
+                finalRender += "<colour:#d1d1d1>${player.name} <grey>»<white> ${signedMessage().message()}"
+                finalRender.style()
             })
         }
 

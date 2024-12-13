@@ -141,13 +141,11 @@ class ChristmasEventPlugin : JavaPlugin() {
 
         // Create Event Leaderboard Display
         serverWorld.spawn(MapSinglePoint(535.5, 121, 503.5, -90, 0), TextDisplay::class.java) {
-            it.text("<gold>ᴇᴠᴇɴᴛ\nʟᴇᴀᴅᴇʀʙᴏᴀʀᴅ".style())
-            it.transformation = it.transformation.apply {
-                this.scale.mul(10F)
-            }
+            it.text("<#269123>ᴇᴠᴇɴᴛ\nʟᴇᴀᴅᴇʀʙᴏᴀʀᴅ".style())
+            it.transformation = it.transformation.apply { this.scale.mul(10F) }
             it.billboard = Display.Billboard.CENTER
             it.isDefaultBackground = false
-            it.backgroundColor = Color.fromRGB(94, 68, 23)
+            it.backgroundColor = Color.fromARGB(255, 175, 255, 173)
             it.isSeeThrough = false
         }
 
@@ -177,7 +175,6 @@ class ChristmasEventPlugin : JavaPlugin() {
                     .append("<white>ʜᴇᴀᴅ ᴏᴠᴇʀ ᴛᴏ <gradient:#ff80e8:#ffffff>ꜰʟʏᴛᴇ.ɢɢ/ᴅᴏɴᴀᴛᴇ</gradient> ᴛᴏ ᴅᴏɴᴀᴛᴇ ɴᴏᴡ!\n\n".style())
                     .append("<white>ʟᴇᴀʀɴ ᴍᴏʀᴇ @ <colour:#ec8339>ʙᴇsᴛꜰʀɪᴇɴᴅs.ᴏʀɢ\n\n".style())
                     .append("<red>ᴛʜᴀɴᴋ ʏᴏᴜ ꜰᴏʀ ᴊᴏɪɴɪɴɢ ᴜs ❤".style())
-
             )
             it.lineWidth = 250
             it.transformation = it.transformation.apply { this.scale.mul(2F) }

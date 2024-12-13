@@ -169,6 +169,13 @@ class EventCommand(val menu: StandardMenu = StandardMenu("&c☃ ᴇᴠᴇɴᴛ �
         Bukkit.getPluginManager().callEvent(donationEvent)
     }
 
+    @Command("event mark-as-donor <donor>")
+    @CommandPermission("event.markdonor")
+    fun markAsDonor(sender: Player, donor: Player) {
+        eventController().markAsDonor(donor.name)
+        sender.sendMessage("<hover:show_text:'text'>texthere?</hover>".style())
+    }
+
     private fun setGameSwitcher(): MenuItem {
         val menuItem = MenuItem(Material.STRUCTURE_VOID).apply {
             setName("&b&lSelect Game:".colourise())

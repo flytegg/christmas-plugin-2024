@@ -8,7 +8,7 @@ object Colours {
     val AQUA: TextColor = TextColor.fromHexString("#42D9C8")!!
     val WHITE: TextColor = TextColor.fromHexString("#F3F7F0")!!
     val YELLOW: TextColor = TextColor.fromHexString("#FFEE63")!!
-    val GREEN: TextColor = TextColor.fromHexString("#A7C957")!!
+    val GREEN: TextColor = TextColor.fromHexString("#55FF55")!!
     val DARK_GREEN: TextColor = TextColor.fromHexString("#226F54")!!
     val BLUE: TextColor = TextColor.fromHexString("#384B70")!!
     val PURPLE: TextColor = TextColor.fromHexString("#6735CE")!!
