@@ -499,6 +499,9 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             else "<game_colour>$withMountText Snow Golem".style()
 
         val location = gameConfig.spawnPoints.random().randomLocation()
+        if (withMount) {
+            location.y += 10
+        }
 
         CustomSnowGolem(nmsWorld, location, withMount).spawn().let {
             it.customName(snowmanName)
