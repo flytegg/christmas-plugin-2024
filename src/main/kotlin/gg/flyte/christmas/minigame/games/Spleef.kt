@@ -24,6 +24,7 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal
 import net.minecraft.world.entity.ai.goal.RangedAttackGoal
 import net.minecraft.world.entity.animal.SnowGolem
 import net.minecraft.world.entity.projectile.Projectile
@@ -489,17 +490,17 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     }
 
     private fun spawnSnowGolem(name: String?) {
-        val mainInstance = ChristmasEventPlugin.instance
+        val nmsWorld = ChristmasEventPlugin.instance.nmsServerWorld
         val withMount = (0..1).random() == 0
 
-        CustomSnowGolem(mainInstance.nmsServerWorld, gameConfig.centrePoint, withMount).spawn().let { it ->
+        CustomSnowGolem(nmsWorld, gameConfig.centrePoint, withMount).spawn().let {
             it.customName(if (name != null) "<aqua>$name's</aqua> <game_colour>Snow Golem".style() else "<game_colour>Angry Snow Golem".style())
             it.isCustomNameVisible = true
 
             it.getAttribute(Attribute.FOLLOW_RANGE)!!.baseValue = 64.0
 
             if (withMount) {
-                mainInstance.serverWorld.spawn(it.location, Bee::class.java).let { bee ->
+                CustomBee(nmsWorld, gameConfig.centrePoint).spawn().let { bee ->
                     bee.isInvisible = true
                     bee.isSilent = true
                     bee.addPassenger(it)
@@ -562,6 +563,25 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             }
 
             playSound(SoundEvents.SNOW_GOLEM_SHOOT, 1.0f, 0.4f / (getRandom().nextFloat() * 0.4f + 0.8f))
+        }
+    }
+
+    private class CustomBee(private val world: Level, location: Location) : net.minecraft.world.entity.animal.Bee(EntityType.BEE, world) {
+        init {
+            setPos(location.x, location.y, location.z)
+        }
+
+        fun spawn(): Bee {
+            world.addFreshEntity(this, CreatureSpawnEvent.SpawnReason.CUSTOM)
+
+            return bukkitEntity as Bee
+        }
+
+        override fun registerGoals() {
+            super.registerGoals()
+
+            goalSelector.removeAllGoals { _ -> true }
+            goalSelector.addGoal(0, MeleeAttackGoal(this, 2.25, true))
         }
     }
 }
