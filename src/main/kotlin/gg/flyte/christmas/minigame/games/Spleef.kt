@@ -38,7 +38,6 @@ import org.bukkit.entity.Player
 import org.bukkit.entity.Snowball
 import org.bukkit.entity.Snowman
 import org.bukkit.event.block.BlockBreakEvent
-import org.bukkit.event.block.BlockFormEvent
 import org.bukkit.event.entity.CreatureSpawnEvent
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.event.entity.ProjectileLaunchEvent
@@ -117,6 +116,9 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 it.gameMode = GameMode.SURVIVAL
                 it.allowFlight = true
             }
+
+            //prevent snow golems from forming snow layers
+            ChristmasEventPlugin.instance.serverWorld.setGameRule(GameRule.MOB_GRIEFING, false)
 
             addActionBarTask()
             addUnlimitedJumpsTask()
@@ -218,6 +220,9 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     }
 
     override fun endGame() {
+        //undo what was done in startGame()
+        ChristmasEventPlugin.instance.serverWorld.setGameRule(GameRule.MOB_GRIEFING, true)
+
         for (point in floorLevelBlocks) {
             point.block.type = Material.AIR
         }
@@ -350,12 +355,6 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 doubleJumps[player.uniqueId] = doubleJumps[player.uniqueId]!! - 1
             } else {
                 player.allowFlight = false
-            }
-        }
-
-        listeners += event<BlockFormEvent> { //prevent snowmen from forming snow layers
-            if (block.type == Material.SNOW) {
-                isCancelled = true
             }
         }
 
