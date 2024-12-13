@@ -437,7 +437,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         when (tier) {
             DonationTier.LOW -> lowTierDonation(donorName)
             DonationTier.MEDIUM -> midTierDonation(donorName)
-            DonationTier.HIGH -> TODO()
+            DonationTier.HIGH -> highTierDonation(donorName)
         }
     }
 
@@ -457,6 +457,18 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         when (random) {
             0 -> spawnSnowGolem(donorName)
             1 -> snowballRain(donorName)
+        }
+    }
+
+    private fun highTierDonation(donorName: String?) {
+        val random = (0..1).random()
+
+        when (random) {
+            0 -> meltBottomLayer(donorName)
+            1 -> {
+                snowballRain(donorName)
+                spawnSnowGolem(donorName)
+            }
         }
     }
 
@@ -566,6 +578,33 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         remainingPlayers().forEach {
             it.playSound(it, Sound.WEATHER_RAIN, 1.0F, 0.5F)
             it.sendMessage(message)
+        }
+    }
+
+    private fun meltBottomLayer(name: String?) {
+        var secondsElapsed = 0
+
+        val meltedText =
+            if (name != null) "<red><b>The bottom layer was melted by <aqua>$name</aqua>!".style()
+            else "<red><b>The bottom layer has melted!".style()
+
+        tasks += repeatingTask(20) {
+            if (secondsElapsed++ == 5) {
+                cancel()
+                remainingPlayers().forEach { it.sendMessage(meltedText) }
+            } else {
+                remainingPlayers().forEach {
+                    it.sendMessage("<red><b>The bottom layer will melt in <aqua>${6 - secondsElapsed}</aqua> seconds!".style())
+                }
+            }
+        }
+
+        tasks += delay(100) {
+            floorLevelBlocks.forEach {
+                if (it.block.y == 86) {
+                    it.block.breakNaturally()
+                }
+            }
         }
     }
 
