@@ -378,6 +378,10 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                     wearDownSnowBlock(hitBlock!!)
                 }
             }
+
+            if (hitEntity != null) {
+                isCancelled = true // make snowballs fly through entities to increase chances of spleefing
+            }
         }
     }
 
