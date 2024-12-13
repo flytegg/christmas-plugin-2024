@@ -455,7 +455,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         val random = (0..1).random()
 
         when (random) {
-            0 -> spawnSnowGolem(donorName)
+            0 -> spawnSnowGolem(donorName, (0..2).random() == 0)
             1 -> snowballRain(donorName)
         }
     }
@@ -467,7 +467,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             0 -> meltBottomLayer(donorName)
             1 -> {
                 snowballRain(donorName)
-                spawnSnowGolem(donorName)
+                spawnSnowGolem(donorName, true)
             }
         }
     }
@@ -514,28 +514,25 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
     }
 
-    private fun spawnSnowGolem(name: String?) {
+    private fun spawnSnowGolem(name: String?, flying: Boolean) {
         val nmsWorld = ChristmasEventPlugin.instance.nmsServerWorld
-
-        val withMount = (0..2).random() == 0
-        val withMountText = if (withMount) "Flying" else "Angry"
 
         val snowmanName =
             if (name != null) "<aqua>$name's</aqua> Snow Golem".style()
-            else "<game_colour>$withMountText Snow Golem".style()
+            else "<game_colour>${if (flying) "Flying" else "Angry"} Snow Golem".style()
 
         val location = gameConfig.spawnPoints.random().randomLocation()
-        if (withMount) {
+        if (flying) {
             location.y += 10
         }
 
-        CustomSnowGolem(nmsWorld, location, withMount).spawn().let {
+        CustomSnowGolem(nmsWorld, location, flying).spawn().let {
             it.customName(snowmanName)
             it.isCustomNameVisible = true
 
             it.getAttribute(Attribute.FOLLOW_RANGE)!!.baseValue = 64.0
 
-            if (withMount) {
+            if (flying) {
                 CustomBee(nmsWorld, location).spawn().let { bee ->
                     bee.isInvisible = true
                     bee.isSilent = true
@@ -551,7 +548,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             snowmen.add(it)
         }
 
-        val flyingText = if (withMount) " flying" else "n angry"
+        val flyingText = if (flying) " flying" else "n angry"
         val message =
             if (name != null) "<green>A$flyingText snowman has joined the game! (<aqua>$name's</aqua> donation)".style()
             else "<green>A$flyingText snowman has joined the game! (donation)".style()
