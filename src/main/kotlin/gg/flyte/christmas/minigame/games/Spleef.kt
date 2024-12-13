@@ -603,7 +603,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             }
         }
 
-        tasks += delay(100) {
+        tasks += delay(120) {
             floorLevelBlocks.forEach {
                 if (it.block.y == 86) {
                     it.block.breakNaturally()
