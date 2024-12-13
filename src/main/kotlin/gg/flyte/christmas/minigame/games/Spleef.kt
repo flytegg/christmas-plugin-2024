@@ -491,7 +491,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     private fun spawnSnowGolem(name: String?) {
         val nmsWorld = ChristmasEventPlugin.instance.nmsServerWorld
 
-        val withMount = (0..1).random() == 0
+        val withMount = (0..2).random() == 0
         val withMountText = if (withMount) "Flying" else "Angry"
 
         val snowmanName =
