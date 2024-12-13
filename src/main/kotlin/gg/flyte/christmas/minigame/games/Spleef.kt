@@ -38,6 +38,7 @@ import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.CreatureSpawnEvent
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.event.entity.ProjectileLaunchEvent
+import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerToggleFlightEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
@@ -386,6 +387,10 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                     wearDownSnowBlock(hitBlock!!)
                 }
             }
+        }
+
+        listeners += event<PlayerDropItemEvent> {
+            isCancelled = true
         }
     }
 
