@@ -24,7 +24,6 @@ import net.minecraft.server.level.ServerLevel
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal
 import net.minecraft.world.entity.ai.goal.RangedAttackGoal
 import net.minecraft.world.entity.animal.SnowGolem
 import net.minecraft.world.entity.projectile.Projectile
@@ -577,11 +576,9 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             return bukkitEntity as Bee
         }
 
-        override fun registerGoals() {
-            super.registerGoals()
-
-            goalSelector.removeAllGoals { _ -> true }
-            goalSelector.addGoal(0, MeleeAttackGoal(this, 2.25, true))
+        override fun aiStep() {
+            onGround = true
+            super.aiStep()
         }
     }
 }
