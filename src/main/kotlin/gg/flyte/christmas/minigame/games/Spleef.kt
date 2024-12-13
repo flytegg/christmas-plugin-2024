@@ -502,8 +502,10 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 CustomBee(nmsWorld, gameConfig.centrePoint).spawn().let { bee ->
                     bee.isInvisible = true
                     bee.isSilent = true
-                    bee.addPassenger(it)
 
+                    bee.getAttribute(Attribute.MOVEMENT_SPEED)!!.baseValue = 0.6
+
+                    bee.addPassenger(it)
                     bees.add(bee)
                 }
             }
