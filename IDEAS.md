@@ -86,4 +86,4 @@ Extra considerations:
 
 ### Bugs which I don't want to spam on the discord
 - Terminating a game in its camera phase
-- Game starting changed colors??
+- Tab player count doesn't update when a player leaves
