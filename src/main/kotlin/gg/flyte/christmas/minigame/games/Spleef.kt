@@ -509,8 +509,8 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                     bee.isInvisible = true
                     bee.isSilent = true
 
-                    bee.getAttribute(Attribute.MOVEMENT_SPEED)!!.baseValue = 0.4
-                    bee.getAttribute(Attribute.FLYING_SPEED)!!.baseValue = 0.4
+                    bee.getAttribute(Attribute.MOVEMENT_SPEED)!!.baseValue = 0.5
+                    bee.getAttribute(Attribute.FLYING_SPEED)!!.baseValue = 0.5
 
                     bee.addPassenger(it)
                     bees.add(bee)
