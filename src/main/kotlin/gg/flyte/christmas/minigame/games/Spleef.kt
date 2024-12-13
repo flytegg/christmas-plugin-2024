@@ -38,6 +38,7 @@ import org.bukkit.entity.Player
 import org.bukkit.entity.Snowball
 import org.bukkit.entity.Snowman
 import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.block.BlockFormEvent
 import org.bukkit.event.entity.CreatureSpawnEvent
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.event.entity.ProjectileLaunchEvent
@@ -349,6 +350,12 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 doubleJumps[player.uniqueId] = doubleJumps[player.uniqueId]!! - 1
             } else {
                 player.allowFlight = false
+            }
+        }
+
+        listeners += event<BlockFormEvent> { //prevent snowmen from forming snow layers
+            if (block.type == Material.SNOW) {
+                isCancelled = true
             }
         }
 
