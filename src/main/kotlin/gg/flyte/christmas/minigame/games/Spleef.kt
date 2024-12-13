@@ -82,7 +82,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
         overviewTasks += repeatingTask(1) {
             while (floorLevelBlocks.random().block.type != Material.AIR) {
-                wearDownSnowBlock(floorLevelBlocks.random().block)
+                wearDownSnowBlock(floorLevelBlocks.random().block, true)
             }
         }
     }
@@ -408,7 +408,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         player.playSound(Sound.ENTITY_BREEZE_SHOOT)
     }
 
-    private fun wearDownSnowBlock(block: Block) {
+    private fun wearDownSnowBlock(block: Block, gradual: Boolean = false) {
         when (block.type) {
             Material.SNOW_BLOCK -> {
                 block.type = Material.SNOW
@@ -417,7 +417,9 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                     return
                 }
 
-                block.blockData = (block.blockData as Snow).apply { layers = 5 }
+                block.blockData = (block.blockData as Snow).apply {
+                    layers = if (gradual) 7 else 5
+                }
             }
 
             Material.SNOW -> {
@@ -426,7 +428,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 if (blockData.layers <= 2) {
                     block.type = Material.AIR
                 } else {
-                    blockData.layers -= 3
+                    blockData.layers -= if (gradual) (1..2).random() else 3
                     block.blockData = blockData
                 }
             }
