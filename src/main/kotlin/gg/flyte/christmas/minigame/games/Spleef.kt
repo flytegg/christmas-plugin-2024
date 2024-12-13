@@ -564,7 +564,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             else "<green>A snowball rain has started! (donation)".style()
 
         remainingPlayers().forEach {
-            it.playSound(Sound.ENTITY_LIGHTNING_BOLT_THUNDER)
+            it.playSound(it, Sound.WEATHER_RAIN, 1.0F, 0.5F)
             it.sendMessage(message)
         }
     }
