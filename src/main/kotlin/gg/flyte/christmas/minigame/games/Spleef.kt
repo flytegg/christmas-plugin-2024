@@ -552,7 +552,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
         floorLevelBlocks.forEach {
             val location = it.block.location
-            location.y = 140.0
+            location.y = 150.0 + (0..20).random().toDouble()
 
             if ((0..9).random() == 0) {
                 world.spawn(location, Snowball::class.java)
