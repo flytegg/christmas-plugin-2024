@@ -532,7 +532,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             location.y += 10
         }
 
-        CustomSnowGolem(nmsWorld, location, flying).spawn().let {
+        CustomSnowGolem(this, nmsWorld, location, flying).spawn().let {
             it.customName(snowmanName)
             it.isCustomNameVisible = true
 
@@ -612,7 +612,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
     }
 
-    private class CustomSnowGolem(private val world: Level, location: Location, private val withMount: Boolean) : SnowGolem(EntityType.SNOW_GOLEM, world) {
+    private class CustomSnowGolem(private val game: Spleef, private val world: Level, location: Location, private val withMount: Boolean) : SnowGolem(EntityType.SNOW_GOLEM, world) {
         init {
             setPos(location.x, location.y, location.z)
         }
@@ -640,7 +640,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             val dz = target.z - z
             val targetY = target.y - 1.6 // different from the original method; aim at feet instead of eyes
 
-            val distanceFactor = sqrt(dx * dx + dz * dz) * 0.2
+            val extraY = sqrt(dx * dx + dz * dz) * (if (game.powerfulSnowballs) 0.1 else 0.2)
             val world = level()
 
             if (world is ServerLevel) {
@@ -648,7 +648,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 val snowball = net.minecraft.world.entity.projectile.Snowball(world, this, item)
 
                 Projectile.spawnProjectile(snowball, world, item) { snowballEntity ->
-                    val dy = targetY + distanceFactor - snowballEntity.y
+                    val dy = targetY - snowballEntity.y + extraY
                     snowballEntity.shoot(dx, dy, dz, 1.6f, 10.0f)
                 }
             }
