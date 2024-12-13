@@ -520,13 +520,12 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             snowmen.add(it)
         }
 
-        remainingPlayers().forEach {
-            if (name != null) {
-                it.sendMessage("<green>A snowman has joined the game! (<aqua>$name's</aqua> donation)".style())
-            } else {
-                it.sendMessage("<green>A snowman has joined the game! (donation)".style())
-            }
-        }
+        val flyingText = if (withMount) " flying" else "n angry"
+        val message =
+            if (name != null) "<green>A$flyingText snowman has joined the game! (<aqua>$name's</aqua> donation)".style()
+            else "<green>A$flyingText snowman has joined the game! (donation)".style()
+
+        remainingPlayers().forEach { it.sendMessage(message) }
     }
 
     private class CustomSnowGolem(private val world: Level, location: Location, private val withMount: Boolean) : SnowGolem(EntityType.SNOW_GOLEM, world) {
