@@ -75,6 +75,8 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     private val snowmen = mutableListOf<Snowman>()
     private val bees = mutableListOf<Bee>()
 
+    private var bottomLayerMelted = false
+
     override fun startGameOverview() {
         super.startGameOverview()
 
@@ -461,7 +463,9 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     }
 
     private fun highTierDonation(donorName: String?) {
-        val random = (0..1).random()
+        var random = (0..1).random()
+
+        if (bottomLayerMelted) random = 1
 
         when (random) {
             0 -> meltBottomLayer(donorName)
@@ -579,6 +583,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     }
 
     private fun meltBottomLayer(name: String?) {
+        bottomLayerMelted = true
         var secondsElapsed = 0
 
         val meltedText =
