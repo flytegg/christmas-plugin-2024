@@ -33,10 +33,7 @@ import org.bukkit.*
 import org.bukkit.attribute.Attribute
 import org.bukkit.block.Block
 import org.bukkit.block.data.type.Snow
-import org.bukkit.entity.ItemDisplay
-import org.bukkit.entity.Player
-import org.bukkit.entity.Snowball
-import org.bukkit.entity.Snowman
+import org.bukkit.entity.*
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.CreatureSpawnEvent
 import org.bukkit.event.entity.ProjectileHitEvent
@@ -75,7 +72,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     private var snowballBarTicks = 0.0F
 
     private val snowmen = mutableListOf<Snowman>()
-
+    private val bees = mutableListOf<Bee>()
 
     override fun startGameOverview() {
         super.startGameOverview()
@@ -138,6 +135,13 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                     if (it.location.blockY < 70) {
                         it.remove()
                         snowmen.remove(it)
+                    }
+                }
+
+                bees.toList().forEach {
+                    if (it.location.blockY < 70) {
+                        it.remove()
+                        bees.remove(it)
                     }
                 }
             }
@@ -319,6 +323,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     private fun addSnowmenSetTargetTask() {
         tasks += repeatingTask(1) {
             snowmen.removeIf(Snowman::isDead)
+            bees.removeIf(Bee::isDead)
 
             snowmen.forEach {
                 val target = it.getNearestPlayer(64.0, 64.0, 64.0)
@@ -479,11 +484,24 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     }
 
     private fun spawnSnowGolem(name: String?) {
-        CustomSnowGolem(ChristmasEventPlugin.instance.nmsServerWorld, gameConfig.centrePoint).spawn().let {
+        val mainInstance = ChristmasEventPlugin.instance
+        val withMount = (0..1).random() == 0
+
+        CustomSnowGolem(mainInstance.nmsServerWorld, gameConfig.centrePoint, withMount).spawn().let { it ->
             it.customName(if (name != null) "<aqua>$name's</aqua> <game_colour>Snow Golem".style() else "<game_colour>Angry Snow Golem".style())
             it.isCustomNameVisible = true
 
             it.getAttribute(Attribute.FOLLOW_RANGE)!!.baseValue = 64.0
+
+            if (withMount) {
+                mainInstance.serverWorld.spawn(it.location, Bee::class.java).let { bee ->
+                    bee.isInvisible = true
+                    bee.isSilent = true
+                    bee.addPassenger(it)
+
+                    bees.add(bee)
+                }
+            }
 
             snowmen.add(it)
         }
@@ -497,7 +515,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
     }
 
-    private class CustomSnowGolem(private val world: Level, location: Location) : SnowGolem(EntityType.SNOW_GOLEM, world) {
+    private class CustomSnowGolem(private val world: Level, location: Location, private val withMount: Boolean) : SnowGolem(EntityType.SNOW_GOLEM, world) {
         init {
             setPos(location.x, location.y, location.z)
         }
@@ -511,14 +529,15 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         override fun registerGoals() {
             super.registerGoals()
 
-            val attackGoal = RangedAttackGoal(this, 2.25, 2, 12.0F)
+            val range = if (withMount) 18.0F else 12.0F
+            val attackGoal = RangedAttackGoal(this, 2.25, 2, range)
 
             goalSelector.removeAllGoals { goal -> goal is RangedAttackGoal }
             goalSelector.addGoal(1, attackGoal)
         }
 
         override fun performRangedAttack(target: LivingEntity, pullProgress: Float) {
-            if (!onGround) return
+            if (!onGround && !withMount) return
 
             val dx = target.x - x
             val dz = target.z - z
