@@ -498,14 +498,16 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             if (name != null) "<aqua>$name's</aqua> Snow Golem".style()
             else "<game_colour>$withMountText Snow Golem".style()
 
-        CustomSnowGolem(nmsWorld, gameConfig.centrePoint, withMount).spawn().let {
+        val location = gameConfig.spawnPoints.random().randomLocation()
+
+        CustomSnowGolem(nmsWorld, location, withMount).spawn().let {
             it.customName(snowmanName)
             it.isCustomNameVisible = true
 
             it.getAttribute(Attribute.FOLLOW_RANGE)!!.baseValue = 64.0
 
             if (withMount) {
-                CustomBee(nmsWorld, gameConfig.centrePoint).spawn().let { bee ->
+                CustomBee(nmsWorld, location).spawn().let { bee ->
                     bee.isInvisible = true
                     bee.isSilent = true
 
