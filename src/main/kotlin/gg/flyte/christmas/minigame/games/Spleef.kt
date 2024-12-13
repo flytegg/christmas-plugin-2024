@@ -373,7 +373,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
 
         listeners += event<ProjectileHitEvent> {
-            if (hitEntity != null && entity.shooter is Snowman) {
+            if (hitEntity != null && entity.shooter !is Player) {
                 isCancelled = true // make snowballs fly through entities to increase chances of spleefing
             }
 
@@ -386,6 +386,11 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 } else {
                     wearDownSnowBlock(hitBlock!!)
                 }
+            }
+
+            // implies snowball source is snowball rain
+            if (entity.shooter !is Player && entity.shooter !is Snowman) {
+                isCancelled = true // make snowball rain destroy multiple blocks
             }
         }
 
@@ -431,7 +436,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     override fun handleDonation(tier: DonationTier, donorName: String?) {
         when (tier) {
             DonationTier.LOW -> lowTierDonation(donorName)
-            DonationTier.MEDIUM -> spawnSnowGolem(donorName)
+            DonationTier.MEDIUM -> midTierDonation(donorName)
             DonationTier.HIGH -> TODO()
         }
     }
@@ -443,6 +448,15 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             0 -> extraDoubleJumps(donorName)
             1 -> unlimitedDoubleJumps(donorName)
             2 -> powerfulSnowballs(donorName)
+        }
+    }
+
+    private fun midTierDonation(donorName: String?) {
+        val random = (0..1).random()
+
+        when (random) {
+            0 -> spawnSnowGolem(donorName)
+            1 -> snowballRain(donorName)
         }
     }
 
@@ -531,6 +545,28 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             else "<green>A$flyingText snowman has joined the game! (donation)".style()
 
         remainingPlayers().forEach { it.sendMessage(message) }
+    }
+
+    private fun snowballRain(name: String?) {
+        val world = ChristmasEventPlugin.instance.serverWorld
+
+        floorLevelBlocks.forEach {
+            val location = it.block.location
+            location.y = 140.0
+
+            if ((0..9).random() == 0) {
+                world.spawn(location, Snowball::class.java)
+            }
+        }
+
+        val message =
+            if (name != null) "<green>A snowball rain has started! (<aqua>$name's</aqua> donation)".style()
+            else "<green>A snowball rain has started! (donation)".style()
+
+        remainingPlayers().forEach {
+            it.playSound(Sound.ENTITY_LIGHTNING_BOLT_THUNDER)
+            it.sendMessage(message)
+        }
     }
 
     private class CustomSnowGolem(private val world: Level, location: Location, private val withMount: Boolean) : SnowGolem(EntityType.SNOW_GOLEM, world) {
