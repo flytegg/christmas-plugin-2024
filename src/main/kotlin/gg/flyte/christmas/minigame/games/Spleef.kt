@@ -372,8 +372,9 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             }
 
             // implies snowball source is snowball rain
-            if (entity.shooter !is Player && entity.shooter !is Snowman) {
+            if (entity.shooter == null) {
                 isCancelled = true // make snowball rain destroy multiple blocks
+                entity.location.y -= 1
             }
         }
 
