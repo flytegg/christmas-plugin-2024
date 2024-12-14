@@ -113,7 +113,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             //prevent snow golems from forming snow layers
             ChristmasEventPlugin.instance.serverWorld.setGameRule(GameRule.MOB_GRIEFING, false)
 
-            addActionBarTask()
+            manageActionBars()
             addUnlimitedJumpsTask()
             addPowerfulSnowballsTask()
             addSnowmenSetTargetTask()
@@ -243,7 +243,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         Bukkit.getOnlinePlayers().forEach { eventController().sidebarManager.updateLines(it, listOf(Component.empty(), playersLeft)) }
     }
 
-    private fun addActionBarTask() {
+    private fun manageActionBars() {
         tasks += repeatingTask(10) {
             remainingPlayers().forEach {
                 if (unlimitedJumps) {
