@@ -377,10 +377,6 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 entity.location.y -= 1
             }
         }
-
-        listeners += event<PlayerDropItemEvent> {
-            isCancelled = true
-        }
     }
 
     private fun doubleJump(player: Player) {
