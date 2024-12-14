@@ -207,7 +207,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         when (remainingPlayers().size) {
             1 -> {
                 formattedWinners[player.uniqueId] = value
-                formattedWinners[remainingPlayers().first().uniqueId] = "$value (1st Place!)"
+                formattedWinners[remainingPlayers().first().uniqueId] = "${value + 1} (1ѕᴛ ᴘʟᴀᴄᴇ!)"
                 endGame()
             }
 
