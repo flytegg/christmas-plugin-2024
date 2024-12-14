@@ -248,10 +248,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             remainingPlayers().forEach {
                 if (unlimitedJumps) {
                     it.sendActionBar("<gold><b>UNLIMITED<reset> <game_colour>double jumps!".style())
-                    return@forEach
-                }
-
-                if (doubleJumps[it.uniqueId]!! > 0) {
+                } else if (doubleJumps[it.uniqueId]!! > 0) {
                     it.sendActionBar("<green><b>${doubleJumps[it.uniqueId]!!} <reset><game_colour>double jumps left!".style())
                 } else {
                     it.sendActionBar("<red><b>0 <reset><game_colour>double jumps left!".style())
