@@ -263,9 +263,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 }
             }
 
-            if (!unlimitedJumps) {
-                return@repeatingTask
-            }
+            if (!unlimitedJumps) return@repeatingTask
 
             unlimitedJumpBar.progress(Math.clamp(remainingUnlimitedJumpTicks / unlimitedJumpBarTicks, 0.0F, 1.0F))
 
@@ -291,9 +289,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 }
             }
 
-            if (!powerfulSnowballs) {
-                return@repeatingTask
-            }
+            if (!powerfulSnowballs) return@repeatingTask
 
             snowballBar.progress(Math.clamp(remainingPowerfulSnowballTicks / snowballBarTicks, 0.0F, 1.0F))
 
