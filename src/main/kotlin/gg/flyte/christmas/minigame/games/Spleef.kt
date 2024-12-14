@@ -145,7 +145,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             tasks += repeatingTask(20) {
                 gameTime++
 
-                if (gameTime % 20 == 0) {
+                if (gameTime % 30 == 0) {
                     remainingPlayers().forEach {
                         it.sendMessage("<green>+1 point for surviving 30 seconds!".style())
                         eventController().addPoints(it.uniqueId, 1)
