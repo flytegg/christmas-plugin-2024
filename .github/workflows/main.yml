@@ -1,0 +1,52 @@
+name: Resource-Pack Zipper
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'resource-pack/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create ZIP file
+        run: |
+          COMMIT_ID=$(git rev-parse --short HEAD)
+          ZIP_NAME="Resource-Pack.zip"
+          echo "ZIP_NAME=${ZIP_NAME}" >> $GITHUB_ENV
+          cd resource-pack
+          zip -r "../${ZIP_NAME}" .
+
+      - name: Upload ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: resource-pack-artifact
+          path: ${{ env.ZIP_NAME }}
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.RESOURCE_ZIPPER_PAT }}
+        with:
+          tag_name: release-${{ github.sha }}
+          release_name: Resource-Pack
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Artifact
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.RESOURCE_ZIPPER_PAT }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ github.workspace }}/${{ env.ZIP_NAME }}
+          asset_name: ${{ env.ZIP_NAME }}
+          asset_content_type: application/zip

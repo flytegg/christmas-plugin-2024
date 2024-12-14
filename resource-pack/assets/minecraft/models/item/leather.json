@@ -1,0 +1,25 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:item/leather"
+  },
+
+  "overrides": [
+    {
+      "predicate": { "custom_model_data": 1 },
+      "model": "custom/hats/hat_red"
+    },
+    {
+      "predicate": { "custom_model_data": 2 },
+      "model": "custom/hats/hat_blue"
+    },
+    {
+      "predicate": { "custom_model_data": 3 },
+      "model": "custom/hats/hat_green"
+    },
+    {
+      "predicate": { "custom_model_data": 4 },
+      "model": "custom/hats/hat_gold"
+    }
+  ]
+}

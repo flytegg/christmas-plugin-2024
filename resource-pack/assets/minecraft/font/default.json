@@ -1,0 +1,13 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "minecraft:guis/blackscreen/fullscreen.png",
+      "ascent": 200,
+      "height": 1000,
+      "chars": [
+        "其"
+      ]
+    }
+  ]
+}

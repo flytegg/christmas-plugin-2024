@@ -1,0 +1,21 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:item/paper"
+  },
+
+  "overrides": [
+    {
+      "predicate": { "custom_model_data": 1 },
+      "model": "custom/sled"
+    },
+    {
+      "predicate": { "custom_model_data": 2 },
+      "model": "custom/podium"
+    },
+    {
+      "predicate": { "custom_model_data": 3 },
+      "model": "custom/present_1"
+    }
+  ]
+}

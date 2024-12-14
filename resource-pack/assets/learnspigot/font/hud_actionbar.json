@@ -1,0 +1,27 @@
+{
+  "providers": [
+    {
+      "type": "ttf",
+      "file": "learnspigot:hud_font.ttf",
+      "shift": [
+        0,
+        12
+      ],
+      "size": 12.0
+    },
+    {
+      "type": "bitmap",
+      "file": "learnspigot:icon/xp.png",
+      "ascent": -17,
+      "height": 8,
+      "chars": ["\uE000"]
+    },
+    {
+      "type": "bitmap",
+      "file": "learnspigot:icon/clock.png",
+      "ascent": -17,
+      "height": 8,
+      "chars": ["\uE001"]
+    }
+  ]
+}

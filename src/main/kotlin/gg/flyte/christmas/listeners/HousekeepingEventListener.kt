@@ -108,11 +108,14 @@ class HousekeepingEventListener : Listener, PacketListener {
 
         event<PlayerInteractEvent> {
             val clickedBlock = clickedBlock ?: return@event
-            if (eventController().currentGame?.state != GameState.IDLE && eventController().currentGame != null) return@event
             if (!(clickedBlock.type == Material.SNOW || clickedBlock.type == Material.SNOW_BLOCK)) return@event
-            if (this.item?.type == Material.SNOWBALL) {
-                isCancelled = true
+            if (this.item?.type == Material.SNOWBALL) isCancelled = true
+
+            var canPickup = true
+            if (eventController().currentGame != null) {
+                canPickup = eventController().currentGame!!.state == GameState.IDLE
             }
+
             if (Random().nextInt(5) != 0) return@event
 
             if (player.inventory.firstEmpty() == -1) return@event
@@ -143,7 +146,7 @@ class HousekeepingEventListener : Listener, PacketListener {
             player.apply {
                 async {
                     try {
-                        RemoteFile("https://github.com/shreyasayyengar/flyte-christmas-resource-pack/releases/latest/download/RP.zip").apply {
+                        RemoteFile("https://github.com/flytegg/christmas-plugin-2024/releases/latest/download/Resource-Pack.zip").apply {
                             setResourcePack(this.url, this.hash, true)
                         }
                     } catch (_: Exception) {
