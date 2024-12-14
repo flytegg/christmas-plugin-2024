@@ -17,6 +17,10 @@ import gg.flyte.twilight.extension.showPlayer
 import gg.flyte.twilight.scheduler.TwilightRunnable
 import gg.flyte.twilight.scheduler.delay
 import gg.flyte.twilight.scheduler.repeatingTask
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import net.minecraft.server.level.ServerLevel
@@ -413,7 +417,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 if (blockData.layers <= 2) {
                     block.type = Material.AIR
                 } else {
-                    blockData.layers -= if (gradual) (2..3).random() else 3
+                    blockData.layers -= 1.coerceAtMost(if (gradual) (2..3).random() else 3)
                     block.blockData = blockData
                 }
 
@@ -565,7 +569,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     private fun snowballRain(name: String?) {
         val world = ChristmasEventPlugin.instance.serverWorld
 
-        floorLevelBlocks.forEach { it ->
+        floorLevelBlocks.forEach {
             val location = it.block.location
             location.y = 150.0 + (0..20).random().toDouble()
 
@@ -584,6 +588,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun meltBottomLayer(name: String?) {
         bottomLayerMelted = true
         var countdown = 5
@@ -600,17 +605,33 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 remainingPlayers().forEach {
                     it.sendMessage("<red><b>The bottom layer will melt in <aqua>$countdown</aqua> seconds!".style())
                 }
-
                 countdown--
             }
         }
 
-        tasks += delay(120) {
+        //start of gpt code
+        val blocksToDestroy = mutableListOf<Block>()
+        var sectionSize = 0
+
+        GlobalScope.launch(Dispatchers.IO) {
             floorLevelBlocks.forEach {
                 if (it.block.y == 86) {
-                    it.block.breakNaturally()
-                    spawnSnowParticles(it.block)
+                    blocksToDestroy.add(it.block)
                 }
+            }
+
+            sectionSize = blocksToDestroy.size / 4
+        }
+
+        var currentIndex = 0
+        for (i in 0 until 4) {
+            tasks += delay(120 + i) {
+                blocksToDestroy.subList(currentIndex, currentIndex + sectionSize).forEach {
+                    it.breakNaturally()
+                    spawnSnowParticles(it)
+                }
+
+                currentIndex += sectionSize
             }
         }
     }
