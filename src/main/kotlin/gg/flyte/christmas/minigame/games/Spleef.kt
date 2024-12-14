@@ -332,6 +332,8 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                     })
                 }
             }
+
+            spawnSnowParticles(block)
         }
 
         listeners += event<PlayerToggleFlightEvent> {
@@ -368,6 +370,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             if (floorLevelBlocks.any { it.block == hitBlock }) {
                 if (powerfulSnowballs) {
                     hitBlock!!.type = Material.AIR
+                    spawnSnowParticles(hitBlock!!)
                 } else {
                     wearDownSnowBlock(hitBlock!!)
                 }
@@ -400,6 +403,8 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 block.blockData = (block.blockData as Snow).apply {
                     layers = if (gradual) 7 else 5
                 }
+
+                spawnSnowParticles(block)
             }
 
             Material.SNOW -> {
@@ -411,10 +416,24 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                     blockData.layers -= if (gradual) (2..3).random() else 3
                     block.blockData = blockData
                 }
+
+                spawnSnowParticles(block)
             }
 
             else -> return
         }
+    }
+
+    private fun spawnSnowParticles(block: Block) {
+        block.world.spawnParticle(
+            Particle.SNOWFLAKE,
+            block.location.clone().add(0.5, 0.5, 0.5),
+            30,
+            0.2,
+            0.2,
+            0.2,
+            0.1
+        )
     }
 
     override fun handleDonation(tier: DonationTier, donorName: String?) {
