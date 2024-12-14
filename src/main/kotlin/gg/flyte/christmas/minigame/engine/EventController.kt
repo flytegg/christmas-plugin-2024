@@ -238,8 +238,9 @@ class EventController {
      * @see EventMiniGame.handleDonation
      */
     fun handleDonation(event: DonateEvent) {
-        val value = event.amount.toDouble()
-        if (value <= 0) return // no negative donations (don't think this is possible)
+        if (event.amount == null) return // no clue why this would happen, but just in case
+        var value = event.amount.toDouble()
+        if (value < 0) return // no negative donations (don't think this is possible)
 
         totalDonations += value.toInt()
         updateDonationBar()
