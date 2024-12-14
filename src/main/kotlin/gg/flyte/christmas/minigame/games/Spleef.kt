@@ -57,7 +57,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         Util.fillArena(86, Material.SNOW_BLOCK)
     ).flatten()
 
-    private var secondsElapsed = 0
+    private var gameTime = 0
 
     private var doubleJumps = mutableMapOf<UUID, Int>()
 
@@ -151,9 +151,9 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             }
 
             tasks += repeatingTask(20) {
-                secondsElapsed++
+                gameTime++
 
-                if (secondsElapsed % 20 == 0) {
+                if (gameTime % 20 == 0) {
                     remainingPlayers().forEach {
                         it.sendMessage("<green>+1 point for surviving 30 seconds!".style())
                         eventController().addPoints(it.uniqueId, 1)
@@ -215,7 +215,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
         super.eliminate(player, reason)
 
-        val value = "$secondsElapsed second${if (secondsElapsed > 1) "s" else ""}" // bro imagine surviving a singular amount of seconds
+        val value = "$gameTime second${if (gameTime > 1) "s" else ""}" // bro imagine surviving a singular amount of seconds
         when (remainingPlayers().size) {
             1 -> {
                 formattedWinners[player.uniqueId] = value
