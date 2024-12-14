@@ -50,7 +50,6 @@ import kotlin.math.sqrt
 
 class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     private var overviewTasks = mutableListOf<TwilightRunnable>()
-
     private var floorLevelBlocks: List<MapSinglePoint> = listOf(
         Util.fillArena(110, Material.SNOW_BLOCK),
         Util.fillArena(98, Material.SNOW_BLOCK),
@@ -58,24 +57,17 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     ).flatten()
 
     private var gameTime = 0
-
     private var doubleJumps = mutableMapOf<UUID, Int>()
-
     private var unlimitedJumps = false
     private var remainingUnlimitedJumpTicks = 0
-
     private val unlimitedJumpBar = BossBar.bossBar("<gold><b>UNLIMITED DOUBLE JUMPS".style(), 1.0F, BossBar.Color.BLUE, BossBar.Overlay.NOTCHED_6)
     private var unlimitedJumpBarTicks = 0.0F
-
     private var powerfulSnowballs = false
     private var remainingPowerfulSnowballTicks = 0
-
     private val snowballBar = BossBar.bossBar("<gold><b>POWERFUL SNOWBALLS".style(), 1.0F, BossBar.Color.WHITE, BossBar.Overlay.NOTCHED_6)
     private var snowballBarTicks = 0.0F
-
     private val snowmen = mutableListOf<Snowman>()
     private val bees = mutableListOf<Bee>()
-
     private var bottomLayerMelted = false
 
     override fun startGameOverview() {
