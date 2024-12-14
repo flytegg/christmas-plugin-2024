@@ -65,8 +65,8 @@
     - Give everyone a sniper
     - Spawn a snow golem in the middle of the map
   - High-tier
-    - Spawn a snow golem on the enemy team
-    - Spawn a snow golem on the enemy team
+    - Placeholder
+    - Placeholder
 
 ## Stream:
 
