@@ -408,7 +408,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 if (blockData.layers <= 2) {
                     block.type = Material.AIR
                 } else {
-                    blockData.layers -= if (gradual) (1..2).random() else 3
+                    blockData.layers -= if (gradual) (2..3).random() else 3
                     block.blockData = blockData
                 }
             }
