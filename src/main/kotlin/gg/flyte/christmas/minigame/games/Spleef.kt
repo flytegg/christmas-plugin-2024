@@ -39,7 +39,6 @@ import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.CreatureSpawnEvent
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.event.entity.ProjectileLaunchEvent
-import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerToggleFlightEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
@@ -47,6 +46,7 @@ import org.bukkit.potion.PotionEffectType
 import org.bukkit.util.Vector
 import java.util.*
 import kotlin.math.sqrt
+import kotlin.random.Random
 
 class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     private var overviewTasks = mutableListOf<TwilightRunnable>()
@@ -434,26 +434,27 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     }
 
     private fun midTierDonation(donorName: String?) {
-        val random = (0..1).random()
+        val random = Random.nextBoolean()
 
-        when (random) {
-            0 -> spawnSnowGolem(donorName, (0..2).random() == 0)
-            1 -> snowballRain(donorName)
+        if (random) {
+            spawnSnowGolem(donorName, (0..2).random() == 0)
+        } else {
+            snowballRain(donorName)
         }
     }
 
     private fun highTierDonation(donorName: String?) {
-        var random = (0..1).random()
+        var random = Random.nextBoolean()
 
-        if (bottomLayerMelted) random = 1
+        if (bottomLayerMelted) random = false
 
-        when (random) {
-            0 -> meltBottomLayer(donorName)
-            1 -> {
-                snowballRain(donorName)
-                spawnSnowGolem(donorName, true)
-            }
+        if (random) {
+            meltBottomLayer(donorName)
+        } else {
+            snowballRain(donorName)
+            spawnSnowGolem(donorName, true)
         }
+
     }
 
     private fun extraDoubleJumps(name: String?) {
