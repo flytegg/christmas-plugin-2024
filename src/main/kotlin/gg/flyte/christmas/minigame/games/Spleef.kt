@@ -586,20 +586,22 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
     private fun meltBottomLayer(name: String?) {
         bottomLayerMelted = true
-        var countdown = 6
+        var countdown = 5
 
         val meltedText =
             if (name != null) "<red><b>The bottom layer was melted by <aqua>$name</aqua>!".style()
             else "<red><b>The bottom layer has melted!".style()
 
         tasks += repeatingTask(20) {
-            if (countdown-- == 0) {
+            if (countdown == 0) {
                 cancel()
                 remainingPlayers().forEach { it.sendMessage(meltedText) }
             } else {
                 remainingPlayers().forEach {
                     it.sendMessage("<red><b>The bottom layer will melt in <aqua>$countdown</aqua> seconds!".style())
                 }
+
+                countdown--
             }
         }
 
@@ -607,6 +609,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             floorLevelBlocks.forEach {
                 if (it.block.y == 86) {
                     it.block.breakNaturally()
+                    spawnSnowParticles(it.block)
                 }
             }
         }
