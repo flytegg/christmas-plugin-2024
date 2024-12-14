@@ -242,7 +242,6 @@ class EventController {
         var value = event.amount.toDouble()
         if (value < 0) return // no negative donations (don't think this is possible)
 
-        totalDonations += value.toInt()
         updateDonationBar()
 
         Bukkit.getOnlinePlayers().forEach {
