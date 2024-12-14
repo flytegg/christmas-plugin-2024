@@ -356,7 +356,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
 
         listeners += event<ProjectileHitEvent> {
-            if (hitEntity != null && entity.shooter !is Player) {
+            if (hitEntity != null && entity.shooter !is Player) { //Snowman or snowball rain
                 isCancelled = true // make snowballs fly through entities to increase chances of spleefing
             }
 
@@ -546,12 +546,12 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     private fun snowballRain(name: String?) {
         val world = ChristmasEventPlugin.instance.serverWorld
 
-        floorLevelBlocks.forEach {
+        floorLevelBlocks.forEach { it ->
             val location = it.block.location
             location.y = 150.0 + (0..20).random().toDouble()
 
             if ((0..9).random() == 0) {
-                world.spawn(location, Snowball::class.java)
+                world.spawn(location, Snowball::class.java).shooter = null
             }
         }
 
