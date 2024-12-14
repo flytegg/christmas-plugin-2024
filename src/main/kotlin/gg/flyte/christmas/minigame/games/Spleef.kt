@@ -267,7 +267,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
                 remainingPlayers().forEach {
                     it.allowFlight = true
-                    unlimitedJumpBar.addViewer(it)
+                    it.showBossBar(unlimitedJumpBar)
                 }
             }
 
@@ -295,7 +295,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 powerfulSnowballs = true
 
                 remainingPlayers().forEach {
-                    snowballBar.addViewer(it)
+                    it.showBossBar(snowballBar)
                 }
             }
 
