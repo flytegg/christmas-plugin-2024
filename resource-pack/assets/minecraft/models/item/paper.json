@@ -16,6 +16,10 @@
     {
       "predicate": { "custom_model_data": 3 },
       "model": "custom/present_1"
+    },
+    {
+      "predicate": { "custom_model_data": 4 },
+      "model": "custom/candy_cane"
     }
   ]
 }
