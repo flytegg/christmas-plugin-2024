@@ -8,7 +8,6 @@
 - Staff Utils Menu:
     - Teleport all players to a “screenie” location. player’s movement is locked and facing forward to facilitate an easy event screenie. (ik stephen
       will love this)
-- Add a point for hitting someone with a snowball in the lobby
 
 ## Game Specific:
 
