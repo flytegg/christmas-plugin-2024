@@ -11,7 +11,6 @@ import gg.flyte.christmas.util.eventController
 import gg.flyte.christmas.util.formatInventory
 import gg.flyte.christmas.util.style
 import gg.flyte.twilight.event.event
-import gg.flyte.twilight.extension.getNearestPlayer
 import gg.flyte.twilight.extension.hidePlayer
 import gg.flyte.twilight.extension.playSound
 import gg.flyte.twilight.extension.showPlayer
@@ -310,7 +309,10 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             bees.removeIf(Bee::isDead)
 
             snowmen.forEach {
-                val target = it.getNearestPlayer(64.0, 64.0, 64.0)
+                val target = remainingPlayers().minByOrNull {
+                    player -> player.location.distance(it.location)
+                }
+
                 if (target != null) {
                     it.target = target
                 }
