@@ -219,9 +219,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         //undo what was done in startGame()
         ChristmasEventPlugin.instance.serverWorld.setGameRule(GameRule.MOB_GRIEFING, true)
 
-        for (point in floorLevelBlocks) {
-            point.block.type = Material.AIR
-        }
+        for (point in floorLevelBlocks) point.block.type = Material.AIR
 
         remainingPlayers().forEach {
             it.allowFlight = false
@@ -230,6 +228,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
 
         snowmen.forEach { it.remove() }
+        bees.forEach { it.remove() }
 
         super.endGame()
     }
