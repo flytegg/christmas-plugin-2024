@@ -157,9 +157,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
             tasks += repeatingTask(5) {
                 delay((1..15).random()) {
-                    floorLevelBlocks.filter { it.block.type != Material.AIR }.random().let {
-                        wearDownSnowBlock(it.block)
-                    }
+                    wearDownSnowBlock(floorLevelBlocks.filter { it.block.type != Material.AIR }.random().block)
                 }
             }
         }
