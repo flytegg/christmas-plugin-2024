@@ -33,6 +33,7 @@ import org.bukkit.*
 import org.bukkit.attribute.Attribute
 import org.bukkit.block.Block
 import org.bukkit.block.data.type.Snow
+import org.bukkit.craftbukkit.CraftWorld
 import org.bukkit.entity.*
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.CreatureSpawnEvent
@@ -521,7 +522,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     }
 
     private fun spawnSnowGolem(name: String?, flying: Boolean) {
-        val nmsWorld = ChristmasEventPlugin.instance.nmsServerWorld
+        val nmsWorld = (ChristmasEventPlugin.instance.serverWorld as CraftWorld).handle
 
         val snowmanName =
             if (name != null) "<aqua>$name's</aqua> Snow Golem".style()
