@@ -150,7 +150,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
                 if (gameTime % 30 == 0) {
                     remainingPlayers().forEach {
-                        it.sendMessage("<green>+1 point for surviving 30 seconds!".style())
+                        it.sendMessage("<green>+1 ᴘᴏɪɴᴛ ꜰᴏʀ sᴜʀᴠɪᴠɪɴɢ 30 sᴇᴄᴏɴᴅs!".style())
                         eventController().addPoints(it.uniqueId, 1)
                     }
                 }
@@ -245,11 +245,11 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         tasks += repeatingTask(10) {
             remainingPlayers().forEach {
                 if (unlimitedJumps) {
-                    it.sendActionBar("<gold><b>UNLIMITED<reset> <game_colour>double jumps!".style())
+                    it.sendActionBar("<gold><b>UNLIMITED<reset> <game_colour>ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘs!".style())
                 } else if (doubleJumps[it.uniqueId]!! > 0) {
-                    it.sendActionBar("<green><b>${doubleJumps[it.uniqueId]!!} <reset><game_colour>double jumps left!".style())
+                    it.sendActionBar("<green><b>${doubleJumps[it.uniqueId]!!} <reset><game_colour>ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘs ʟᴇꜰᴛ!".style())
                 } else {
-                    it.sendActionBar("<red><b>0 <reset><game_colour>double jumps left!".style())
+                    it.sendActionBar("<red><b>0 <reset><game_colour>ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘs ʟᴇꜰᴛ!".style())
                 }
             }
         }
@@ -491,9 +491,9 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             it.allowFlight = true
 
             if (name != null) {
-                it.sendMessage("<green>+<red>$increase</red> double jump$plural! (<aqua>$name's</aqua> donation)".style())
+                it.sendMessage("<green>+<red>$increase</red> ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘ$plural! (<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ)".style())
             } else {
-                it.sendMessage("<green>+<red>$increase</red> double jump$plural! (donation)".style())
+                it.sendMessage("<green>+<red>$increase</red> ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘ$plural! (ᴅᴏɴᴀᴛɪᴏɴ)".style())
             }
         }
     }
@@ -504,9 +504,9 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
         remainingPlayers().forEach {
             if (name != null) {
-                it.sendMessage("<green>+<red>5</red> seconds of unlimited double jump! (<aqua>$name's</aqua> donation)".style())
+                it.sendMessage("<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴜɴʟɪᴍɪᴛᴇᴅ ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘ! (<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ)".style())
             } else {
-                it.sendMessage("<green>+<red>5</red> seconds of unlimited double jump! (donation)".style())
+                it.sendMessage("<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴜɴʟɪᴍɪᴛᴇᴅ ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘ! (ᴅᴏɴᴀᴛɪᴏɴ)".style())
             }
         }
     }
@@ -517,9 +517,9 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
         remainingPlayers().forEach {
             if (name != null) {
-                it.sendMessage("<green>+<red>10</red> seconds of powerful snowballs! (<aqua>$name's</aqua> donation)".style())
+                it.sendMessage("<green>+<red>10</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴘᴏᴡᴇʀꜰᴜʟ sɴᴏᴡʙᴀʟʟs! (<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ)".style())
             } else {
-                it.sendMessage("<green>+<red>10</red> seconds of powerful snowballs! (donation)".style())
+                it.sendMessage("<green>+<red>10</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴘᴏᴡᴇʀꜰᴜʟ sɴᴏᴡʙᴀʟʟs! (ᴅᴏɴᴀᴛɪᴏɴ)".style())
             }
         }
     }
@@ -528,8 +528,8 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         val nmsWorld = (ChristmasEventPlugin.instance.serverWorld as CraftWorld).handle
 
         val snowmanName =
-            if (name != null) "<aqua>$name's</aqua> Snow Golem".style()
-            else "<game_colour>${if (flying) "Flying" else "Angry"} Snow Golem".style()
+            if (name != null) "<aqua>$name's</aqua> Sɴᴏᴡ Gᴏʟᴇᴍ".style()
+            else "<game_colour>${if (flying) "Fʟʏɪɴɢ" else "Aɴɢʀʏ"} Sɴᴏᴡ Gᴏʟᴇᴍ".style()
 
         val location = gameConfig.spawnPoints.random().randomLocation()
         if (flying) {
@@ -558,10 +558,10 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             snowmen.add(it)
         }
 
-        val flyingText = if (flying) " flying" else "n angry"
+        val flyingText = if (flying) " ꜰʟʏɪɴɢ" else "ɴ ᴀɴɢʀʏ"
         val message =
-            if (name != null) "<green>A$flyingText snowman has joined the game! (<aqua>$name's</aqua> donation)".style()
-            else "<green>A$flyingText snowman has joined the game! (donation)".style()
+            if (name != null) "<green>A$flyingText sɴᴏᴡᴍᴀɴ ʜᴀs ᴊᴏɪɴᴇᴅ ᴛʜᴇ ɢᴀᴍᴇ! (<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ)".style()
+            else "<green>A$flyingText sɴᴏᴡᴍᴀɴ ʜᴀs ᴊᴏɪɴᴇᴅ ᴛʜᴇ ɢᴀᴍᴇ! (ᴅᴏɴᴀᴛɪᴏɴ)".style()
 
         remainingPlayers().forEach { it.sendMessage(message) }
     }
@@ -579,8 +579,8 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
 
         val message =
-            if (name != null) "<green>A snowball rain has started! (<aqua>$name's</aqua> donation)".style()
-            else "<green>A snowball rain has started! (donation)".style()
+            if (name != null) "<green>A sɴᴏᴡʙᴀʟʟ ʀᴀɪɴ ʜᴀs sᴛᴀʀᴛᴇᴅ! (<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ)".style()
+            else "<green>A sɴᴏᴡʙᴀʟʟ ʀᴀɪɴ ʜᴀs sᴛᴀʀᴛᴇᴅ! (ᴅᴏɴᴀᴛɪᴏɴ)".style()
 
         remainingPlayers().forEach {
             it.playSound(it, Sound.WEATHER_RAIN, 1.0F, 0.5F)
@@ -594,8 +594,8 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         var countdown = 5
 
         val meltedText =
-            if (name != null) "<red><b>The bottom layer was melted by <aqua>$name</aqua>!".style()
-            else "<red><b>The bottom layer has melted!".style()
+            if (name != null) "<red><b>Tʜᴇ ʙᴏᴛᴛᴏᴍ ʟᴀʏᴇʀ ᴡᴀs ᴍᴇʟᴛᴇᴅ ʙʏ <aqua>$name</aqua>!".style()
+            else "<red><b>Tʜᴇ ʙᴏᴛᴛᴏᴍ ʟᴀʏᴇʀ ʜᴀs ᴍᴇʟᴛᴇᴅ!".style()
 
         tasks += repeatingTask(20) {
             if (countdown == 0) {
@@ -603,7 +603,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 remainingPlayers().forEach { it.sendMessage(meltedText) }
             } else {
                 remainingPlayers().forEach {
-                    it.sendMessage("<red><b>The bottom layer will melt in <aqua>$countdown</aqua> seconds!".style())
+                    it.sendMessage("<red><b>Tʜᴇ ʙᴏᴛᴛᴏᴍ ʟᴀʏᴇʀ ᴡɪʟʟ ᴍᴇʟᴛ ɪɴ <aqua>$countdown</aqua> sᴇᴄᴏɴᴅs!".style())
                 }
                 countdown--
             }
