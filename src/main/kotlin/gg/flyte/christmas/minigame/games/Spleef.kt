@@ -111,7 +111,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 it.allowFlight = true
             }
 
-            //prevent snow golems from forming snow layers
+            // prevent snow golems from forming snow layers
             ChristmasEventPlugin.instance.serverWorld.setGameRule(GameRule.MOB_GRIEFING, false)
 
             manageActionBars()
@@ -397,7 +397,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     }
 
     private fun lowTierDonation(donorName: String?) {
-        fun extraDoubleJumps(name: String?) {
+        fun doExtraDoubleJumps(name: String?) {
             val increase = (1..2).random()
             val plural = if (increase > 1) "s" else ""
 
@@ -413,7 +413,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             }
         }
 
-        fun unlimitedDoubleJumps(name: String?) {
+        fun doUnlimitedDoubleJumps(name: String?) {
             remainingUnlimitedJumpTicks += 20 * 5
             unlimitedJumpBarTicks += 20 * 5
 
@@ -426,7 +426,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             }
         }
 
-        fun powerfulSnowballs(name: String?) {
+        fun doPowerfulSnowballs(name: String?) {
             remainingPowerfulSnowballTicks += 20 * 10
             snowballBarTicks += 20 * 10
 
@@ -440,15 +440,15 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
 
         when ((0..2).random()) {
-            0 -> extraDoubleJumps(donorName)
-            1 -> unlimitedDoubleJumps(donorName)
-            2 -> powerfulSnowballs(donorName)
+            0 -> doExtraDoubleJumps(donorName)
+            1 -> doUnlimitedDoubleJumps(donorName)
+            2 -> doPowerfulSnowballs(donorName)
         }
     }
 
     private fun midTierDonation(donorName: String?) {
-        if (Random.nextBoolean()) spawnSnowGolem(donorName, (0..2).random() == 0)
-        else snowballRain(donorName)
+        if (Random.nextBoolean()) doSpawnSnowGolem(donorName, (0..2).random() == 0)
+        else doSnowballRain(donorName)
     }
 
     private fun highTierDonation(donorName: String?) {
@@ -457,10 +457,10 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         if (bottomLayerMelted) random = false
 
         if (random) {
-            meltBottomLayer(donorName)
+            doMeltBottomLayer(donorName)
         } else {
-            snowballRain(donorName)
-            spawnSnowGolem(donorName, true)
+            doSnowballRain(donorName)
+            doSpawnSnowGolem(donorName, true)
         }
 
     }
@@ -517,7 +517,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         )
     }
 
-    private fun spawnSnowGolem(name: String?, flying: Boolean) {
+    private fun doSpawnSnowGolem(name: String?, flying: Boolean) {
         val nmsWorld = (ChristmasEventPlugin.instance.serverWorld as CraftWorld).handle
 
         val snowmanName =
@@ -559,7 +559,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         remainingPlayers().forEach { it.sendMessage(message) }
     }
 
-    private fun snowballRain(name: String?) {
+    private fun doSnowballRain(name: String?) {
         val world = ChristmasEventPlugin.instance.serverWorld
 
         floorLevelBlocks.forEach {
@@ -582,7 +582,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     }
 
     @OptIn(DelicateCoroutinesApi::class)
-    private fun meltBottomLayer(name: String?) {
+    private fun doMeltBottomLayer(name: String?) {
         bottomLayerMelted = true
         var countdown = 5
 
