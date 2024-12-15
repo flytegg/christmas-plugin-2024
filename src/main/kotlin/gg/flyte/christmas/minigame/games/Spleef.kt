@@ -103,9 +103,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
         donationEventsEnabled = true
 
-        for (point in floorLevelBlocks) {
-            point.block.type = Material.SNOW_BLOCK
-        } // reset after game overview
+        for (block in floorLevelBlocks) block.block.type = Material.SNOW_BLOCK // reset after game overview
 
         simpleCountdown {
             Util.runAction(PlayerType.PARTICIPANT) {
