@@ -253,6 +253,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
     }
 
+    // todo tasks events
     private fun addUnlimitedJumpsTask() {
         tasks += repeatingTask(1) {
             if (!unlimitedJumps && remainingUnlimitedJumpTicks > 0) {
@@ -311,8 +312,8 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             bees.removeIf(Bee::isDead)
 
             snowmen.forEach {
-                val target = remainingPlayers().minByOrNull {
-                    player -> player.location.distance(it.location)
+                val target = remainingPlayers().minByOrNull { player ->
+                    player.location.distance(it.location)
                 }
 
                 if (target != null) {
@@ -321,6 +322,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             }
         }
     }
+    // todo tasks events
 
     override fun handleGameEvents() {
         listeners += event<BlockBreakEvent> {
@@ -386,6 +388,83 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
     }
 
+    override fun handleDonation(tier: DonationTier, donorName: String?) {
+        when (tier) {
+            DonationTier.LOW -> lowTierDonation(donorName)
+            DonationTier.MEDIUM -> midTierDonation(donorName)
+            DonationTier.HIGH -> highTierDonation(donorName)
+        }
+    }
+
+    private fun lowTierDonation(donorName: String?) {
+        fun extraDoubleJumps(name: String?) {
+            val increase = (1..2).random()
+            val plural = if (increase > 1) "s" else ""
+
+            remainingPlayers().forEach {
+                doubleJumps[it.uniqueId] = doubleJumps[it.uniqueId]!! + increase
+                it.allowFlight = true
+
+                if (name != null) {
+                    it.sendMessage("<green>+<red>$increase</red> ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘ$plural! (<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ)".style())
+                } else {
+                    it.sendMessage("<green>+<red>$increase</red> ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘ$plural! (ᴅᴏɴᴀᴛɪᴏɴ)".style())
+                }
+            }
+        }
+
+        fun unlimitedDoubleJumps(name: String?) {
+            remainingUnlimitedJumpTicks += 20 * 5
+            unlimitedJumpBarTicks += 20 * 5
+
+            remainingPlayers().forEach {
+                if (name != null) {
+                    it.sendMessage("<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴜɴʟɪᴍɪᴛᴇᴅ ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘ! (<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ)".style())
+                } else {
+                    it.sendMessage("<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴜɴʟɪᴍɪᴛᴇᴅ ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘ! (ᴅᴏɴᴀᴛɪᴏɴ)".style())
+                }
+            }
+        }
+
+        fun powerfulSnowballs(name: String?) {
+            remainingPowerfulSnowballTicks += 20 * 10
+            snowballBarTicks += 20 * 10
+
+            remainingPlayers().forEach {
+                if (name != null) {
+                    it.sendMessage("<green>+<red>10</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴘᴏᴡᴇʀꜰᴜʟ sɴᴏᴡʙᴀʟʟs! (<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ)".style())
+                } else {
+                    it.sendMessage("<green>+<red>10</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴘᴏᴡᴇʀꜰᴜʟ sɴᴏᴡʙᴀʟʟs! (ᴅᴏɴᴀᴛɪᴏɴ)".style())
+                }
+            }
+        }
+
+        when ((0..2).random()) {
+            0 -> extraDoubleJumps(donorName)
+            1 -> unlimitedDoubleJumps(donorName)
+            2 -> powerfulSnowballs(donorName)
+        }
+    }
+
+    private fun midTierDonation(donorName: String?) {
+        if (Random.nextBoolean()) spawnSnowGolem(donorName, (0..2).random() == 0)
+        else snowballRain(donorName)
+    }
+
+    private fun highTierDonation(donorName: String?) {
+        var random = Random.nextBoolean()
+
+        if (bottomLayerMelted) random = false
+
+        if (random) {
+            meltBottomLayer(donorName)
+        } else {
+            snowballRain(donorName)
+            spawnSnowGolem(donorName, true)
+        }
+
+    }
+
     private fun doubleJump(player: Player) {
         player.isFlying = false
         player.velocity = player.location.direction.multiply(0.5).add(Vector(0.0, 1.25, 0.0))
@@ -436,90 +515,6 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             0.2,
             0.1
         )
-    }
-
-    override fun handleDonation(tier: DonationTier, donorName: String?) {
-        when (tier) {
-            DonationTier.LOW -> lowTierDonation(donorName)
-            DonationTier.MEDIUM -> midTierDonation(donorName)
-            DonationTier.HIGH -> highTierDonation(donorName)
-        }
-    }
-
-    private fun lowTierDonation(donorName: String?) {
-        val random = (0..2).random()
-
-        when (random) {
-            0 -> extraDoubleJumps(donorName)
-            1 -> unlimitedDoubleJumps(donorName)
-            2 -> powerfulSnowballs(donorName)
-        }
-    }
-
-    private fun midTierDonation(donorName: String?) {
-        val random = Random.nextBoolean()
-
-        if (random) {
-            spawnSnowGolem(donorName, (0..2).random() == 0)
-        } else {
-            snowballRain(donorName)
-        }
-    }
-
-    private fun highTierDonation(donorName: String?) {
-        var random = Random.nextBoolean()
-
-        if (bottomLayerMelted) random = false
-
-        if (random) {
-            meltBottomLayer(donorName)
-        } else {
-            snowballRain(donorName)
-            spawnSnowGolem(donorName, true)
-        }
-
-    }
-
-    private fun extraDoubleJumps(name: String?) {
-        val increase = (1..2).random()
-        val plural = if (increase > 1) "s" else ""
-
-        remainingPlayers().forEach {
-            doubleJumps[it.uniqueId] = doubleJumps[it.uniqueId]!! + increase
-            it.allowFlight = true
-
-            if (name != null) {
-                it.sendMessage("<green>+<red>$increase</red> ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘ$plural! (<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ)".style())
-            } else {
-                it.sendMessage("<green>+<red>$increase</red> ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘ$plural! (ᴅᴏɴᴀᴛɪᴏɴ)".style())
-            }
-        }
-    }
-
-    private fun unlimitedDoubleJumps(name: String?) {
-        remainingUnlimitedJumpTicks += 20 * 5
-        unlimitedJumpBarTicks += 20 * 5
-
-        remainingPlayers().forEach {
-            if (name != null) {
-                it.sendMessage("<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴜɴʟɪᴍɪᴛᴇᴅ ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘ! (<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ)".style())
-            } else {
-                it.sendMessage("<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴜɴʟɪᴍɪᴛᴇᴅ ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘ! (ᴅᴏɴᴀᴛɪᴏɴ)".style())
-            }
-        }
-    }
-
-    private fun powerfulSnowballs(name: String?) {
-        remainingPowerfulSnowballTicks += 20 * 10
-        snowballBarTicks += 20 * 10
-
-        remainingPlayers().forEach {
-            if (name != null) {
-                it.sendMessage("<green>+<red>10</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴘᴏᴡᴇʀꜰᴜʟ sɴᴏᴡʙᴀʟʟs! (<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ)".style())
-            } else {
-                it.sendMessage("<green>+<red>10</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴘᴏᴡᴇʀꜰᴜʟ sɴᴏᴡʙᴀʟʟs! (ᴅᴏɴᴀᴛɪᴏɴ)".style())
-            }
-        }
     }
 
     private fun spawnSnowGolem(name: String?, flying: Boolean) {
@@ -634,7 +629,8 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
     }
 
-    private class CustomSnowGolem(private val game: Spleef, private val world: Level, location: Location, private val withMount: Boolean) : SnowGolem(EntityType.SNOW_GOLEM, world) {
+    private class CustomSnowGolem(private val game: Spleef, private val world: Level, location: Location, private val withMount: Boolean) :
+        SnowGolem(EntityType.SNOW_GOLEM, world) {
         init {
             setPos(location.x, location.y, location.z)
         }
