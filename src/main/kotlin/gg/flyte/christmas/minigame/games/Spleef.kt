@@ -462,7 +462,6 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             doSnowballRain(donorName)
             doSpawnSnowGolem(donorName, true)
         }
-
     }
 
     private fun doubleJump(player: Player) {
