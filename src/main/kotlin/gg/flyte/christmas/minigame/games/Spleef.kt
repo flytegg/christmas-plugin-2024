@@ -58,17 +58,14 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         Util.fillArena(98, Material.SNOW_BLOCK),
         Util.fillArena(86, Material.SNOW_BLOCK)
     ).flatten()
-
     private var gameTime = 0
     private var doubleJumps = mutableMapOf<UUID, Int>()
-    private var unlimitedJumps = false
-    private var remainingUnlimitedJumpTicks = 0
-    private val unlimitedJumpBar = BossBar.bossBar("<gold><b>UNLIMITED DOUBLE JUMPS".style(), 1.0F, BossBar.Color.BLUE, BossBar.Overlay.NOTCHED_6)
-    private var unlimitedJumpBarTicks = 0.0F
-    private var powerfulSnowballs = false
-    private var remainingPowerfulSnowballTicks = 0
-    private val snowballBar = BossBar.bossBar("<gold><b>POWERFUL SNOWBALLS".style(), 1.0F, BossBar.Color.WHITE, BossBar.Overlay.NOTCHED_6)
-    private var snowballBarTicks = 0.0F
+
+    // ticks left | total ticks
+    private var unlimitedJumpTickData: Pair<Int, Int> = 0 to 0
+    private var powerfulSnowballTickData: Pair<Int, Int> = 0 to 0
+    private val unlimitedJumpBossBar = BossBar.bossBar("<game_colour><b>ᴜɴʟɪᴍɪᴛᴇᴅ ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘs!".style(), 1.0F, BossBar.Color.YELLOW, BossBar.Overlay.PROGRESS)
+    private val snowballBar = BossBar.bossBar("<game_colour><b>ᴘᴏᴡᴇʀꜰᴜʟ sɴᴏᴡʙᴀʟʟs".style(), 1.0F, BossBar.Color.WHITE, BossBar.Overlay.PROGRESS)
     private val snowmen = mutableListOf<Snowman>()
     private val bees = mutableListOf<Bee>()
     private var bottomLayerMelted = false
@@ -94,13 +91,11 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
         player.gameMode = GameMode.ADVENTURE
         player.teleport(gameConfig.spawnPoints.random().randomLocation())
-
         doubleJumps[player.uniqueId] = 3
     }
 
     override fun startGame() {
         overviewTasks.forEach { it.cancel() }
-
         donationEventsEnabled = true
 
         for (block in floorLevelBlocks) block.block.type = Material.SNOW_BLOCK // reset after game overview
@@ -115,9 +110,6 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             ChristmasEventPlugin.instance.serverWorld.setGameRule(GameRule.MOB_GRIEFING, false)
 
             manageActionBars()
-            addUnlimitedJumpsTask()
-            addPowerfulSnowballsTask()
-            addSnowmenSetTargetTask()
 
             tasks += repeatingTask(1) {
                 remainingPlayers().forEach {
@@ -128,7 +120,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                     }
                 }
 
-                snowmen.toList().forEach { //prevent concurrent modification
+                snowmen.toList().forEach { // toList to prevent concurrent modification
                     if (it.location.blockY < 70) {
                         it.remove()
                         snowmen.remove(it)
@@ -141,7 +133,30 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                         bees.remove(it)
                     }
                 }
-            }
+            } // handle y-level eliminations
+
+            tasks += repeatingTask(1) {
+                snowmen.removeIf(Snowman::isDead)
+                bees.removeIf(Bee::isDead)
+
+                snowmen.forEach {
+                    val target = remainingPlayers().minByOrNull { player ->
+                        player.location.distance(it.location)
+                    }
+
+                    if (target != null) {
+                        it.target = target
+                    }
+                }
+            } // handle custom entities
+
+            tasks += repeatingTask(5) {
+                delay((1..15).random()) {
+                    floorLevelBlocks.any { it.block.type != Material.AIR }.let {
+                        wearDownSnowBlock(floorLevelBlocks.filter { it.block.type != Material.AIR }.random().block)
+                    }
+                }
+            } // gradual snow block wear down
 
             tasks += repeatingTask(20) {
                 gameTime++
@@ -154,13 +169,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
                 }
 
                 updateScoreboard()
-            }
-
-            tasks += repeatingTask(5) {
-                delay((1..15).random()) {
-                    wearDownSnowBlock(floorLevelBlocks.filter { it.block.type != Material.AIR }.random().block)
-                }
-            }
+            } // game timer
         }
     }
 
@@ -170,7 +179,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
 
         player.allowFlight = false
-        player.hideBossBar(unlimitedJumpBar)
+        player.hideBossBar(unlimitedJumpBossBar)
         player.hideBossBar(snowballBar)
         doubleJumps.remove(player.uniqueId)
 
@@ -224,7 +233,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
         remainingPlayers().forEach {
             it.allowFlight = false
-            unlimitedJumpBar.removeViewer(it)
+            unlimitedJumpBossBar.removeViewer(it)
             snowballBar.removeViewer(it)
         }
 
@@ -240,10 +249,11 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     }
 
     private fun manageActionBars() {
+        // show the correct # of double jumps available.
         tasks += repeatingTask(10) {
             remainingPlayers().forEach {
-                if (unlimitedJumps) {
-                    it.sendActionBar("<gold><b>UNLIMITED<reset> <game_colour>ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘs!".style())
+                if (unlimitedJumpTickData.first > 0) {
+                    it.sendActionBar("<gold><b>ᴜɴʟɪᴍɪᴛᴇᴅ<reset> <game_colour>ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘs!".style())
                 } else if (doubleJumps[it.uniqueId]!! > 0) {
                     it.sendActionBar("<green><b>${doubleJumps[it.uniqueId]!!} <reset><game_colour>ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘs ʟᴇꜰᴛ!".style())
                 } else {
@@ -253,221 +263,9 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
     }
 
-    // todo tasks events
-    private fun addUnlimitedJumpsTask() {
-        tasks += repeatingTask(1) {
-            if (!unlimitedJumps && remainingUnlimitedJumpTicks > 0) {
-                unlimitedJumps = true
-
-                remainingPlayers().forEach {
-                    it.allowFlight = true
-                    it.showBossBar(unlimitedJumpBar)
-                }
-            }
-
-            if (!unlimitedJumps) return@repeatingTask
-
-            unlimitedJumpBar.progress(Math.clamp(remainingUnlimitedJumpTicks / unlimitedJumpBarTicks, 0.0F, 1.0F))
-
-            if (remainingUnlimitedJumpTicks-- <= 0) {
-                unlimitedJumps = false
-                unlimitedJumpBarTicks = 0.0F
-
-                remainingPlayers().forEach {
-                    it.allowFlight = doubleJumps[it.uniqueId]!! > 0
-                    unlimitedJumpBar.removeViewer(it)
-                }
-            }
-        }
-    }
-
-    private fun addPowerfulSnowballsTask() {
-        tasks += repeatingTask(1) {
-            if (!powerfulSnowballs && remainingPowerfulSnowballTicks > 0) {
-                powerfulSnowballs = true
-
-                remainingPlayers().forEach {
-                    it.showBossBar(snowballBar)
-                }
-            }
-
-            if (!powerfulSnowballs) return@repeatingTask
-
-            snowballBar.progress(Math.clamp(remainingPowerfulSnowballTicks / snowballBarTicks, 0.0F, 1.0F))
-
-            if (remainingPowerfulSnowballTicks-- <= 0) {
-                powerfulSnowballs = false
-                snowballBarTicks = 0.0F
-
-                remainingPlayers().forEach {
-                    snowballBar.removeViewer(it)
-                }
-            }
-        }
-    }
-
-    private fun addSnowmenSetTargetTask() {
-        tasks += repeatingTask(1) {
-            snowmen.removeIf(Snowman::isDead)
-            bees.removeIf(Bee::isDead)
-
-            snowmen.forEach {
-                val target = remainingPlayers().minByOrNull { player ->
-                    player.location.distance(it.location)
-                }
-
-                if (target != null) {
-                    it.target = target
-                }
-            }
-        }
-    }
-    // todo tasks events
-
-    override fun handleGameEvents() {
-        listeners += event<BlockBreakEvent> {
-            isCancelled = true
-            floorLevelBlocks.forEach {
-                if (it.block == block) {
-                    isCancelled = false
-                    isDropItems = false
-                    player.inventory.addItem(ItemStack(Material.SNOWBALL, (1..4).random()).apply {
-                        itemMeta = itemMeta.apply { setMaxStackSize(99) }
-                    })
-                }
-            }
-
-            spawnSnowParticles(block)
-        }
-
-        listeners += event<PlayerToggleFlightEvent> {
-            if (player.gameMode != GameMode.SURVIVAL) return@event
-            isCancelled = true
-
-            if (unlimitedJumps) {
-                doubleJump(player)
-            } else if (doubleJumps[player.uniqueId]!! > 0) {
-                doubleJump(player)
-
-                doubleJumps[player.uniqueId] = doubleJumps[player.uniqueId]!! - 1
-            } else {
-                player.allowFlight = false
-            }
-        }
-
-        listeners += event<ProjectileLaunchEvent> {
-            if (entity !is Snowball) return@event
-
-            if (powerfulSnowballs) {
-                entity.velocity = entity.velocity.multiply(2)
-            }
-        }
-
-        listeners += event<ProjectileHitEvent> {
-            if (hitEntity != null && entity.shooter !is Player) { //Snowman or snowball rain
-                isCancelled = true // make snowballs fly through entities to increase chances of spleefing
-            }
-
-            if (hitBlock == null) return@event
-            if (entity !is Snowball) return@event
-
-            if (floorLevelBlocks.any { it.block == hitBlock }) {
-                if (powerfulSnowballs) {
-                    hitBlock!!.type = Material.AIR
-                    spawnSnowParticles(hitBlock!!)
-                } else {
-                    wearDownSnowBlock(hitBlock!!)
-                }
-            }
-
-            // implies snowball source is snowball rain
-            if (entity.shooter == null) {
-                isCancelled = true // make snowball rain destroy multiple blocks
-                entity.location.y -= 1
-            }
-        }
-    }
-
-    override fun handleDonation(tier: DonationTier, donorName: String?) {
-        when (tier) {
-            DonationTier.LOW -> lowTierDonation(donorName)
-            DonationTier.MEDIUM -> midTierDonation(donorName)
-            DonationTier.HIGH -> highTierDonation(donorName)
-        }
-    }
-
-    private fun lowTierDonation(donorName: String?) {
-        fun doExtraDoubleJumps(name: String?) {
-            val increase = (1..2).random()
-            val plural = if (increase > 1) "s" else ""
-
-            remainingPlayers().forEach {
-                doubleJumps[it.uniqueId] = doubleJumps[it.uniqueId]!! + increase
-                it.allowFlight = true
-
-                if (name != null) {
-                    it.sendMessage("<green>+<red>$increase</red> ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘ$plural! (<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ)".style())
-                } else {
-                    it.sendMessage("<green>+<red>$increase</red> ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘ$plural! (ᴅᴏɴᴀᴛɪᴏɴ)".style())
-                }
-            }
-        }
-
-        fun doUnlimitedDoubleJumps(name: String?) {
-            remainingUnlimitedJumpTicks += 20 * 5
-            unlimitedJumpBarTicks += 20 * 5
-
-            remainingPlayers().forEach {
-                if (name != null) {
-                    it.sendMessage("<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴜɴʟɪᴍɪᴛᴇᴅ ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘ! (<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ)".style())
-                } else {
-                    it.sendMessage("<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴜɴʟɪᴍɪᴛᴇᴅ ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘ! (ᴅᴏɴᴀᴛɪᴏɴ)".style())
-                }
-            }
-        }
-
-        fun doPowerfulSnowballs(name: String?) {
-            remainingPowerfulSnowballTicks += 20 * 10
-            snowballBarTicks += 20 * 10
-
-            remainingPlayers().forEach {
-                if (name != null) {
-                    it.sendMessage("<green>+<red>10</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴘᴏᴡᴇʀꜰᴜʟ sɴᴏᴡʙᴀʟʟs! (<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ)".style())
-                } else {
-                    it.sendMessage("<green>+<red>10</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴘᴏᴡᴇʀꜰᴜʟ sɴᴏᴡʙᴀʟʟs! (ᴅᴏɴᴀᴛɪᴏɴ)".style())
-                }
-            }
-        }
-
-        when ((0..2).random()) {
-            0 -> doExtraDoubleJumps(donorName)
-            1 -> doUnlimitedDoubleJumps(donorName)
-            2 -> doPowerfulSnowballs(donorName)
-        }
-    }
-
-    private fun midTierDonation(donorName: String?) {
-        if (Random.nextBoolean()) doSpawnSnowGolem(donorName, (0..2).random() == 0)
-        else doSnowballRain(donorName)
-    }
-
-    private fun highTierDonation(donorName: String?) {
-        var random = Random.nextBoolean()
-
-        if (bottomLayerMelted) random = false
-
-        if (random) {
-            doMeltBottomLayer(donorName)
-        } else {
-            doSnowballRain(donorName)
-            doSpawnSnowGolem(donorName, true)
-        }
-    }
-
-    private fun doubleJump(player: Player) {
+    private fun performDoubleJump(player: Player) {
         player.isFlying = false
         player.velocity = player.location.direction.multiply(0.5).add(Vector(0.0, 1.25, 0.0))
-
         player.playSound(Sound.ENTITY_BREEZE_SHOOT)
     }
 
@@ -519,19 +317,18 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
     private fun doSpawnSnowGolem(name: String?, flying: Boolean) {
         val nmsWorld = (ChristmasEventPlugin.instance.serverWorld as CraftWorld).handle
 
-        val snowmanName =
-            if (name != null) "<aqua>$name's</aqua> Sɴᴏᴡ Gᴏʟᴇᴍ".style()
-            else "<game_colour>${if (flying) "Fʟʏɪɴɢ" else "Aɴɢʀʏ"} Sɴᴏᴡ Gᴏʟᴇᴍ".style()
-
         val location = gameConfig.spawnPoints.random().randomLocation()
         if (flying) {
             location.y += 10
         }
 
         CustomSnowGolem(this, nmsWorld, location, flying).spawn().let {
+            val snowmanName =
+                if (name != null) "<aqua>$name's</aqua> sɴᴏᴡ ɢᴏʟᴇᴍ".style()
+                else "<game_colour>${if (flying) "ꜰʟʏɪɴɢ" else "ᴀɴɢʀʏ"} sɴᴏᴡ ɢᴏʟᴇᴍ".style()
+
             it.customName(snowmanName)
             it.isCustomNameVisible = true
-
             it.getAttribute(Attribute.FOLLOW_RANGE)!!.baseValue = 64.0
 
             if (flying) {
@@ -580,7 +377,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
+    @OptIn(DelicateCoroutinesApi::class) // TODO keep-an-eye thread-safety.
     private fun doMeltBottomLayer(name: String?) {
         bottomLayerMelted = true
         var countdown = 5
@@ -601,7 +398,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             }
         }
 
-        //start of gpt code
+        // Note: GPT START
         val blocksToDestroy = mutableListOf<Block>()
         var sectionSize = 0
 
@@ -628,6 +425,187 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
     }
 
+    override fun handleGameEvents() {
+        listeners += event<BlockBreakEvent> {
+            isCancelled = true
+            floorLevelBlocks.forEach {
+                if (it.block == block) {
+                    isCancelled = false
+                    isDropItems = false
+                    player.inventory.addItem(ItemStack(Material.SNOWBALL, (1..4).random()).apply {
+                        itemMeta = itemMeta.apply { setMaxStackSize(99) }
+                    })
+                }
+            }
+
+            spawnSnowParticles(block)
+        }
+
+        listeners += event<PlayerToggleFlightEvent> {
+            if (player.gameMode != GameMode.SURVIVAL) return@event
+            isCancelled = true
+
+            if (unlimitedJumpTickData.first > 0) {
+                performDoubleJump(player)
+            } else if (doubleJumps[player.uniqueId]!! > 0) {
+                performDoubleJump(player)
+                doubleJumps[player.uniqueId] = doubleJumps[player.uniqueId]!! - 1
+            } else {
+                player.allowFlight = false
+            }
+        }
+
+        listeners += event<ProjectileLaunchEvent> {
+            if (entity !is Snowball) return@event
+
+            if (powerfulSnowballTickData.first > 0) {
+                entity.velocity = entity.velocity.multiply(2)
+            }
+        }
+
+        listeners += event<ProjectileHitEvent> {
+            if (hitEntity != null && entity.shooter !is Player) { //Snowman or snowball rain
+                isCancelled = true // make snowballs fly through entities to increase chances of spleefing
+            }
+
+            if (hitBlock == null) return@event
+            if (entity !is Snowball) return@event
+
+            if (floorLevelBlocks.any { it.block == hitBlock }) {
+                if (powerfulSnowballTickData.first > 0) {
+                    hitBlock!!.type = Material.AIR
+                    spawnSnowParticles(hitBlock!!)
+                } else {
+                    wearDownSnowBlock(hitBlock!!)
+                }
+            }
+
+            // implies snowball source is snowball rain
+            if (entity.shooter == null) {
+                isCancelled = true // make snowball rain destroy multiple blocks
+                entity.location.y -= 1
+            }
+        }
+    }
+
+    override fun handleDonation(tier: DonationTier, donorName: String?) {
+        when (tier) {
+            DonationTier.LOW -> lowTierDonation(donorName)
+            DonationTier.MEDIUM -> midTierDonation(donorName)
+            DonationTier.HIGH -> highTierDonation(donorName)
+        }
+    }
+
+    private fun lowTierDonation(donorName: String?) {
+        fun doExtraDoubleJumps(name: String?) {
+            val increase = (1..2).random()
+            val plural = if (increase > 1) "s" else ""
+
+            val message = if (name != null) "<green>+<red>$increase</red> ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘ$plural! (<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ)".style()
+            else "<green>+<red>$increase</red> ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘ$plural! (ᴅᴏɴᴀᴛɪᴏɴ)".style()
+
+            remainingPlayers().forEach {
+                doubleJumps[it.uniqueId] = doubleJumps[it.uniqueId]!! + increase
+                it.allowFlight = true
+
+                it.sendMessage(message)
+            }
+        }
+
+        fun doUnlimitedDoubleJumps(name: String?) {
+            remainingPlayers().forEach {
+                it.allowFlight = true
+                it.showBossBar(unlimitedJumpBossBar)
+            }
+
+            if (unlimitedJumpTickData.first > 0) {
+                // extend duration if already active
+                unlimitedJumpTickData = unlimitedJumpTickData.let { it.first + 20 * 5 to it.second + 20 * 5 }
+            } else {
+                // set initial duration
+                unlimitedJumpTickData = 20 * 5 to 20 * 5
+
+                tasks += repeatingTask(1) {
+                    val (ticksLeft, totalTicks) = unlimitedJumpTickData
+                    unlimitedJumpBossBar.progress(Math.clamp(ticksLeft / totalTicks.toFloat(), 0.0F, 1.0F))
+
+                    if (ticksLeft == 0) {
+                        remainingPlayers().forEach {
+                            it.allowFlight = doubleJumps[it.uniqueId]!! > 0
+                            it.hideBossBar(unlimitedJumpBossBar)
+                        }
+                        cancel()
+                        unlimitedJumpTickData = 0 to 0
+                    } else {
+                        unlimitedJumpTickData = ticksLeft - 1 to totalTicks
+                    }
+                }
+            }
+
+            val message = if (name != null) "<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴜɴʟɪᴍɴɪᴛᴇᴅ ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘ! (<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ)".style()
+            else "<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴜɴʟɪᴍɴɪᴛᴇᴅ ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘ! (ᴅᴏɴᴀᴛɪᴏɴ)".style()
+
+            remainingPlayers().forEach { it.sendMessage(message) }
+        }
+
+        fun doPowerfulSnowballs(name: String?) {
+            remainingPlayers().forEach { it.showBossBar(snowballBar) }
+
+            // extend duration if already active
+            if (powerfulSnowballTickData.first > 0) {
+                powerfulSnowballTickData = powerfulSnowballTickData.let { it.first + 20 * 10 to it.second + 20 * 10 }
+            } else {
+                // set initial duration
+                powerfulSnowballTickData = 20 * 10 to 20 * 10
+
+                tasks += repeatingTask(1) {
+                    val (ticksLeft, totalTicks) = powerfulSnowballTickData
+                    snowballBar.progress(Math.clamp(ticksLeft / totalTicks.toFloat(), 0.0F, 1.0F))
+
+                    if (ticksLeft == 0) {
+                        remainingPlayers().forEach { it.hideBossBar(snowballBar) }
+                        cancel()
+                        powerfulSnowballTickData = 0 to 0
+                    } else {
+                        powerfulSnowballTickData = ticksLeft - 1 to totalTicks
+                    }
+                }
+            }
+
+            val message = if (name != null) "<green>+<red>10</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴘᴏᴡᴇʀꜰᴜʟ sɴᴏᴡʙᴀʟʟs! (<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ)".style()
+            else "<green>+<red>10</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴘᴏᴡᴇʀꜰᴜʟ sɴᴏᴡʙᴀʟʟs! (ᴅᴏɴᴀᴛɪᴏɴ)".style()
+
+            remainingPlayers().forEach { it.sendMessage(message) }
+        }
+
+        doUnlimitedDoubleJumps(donorName)
+
+        // TODO uncomment
+//        when ((0..2).random()) {
+//            0 -> doExtraDoubleJumps(donorName)
+//            1 -> doUnlimitedDoubleJumps(donorName)
+//            2 -> doPowerfulSnowballs(donorName)
+//        }
+    }
+
+    private fun midTierDonation(donorName: String?) {
+        if (Random.nextBoolean()) doSpawnSnowGolem(donorName, (0..2).random() == 0)
+        else doSnowballRain(donorName)
+    }
+
+    private fun highTierDonation(donorName: String?) {
+        var random = Random.nextBoolean()
+
+        if (bottomLayerMelted) random = false
+
+        if (random) {
+            doMeltBottomLayer(donorName)
+        } else {
+            doSnowballRain(donorName)
+            doSpawnSnowGolem(donorName, true)
+        }
+    }
+
     private class CustomSnowGolem(private val game: Spleef, private val world: Level, location: Location, private val withMount: Boolean) :
         SnowGolem(EntityType.SNOW_GOLEM, world) {
         init {
@@ -636,7 +614,6 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
         fun spawn(): Snowman {
             world.addFreshEntity(this, CreatureSpawnEvent.SpawnReason.CUSTOM)
-
             return bukkitEntity as Snowman
         }
 
@@ -657,7 +634,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             val dz = target.z - z
             val targetY = target.y - 1.6 // different from the original method; aim at feet instead of eyes
 
-            val extraY = sqrt(dx * dx + dz * dz) * (if (game.powerfulSnowballs) 0.1 else 0.2)
+            val extraY = sqrt(dx * dx + dz * dz) * (if (game.powerfulSnowballTickData.first > 0) 0.1 else 0.2)
             val world = level()
 
             if (world is ServerLevel) {
@@ -690,3 +667,6 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
         }
     }
 }
+
+// TODO make getter for unlimitedDoubleJumps etc. so that repeated calls to the same long variable are not needed
+// TODO potentially put remaining players # in scoreboard?
