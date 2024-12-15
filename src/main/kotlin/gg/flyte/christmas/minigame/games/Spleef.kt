@@ -88,7 +88,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
         ItemStack(Material.DIAMOND_SHOVEL).apply {
             itemMeta = itemMeta.apply {
-                displayName("<!i><game_colour>Snow Shovel!".style())
+                displayName("<!i><game_colour>sɴᴏᴡ sʜᴏᴠᴇʟ!".style())
             }
         }.let { player.inventory.setItem(0, it) }
 
