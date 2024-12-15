@@ -188,7 +188,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
      * @param donorName The name of the donor
      * @see [DonationTier]
      */
-    open fun handleDonation(tier: DonationTier, donorName: String?) {}
+    abstract fun handleDonation(tier: DonationTier, donorName: String?)
 
     /**
      * Handles the provided player reference (directly from [org.bukkit.event.player.PlayerJoinEvent]) when they join **this** game.

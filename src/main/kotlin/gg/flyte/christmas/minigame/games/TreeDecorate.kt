@@ -1,6 +1,7 @@
 package gg.flyte.christmas.minigame.games
 
 import dev.shreyasayyengar.menuapi.menu.MenuItem
+import gg.flyte.christmas.donation.DonationTier
 import gg.flyte.christmas.minigame.engine.EventMiniGame
 import gg.flyte.christmas.minigame.engine.GameConfig
 import gg.flyte.christmas.minigame.engine.PlayerType
@@ -129,5 +130,9 @@ class TreeDecorate : EventMiniGame(GameConfig.TREE_DECORATE) {
                 else -> {}
             }
         }
+    }
+
+    override fun handleDonation(tier: DonationTier, donorName: String?) {
+        TODO("Not yet implemented")
     }
 }
