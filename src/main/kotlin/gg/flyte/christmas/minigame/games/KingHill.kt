@@ -272,7 +272,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
             val direction = damagedLocation.subtract(damagerLocation).normalize()
 
-            velocityList.add(direction.multiply(if (damager.inventory.itemInMainHand.type == Material.AIR) 0.5 else 2.0))
+            velocityList.add(direction.multiply(if (damager.inventory.itemInMainHand.type == Material.AIR) 0.5 else 1.5))
         }
     }
 
