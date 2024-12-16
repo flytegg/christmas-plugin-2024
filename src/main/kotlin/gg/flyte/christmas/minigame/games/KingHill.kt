@@ -13,6 +13,7 @@ import gg.flyte.twilight.extension.playSound
 import gg.flyte.twilight.scheduler.delay
 import gg.flyte.twilight.scheduler.repeatingTask
 import gg.flyte.twilight.time.TimeUnit
+import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
@@ -47,6 +48,8 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     private var thrownAroundTicksLeft = -1
 
     private val velocityMap = mutableMapOf<UUID, MutableList<Vector>>()
+
+    private lateinit var delayedKbBossbar: BossBar
 
     override fun startGameOverview() {
         super.startGameOverview()
@@ -109,6 +112,8 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                 }
 
                 if (delayedKbTicksLeft == 0) {
+                    remainingPlayers().forEach { it.hideBossBar(delayedKbBossbar) }
+
                     delayedKbTicksLeft = -1
 
                     remainingPlayers().forEach {
@@ -119,6 +124,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                     thrownAroundTicksTotal = delayedKbTicksTotal / 6
                     delayedKbTicksTotal = 0
                 } else {
+                    delayedKbBossbar.progress(delayedKbTicksLeft.toFloat() / delayedKbTicksTotal)
                     delayedKbTicksLeft -= 1
                 }
             }
@@ -168,6 +174,8 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
                 thrownAroundTicksLeft -= 1
             }
+
+            delayedKbBossbar = BossBar.bossBar("<game_colour><b>ᴅᴇʟᴀʏᴇᴅ ᴋɴᴏᴄᴋʙᴀᴄᴋ".style(), 1.0F, BossBar.Color.WHITE, BossBar.Overlay.PROGRESS)
         }
     }
 
@@ -293,6 +301,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
         remainingPlayers().forEach {
             it.getAttribute(Attribute.KNOCKBACK_RESISTANCE)!!.baseValue = 1.0
+            it.showBossBar(delayedKbBossbar)
         }
 
         val message =
