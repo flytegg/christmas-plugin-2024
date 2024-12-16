@@ -148,13 +148,18 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                     }
 
                     val ticksPassed = thrownAroundTicksTotal - thrownAroundTicksLeft
+                    val previousTicksPassed = thrownAroundTicksTotal - (thrownAroundTicksLeft + 1)
 
                     val ratio = ticksPassed.toDouble() / thrownAroundTicksTotal.toDouble()
+                    val previousRatio = previousTicksPassed.toDouble() / thrownAroundTicksTotal.toDouble()
+
                     val index = ratio * vectorCount
+                    val previousIndex = previousRatio * vectorCount
 
                     val floor = floor(index)
+                    val previousFloor = floor(previousIndex)
 
-                    if (floor != index || floor < 0 || floor >= vectorCount) {
+                    if (floor == previousFloor) {
                         return@forEach
                     }
 
