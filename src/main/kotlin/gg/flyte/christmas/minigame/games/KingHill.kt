@@ -233,7 +233,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         }
 
         listeners += event<EntityDamageByEntityEvent>(priority = EventPriority.HIGHEST) {
-            if (delayedKbTicksLeft == 0) {
+            if (delayedKbTicksLeft <= 0) {
                 return@event
             }
 
