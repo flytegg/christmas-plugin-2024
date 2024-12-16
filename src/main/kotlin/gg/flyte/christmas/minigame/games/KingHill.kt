@@ -140,13 +140,15 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                         return@forEach
                     }
 
-                    val interval = thrownAroundTicksLeft.toDouble() / vectorCount.toDouble()
-                    val floor = floor(interval)
-                    if (floor != interval || interval < 0 || interval >= vectorCount) {
+                    val ticksPassed = thrownAroundTicksTotal - thrownAroundTicksLeft
+                    val ratio = ticksPassed.toDouble() / thrownAroundTicksTotal.toDouble()
+                    val floor = floor(ratio)
+
+                    if (floor != ratio || floor < 0 || floor >= vectorCount) {
                         return@forEach
                     }
 
-                    val value = vectors[interval.toInt()]
+                    val value = vectors[floor.toInt()]
                     player.velocity = value
                 }
             }
