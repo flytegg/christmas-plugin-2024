@@ -261,8 +261,14 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
             val velocityList = velocityMap.computeIfAbsent(entity.uniqueId) { mutableListOf() }
 
+            val damager = damageSource.causingEntity ?: damageSource.directEntity
+
+            if (damager !is Player) {
+                return@event
+            }
+
             val damagedLocation = entity.location.toVector()
-            val damagerLocation = (damageSource.causingEntity ?: damageSource.directEntity)!!.location.toVector()
+            val damagerLocation = damager.location.toVector()
 
             val direction = damagedLocation.subtract(damagerLocation).normalize()
 
