@@ -167,7 +167,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
                     val value = vectors[floor.toInt()]
 
-                    player.velocity = value
+                    player.velocity = player.velocity.add(value)
                 }
 
                 thrownAroundTicksLeft -= 1
