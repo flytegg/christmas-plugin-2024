@@ -261,6 +261,9 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     }
 
     private fun doDelayedKnockback(name: String?) {
+        delayedKbTicksLeft = 0
+        delayedKbTicksTotal = 0
+
         delayedKbTicksLeft += 20 * 5
         delayedKbTicksTotal += 20 * 5
 
