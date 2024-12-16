@@ -110,7 +110,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                 if (delayedKbTicksLeft == 0) {
                     delayedKbTicksLeft = -1
 
-                    thrownAroundTicksLeft = delayedKbTicksTotal
+                    thrownAroundTicksLeft = delayedKbTicksTotal + 1
                     thrownAroundTicksTotal = delayedKbTicksTotal
                     delayedKbTicksTotal = 0
                 } else {
