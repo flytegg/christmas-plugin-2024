@@ -141,12 +141,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                     val player = Bukkit.getPlayer(it.key)!!
                     val vectors = it.value
 
-                    println()
-                    println("Preparing to launch player $player")
-
                     val vectorCount = vectors.size
-
-                    println("There are $vectorCount velocities to consider")
 
                     if (vectorCount == 0) {
                         return@forEach
@@ -154,25 +149,16 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
                     val ticksPassed = thrownAroundTicksTotal - thrownAroundTicksLeft
 
-                    println("$ticksPassed ticks have passed since the start of the throwing around")
-
                     val ratio = ticksPassed.toDouble() / thrownAroundTicksTotal.toDouble()
                     val index = ratio * vectorCount
 
-                    println("This means that $ratio of the whole time has passed")
-                    println("As an index, this is $index")
-
                     val floor = floor(index)
-
-                    println("When floored, this equals $index")
 
                     if (floor != index || floor < 0 || floor >= vectorCount) {
                         return@forEach
                     }
 
                     val value = vectors[floor.toInt()]
-
-                    println("Launching player $player")
 
                     player.velocity = value
                 }
