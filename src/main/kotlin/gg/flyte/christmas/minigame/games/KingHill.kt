@@ -157,14 +157,16 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                     println("$ticksPassed ticks have passed since the start of the throwing around")
 
                     val ratio = ticksPassed.toDouble() / thrownAroundTicksTotal.toDouble()
+                    val index = ratio * vectorCount
 
                     println("This means that $ratio of the whole time has passed")
+                    println("As an index, this is $index")
 
-                    val floor = floor(ratio)
+                    val floor = floor(index)
 
-                    println("When floored, this equals $floor")
+                    println("When floored, this equals $index")
 
-                    if (floor != ratio || floor < 0 || floor >= vectorCount) {
+                    if (floor != index || floor < 0 || floor >= vectorCount) {
                         return@forEach
                     }
 
