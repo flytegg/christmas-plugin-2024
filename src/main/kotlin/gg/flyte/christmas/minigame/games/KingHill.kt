@@ -129,6 +129,8 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
             tasks += repeatingTask(1, TimeUnit.TICKS) {
                 if (thrownAroundTicksLeft == 0) {
+                    thrownAroundTicksLeft = -1
+
                     velocityMap.entries.clear()
                     return@repeatingTask
                 }
