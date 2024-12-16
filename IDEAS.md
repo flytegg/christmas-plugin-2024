@@ -67,6 +67,14 @@
     - Placeholder
     - Placeholder
 
+### King of the Hill:
+  - Low-tier
+    - Swap locations of everyone
+    - Add 3-5 double jumps
+  - Medium-tier
+    - 5 seconds of stacked kb
+    - 5 seconds of slow falling
+
 ## Stream:
 
 - Drumroll while rolling giveaway?
