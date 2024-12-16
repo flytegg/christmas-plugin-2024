@@ -18,6 +18,7 @@ import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.Sound
+import org.bukkit.attribute.Attribute
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
@@ -112,6 +113,10 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                     println("Delayed KB period ended")
                     println("Disabling delayed KB period by setting ticks left to -1")
                     delayedKbTicksLeft = -1
+
+                    remainingPlayers().forEach {
+                        it.getAttribute(Attribute.KNOCKBACK_RESISTANCE)!!.baseValue = 0.0
+                    }
 
                     println("Delayed KB ticks total: $delayedKbTicksTotal")
                     thrownAroundTicksLeft = delayedKbTicksTotal
@@ -288,6 +293,10 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
         delayedKbTicksLeft += 20 * 5
         delayedKbTicksTotal += 20 * 5
+
+        remainingPlayers().forEach {
+            it.getAttribute(Attribute.KNOCKBACK_RESISTANCE)!!.baseValue = 1.0
+        }
 
         val message =
             "<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴅᴇʟᴀʏᴇᴅ ᴋɴᴏᴄᴋʙᴀᴄᴋ! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
