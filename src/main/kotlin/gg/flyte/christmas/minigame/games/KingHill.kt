@@ -248,7 +248,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
             val direction = damagedLocation.subtract(damagerLocation).normalize()
 
-            velocityList.add(direction)
+            velocityList.add(direction.multiply(0.5))
         }
     }
 
