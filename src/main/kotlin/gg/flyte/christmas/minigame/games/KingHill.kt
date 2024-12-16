@@ -27,8 +27,10 @@ import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
+import org.bukkit.util.Vector
 import java.time.Duration
 import java.util.*
+import kotlin.math.floor
 
 class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     private var hillRegion = MapRegion(MapSinglePoint(824, 85, 633), MapSinglePoint(830, 88, 627))
@@ -36,6 +38,14 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     private var gameTime = 90
     private val respawnBelow = 71
     private val timeOnHill = mutableMapOf<UUID, Int>()
+
+    private var delayedKbTicksTotal = 0
+    private var delayedKbTicksLeft = -1
+
+    private var thrownAroundTicksTotal = 0
+    private var thrownAroundTicksLeft = -1
+
+    private val velocityMap = mutableMapOf<UUID, MutableList<Vector>>()
 
     override fun startGameOverview() {
         super.startGameOverview()
@@ -90,6 +100,55 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                 }
 
                 updateScoreboard()
+            }
+
+            tasks += repeatingTask(1, TimeUnit.TICKS) {
+                if (delayedKbTicksLeft == -1) {
+                    return@repeatingTask
+                }
+
+                if (delayedKbTicksLeft == 0) {
+                    delayedKbTicksLeft = -1
+
+                    thrownAroundTicksLeft = delayedKbTicksTotal
+                    thrownAroundTicksTotal = delayedKbTicksTotal
+                    delayedKbTicksTotal = 0
+                } else {
+                    delayedKbTicksLeft -= 1
+                }
+            }
+
+            tasks += repeatingTask(1, TimeUnit.TICKS) {
+                if (thrownAroundTicksLeft == -1) {
+                    return@repeatingTask
+                }
+
+                thrownAroundTicksLeft -= 1
+
+                if (thrownAroundTicksLeft == 0) {
+                    velocityMap.entries.clear()
+                    return@repeatingTask
+                }
+
+                velocityMap.entries.forEach {
+                    val player = Bukkit.getPlayer(it.key)!!
+                    val vectors = it.value
+
+                    val vectorCount = vectors.size
+
+                    if (vectorCount == 0) {
+                        return@forEach
+                    }
+
+                    val interval = thrownAroundTicksLeft.toDouble() / vectorCount.toDouble()
+                    val floor = floor(interval)
+                    if (floor != interval || interval < 0 || interval >= vectorCount) {
+                        return@forEach
+                    }
+
+                    val value = vectors[interval.toInt()]
+                    player.velocity = value
+                }
             }
         }
     }
@@ -147,6 +206,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         Bukkit.getOnlinePlayers().forEach { eventController().sidebarManager.updateLines(it, listOf(Component.empty(), timeLeft)) }
     }
 
+    @Suppress("UnstableApiUsage")
     override fun handleGameEvents() {
         listeners += event<EntityDamageEvent>(priority = EventPriority.HIGHEST) {
             // return@event -> already cancelled by lower priority [HousekeepingEventListener]
@@ -171,13 +231,41 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                 player.playSound(Sound.ENTITY_PLAYER_TELEPORT)
             }
         }
+
+        listeners += event<EntityDamageByEntityEvent>(priority = EventPriority.HIGHEST) {
+            if (delayedKbTicksLeft == 0) {
+                return@event
+            }
+
+            if (entity !is Player) {
+                return@event
+            }
+
+            val velocityList = velocityMap.computeIfAbsent(entity.uniqueId) { mutableListOf() }
+
+            val damagedLocation = entity.location.toVector()
+            val damagerLocation = (damageSource.causingEntity ?: damageSource.directEntity)!!.location.toVector()
+
+            val direction = damagedLocation.subtract(damagerLocation).normalize()
+
+            velocityList.add(direction)
+        }
     }
 
     override fun handleDonation(tier: DonationTier, donorName: String?) {
         when (tier) {
             DonationTier.LOW -> TODO()
-            DonationTier.MEDIUM -> TODO()
+            DonationTier.MEDIUM -> doDelayedKnockback(donorName)
             DonationTier.HIGH -> TODO()
         }
+    }
+
+    private fun doDelayedKnockback(name: String?) {
+        delayedKbTicksLeft += 20 * 5
+        delayedKbTicksTotal += 20 * 5
+
+        val message =
+            "<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴅᴇʟᴀʏᴇᴅ ᴋɴᴏᴄᴋʙᴀᴄᴋ! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+        announceDonationEvent(message.style())
     }
 }
