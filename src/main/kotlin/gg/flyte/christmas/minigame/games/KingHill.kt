@@ -109,16 +109,12 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                 }
 
                 if (delayedKbTicksLeft == 0) {
-                    println()
-                    println("Delayed KB period ended")
-                    println("Disabling delayed KB period by setting ticks left to -1")
                     delayedKbTicksLeft = -1
 
                     remainingPlayers().forEach {
                         it.getAttribute(Attribute.KNOCKBACK_RESISTANCE)!!.baseValue = 0.0
                     }
 
-                    println("Delayed KB ticks total: $delayedKbTicksTotal")
                     thrownAroundTicksLeft = delayedKbTicksTotal
                     thrownAroundTicksTotal = delayedKbTicksTotal
                     delayedKbTicksTotal = 0
