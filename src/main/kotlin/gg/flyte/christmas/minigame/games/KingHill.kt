@@ -125,11 +125,6 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
                 thrownAroundTicksLeft -= 1
 
-                if (thrownAroundTicksLeft == 0) {
-                    velocityMap.entries.clear()
-                    return@repeatingTask
-                }
-
                 velocityMap.entries.forEach {
                     val player = Bukkit.getPlayer(it.key)!!
                     val vectors = it.value
@@ -145,7 +140,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                         return@forEach
                     }
 
-                    val ticksPassed = thrownAroundTicksTotal - thrownAroundTicksLeft
+                    val ticksPassed = thrownAroundTicksTotal - thrownAroundTicksLeft - 1
 
                     println("$ticksPassed ticks have passed since the start of the throwing around")
 
@@ -166,6 +161,10 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                     println("Launching player $player")
 
                     player.velocity = value
+                }
+
+                if (thrownAroundTicksLeft == 0) {
+                    velocityMap.entries.clear()
                 }
             }
         }
