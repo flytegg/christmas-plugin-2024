@@ -115,8 +115,8 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                         it.getAttribute(Attribute.KNOCKBACK_RESISTANCE)!!.baseValue = 0.0
                     }
 
-                    thrownAroundTicksLeft = delayedKbTicksTotal / 4
-                    thrownAroundTicksTotal = delayedKbTicksTotal / 4
+                    thrownAroundTicksLeft = delayedKbTicksTotal / 6
+                    thrownAroundTicksTotal = delayedKbTicksTotal / 6
                     delayedKbTicksTotal = 0
                 } else {
                     delayedKbTicksLeft -= 1
