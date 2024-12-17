@@ -471,7 +471,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             }
         }
 
-        tasks += repeatingTask(1, TimeUnit.SECONDS) {
+        tasks += repeatingTask(1, TimeUnit.TICKS) {
             remainingPlayers().forEach {
                 val invisibleTimeRemaining = invisibleTimeLeft[it.uniqueId] ?: return@repeatingTask
 
