@@ -307,7 +307,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         }
 
         listeners += event<PlayerToggleFlightEvent> {
-            if (player.gameMode != GameMode.SURVIVAL) return@event
+            if (player.gameMode != GameMode.ADVENTURE) return@event
             isCancelled = true
 
             val doubleJumpCount = doubleJumps.computeIfAbsent(player.uniqueId) { 0 }
