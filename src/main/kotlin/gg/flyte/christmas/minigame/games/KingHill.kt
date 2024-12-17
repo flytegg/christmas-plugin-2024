@@ -501,7 +501,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     }
 
     private fun doApplyInvisibility(name: String?) {
-        val message = "<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ɪɴᴠɪsɪʙɪʟɪᴛʏ! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+        val message = "<green>+<red>8</red> sᴇᴄᴏɴᴅs ᴏꜰ ɪɴᴠɪsɪʙɪʟɪᴛʏ! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
         announceDonationEvent(message.style())
 
         remainingPlayers()
