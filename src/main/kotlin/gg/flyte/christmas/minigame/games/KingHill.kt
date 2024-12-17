@@ -51,6 +51,8 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
     private lateinit var delayedKbBossbar: BossBar
 
+    private val doubleJumps = mutableMapOf<UUID, Int>()
+
     override fun startGameOverview() {
         super.startGameOverview()
         eventController().sidebarManager.dataSupplier = timeOnHill
@@ -286,10 +288,15 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
     override fun handleDonation(tier: DonationTier, donorName: String?) {
         when (tier) {
-            DonationTier.LOW -> TODO()
+            DonationTier.LOW -> doAddDoubleJumps(donorName)
             DonationTier.MEDIUM -> doDelayedKnockback(donorName)
             DonationTier.HIGH -> TODO()
         }
+    }
+
+    private fun performDoubleJump(player: Player) {
+        player.velocity = player.location.direction.multiply(0.5).add(Vector(0.0, 1.25, 0.0))
+        player.playSound(Sound.ENTITY_BREEZE_SHOOT)
     }
 
     private fun doDelayedKnockback(name: String?) {
@@ -307,5 +314,16 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         val message =
             "<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴅᴇʟᴀʏᴇᴅ ᴋɴᴏᴄᴋʙᴀᴄᴋ! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
         announceDonationEvent(message.style())
+    }
+
+    private fun doAddDoubleJumps(name: String?) {
+        val message = "<green>+<red>3</red> ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘs! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+        announceDonationEvent(message.style())
+
+        remainingPlayers().forEach {
+            val doubleJumpCount = doubleJumps.computeIfAbsent(it.uniqueId) { 0 }
+
+            doubleJumps[it.uniqueId] = doubleJumpCount + 3
+        }
     }
 }
