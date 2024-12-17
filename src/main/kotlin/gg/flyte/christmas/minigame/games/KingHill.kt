@@ -26,6 +26,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerToggleFlightEvent
+import org.bukkit.inventory.EquipmentSlotGroup
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.potion.PotionEffect
@@ -394,10 +395,12 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                 return@forEach
             }
 
+            @Suppress("UnstableApiUsage")
             val modifier = AttributeModifier(
                 NamespacedKey(ChristmasEventPlugin.instance, "kinghill_knockback_resistance"),
                 1.0,
-                AttributeModifier.Operation.ADD_NUMBER
+                AttributeModifier.Operation.ADD_NUMBER,
+                EquipmentSlotGroup.ANY
             )
 
             stick.itemMeta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier)
