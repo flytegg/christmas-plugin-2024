@@ -27,6 +27,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.player.PlayerMoveEvent
+import org.bukkit.event.player.PlayerToggleFlightEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
 import org.bukkit.util.Vector
@@ -283,6 +284,20 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             val direction = damagedLocation.subtract(damagerLocation).normalize()
 
             velocityList.add(direction.multiply(if (damager.inventory.itemInMainHand.type == Material.AIR) 0.5 else 1.5))
+        }
+
+        listeners += event<PlayerToggleFlightEvent> {
+            if (player.gameMode != GameMode.SURVIVAL) return@event
+            isCancelled = true
+
+            val doubleJumpCount = doubleJumps.computeIfAbsent(player.uniqueId) { 0 }
+
+            if (doubleJumpCount > 0) {
+                performDoubleJump(player)
+                doubleJumps[player.uniqueId] = doubleJumpCount - 1
+            } else {
+                player.allowFlight = false
+            }
         }
     }
 
