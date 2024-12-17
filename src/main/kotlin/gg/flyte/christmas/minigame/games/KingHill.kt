@@ -40,7 +40,7 @@ import kotlin.math.floor
 class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     private var hillRegion = MapRegion(MapSinglePoint(824, 85, 633), MapSinglePoint(830, 88, 627))
     private var pvpEnabled = false
-    private var gameTime = 90
+    private var gameTime = 150
     private val respawnBelow = 71
     private val timeOnHill = mutableMapOf<UUID, Int>()
 
