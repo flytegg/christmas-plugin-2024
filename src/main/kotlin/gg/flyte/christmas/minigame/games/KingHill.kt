@@ -403,7 +403,11 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                 EquipmentSlotGroup.ANY
             )
 
-            stick.editMeta { it.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier) }
+            stick.editMeta {
+                if (it.getAttributeModifiers(Attribute.KNOCKBACK_RESISTANCE)?.isEmpty() != false) {
+                    it.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier)
+                }
+            }
         }
 
         val message =
