@@ -496,7 +496,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         announceDonationEvent(message.style())
 
         remainingPlayers().forEach {
-            it.addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, 5 * 20, 0))
+            it.addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, 5 * 20, 1))
         }
     }
 
