@@ -430,6 +430,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             .minByOrNull { -it.value }?.key
 
         if (kingUuid == null) {
+            lowTierDonation(name)
             return
         }
 
