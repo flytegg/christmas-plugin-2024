@@ -69,11 +69,16 @@
 
 ### King of the Hill:
   - Low-tier
-    - Swap locations of everyone
     - Add 3-5 double jumps
+    - 5 seconds of slow falling
+    - King's blindness
+    - 5 seconds of jump boost
   - Medium-tier
     - 5 seconds of stacked kb
-    - 5 seconds of slow falling
+    - 8 seconds of invisibility
+  - High-tier
+    - Swap locations of everyone
+    - Inversed knockback for 8 seconds  
 
 ## Stream:
 
