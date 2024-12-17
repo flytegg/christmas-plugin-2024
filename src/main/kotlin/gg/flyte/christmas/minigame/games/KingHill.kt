@@ -323,6 +323,8 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         remainingPlayers().forEach {
             val doubleJumpCount = doubleJumps.computeIfAbsent(it.uniqueId) { 0 }
 
+            it.allowFlight = true
+
             doubleJumps[it.uniqueId] = doubleJumpCount + 3
         }
     }
