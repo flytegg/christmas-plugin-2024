@@ -30,6 +30,8 @@ import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerToggleFlightEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.Vector
 import java.time.Duration
@@ -387,6 +389,15 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
             val message = "<green>ᴘᴏsɪᴛɪᴏɴs ʜᴀᴠᴇ ʙᴇᴇɴ sʜᴜꜰꜰʟᴇᴅ!"
             announceDonationEvent(message.style())
+        }
+    }
+
+    private fun doApplySlowFalling(name: String?) {
+        val message = "<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ sʟᴏᴡ ꜰᴀʟʟɪɴɢ! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+        announceDonationEvent(message.style())
+
+        remainingPlayers().forEach {
+            it.addPotionEffect(PotionEffect(PotionEffectType.SLOW_FALLING, 5 * 20, 0))
         }
     }
 }
