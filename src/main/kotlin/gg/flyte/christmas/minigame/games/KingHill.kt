@@ -179,6 +179,22 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             }
 
             delayedKbBossbar = BossBar.bossBar("<game_colour><b>ᴅᴇʟᴀʏᴇᴅ ᴋɴᴏᴄᴋʙᴀᴄᴋ".style(), 1.0F, BossBar.Color.WHITE, BossBar.Overlay.PROGRESS)
+
+            manageActionBars()
+        }
+    }
+
+    private fun manageActionBars() {
+        tasks += repeatingTask(10) {
+            remainingPlayers().forEach {
+                val doubleJumpsCount = doubleJumps.computeIfAbsent(it.uniqueId) { 0 }
+
+                if (doubleJumpsCount > 0) {
+                    it.sendActionBar("<green><b>${doubleJumps[it.uniqueId]!!} <reset><game_colour>ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘs ʟᴇꜰᴛ!".style())
+                } else {
+                    it.sendActionBar("<red><b>0 <reset><game_colour>ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘs ʟᴇꜰᴛ!".style())
+                }
+            }
         }
     }
 
