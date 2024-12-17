@@ -335,12 +335,13 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     }
 
     private fun lowTierDonation(name: String?) {
-        val random = (0..2).random()
+        val random = (0..3).random()
 
         when (random) {
             0 -> doAddDoubleJumps(name)
             1 -> doApplySlowFalling(name)
             2 -> doApplyKingsBlindness(name)
+            3 -> doApplyJumpBoost(name)
         }
     }
 
@@ -443,5 +444,14 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
         val message = "<green>ᴀᴘᴘʟɪᴇᴅ ʙʟɪɴᴅɴᴇss ᴛᴏ ᴛʜᴇ ᴋɪɴɢ ᴏꜰ ᴛʜᴇ ʜɪʟʟ! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
         announceDonationEvent(message.style())
+    }
+
+    private fun doApplyJumpBoost(name: String?) {
+        val message = "<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴊᴜᴍᴘ ʙᴏᴏsᴛ! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+        announceDonationEvent(message.style())
+
+        remainingPlayers().forEach {
+            it.addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, 5 * 20, 0))
+        }
     }
 }
