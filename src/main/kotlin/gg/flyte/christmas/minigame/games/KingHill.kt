@@ -362,7 +362,9 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     }
 
     private fun doAddDoubleJumps(name: String?) {
-        val message = "<green>+<red>3</red> ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘs! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+        val amount = (3..5).random()
+
+        val message = "<green>+<red>$amount</red> ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘs! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
         announceDonationEvent(message.style())
 
         remainingPlayers().forEach {
@@ -370,7 +372,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
             it.allowFlight = true
 
-            doubleJumps[it.uniqueId] = doubleJumpCount + 3
+            doubleJumps[it.uniqueId] = doubleJumpCount + amount
         }
     }
 
