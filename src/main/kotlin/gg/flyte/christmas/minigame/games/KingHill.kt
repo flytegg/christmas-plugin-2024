@@ -330,12 +330,12 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     }
 
     private fun lowTierDonation(name: String?) {
-        val random = Random.nextBoolean()
+        val random = (0..2).random()
 
-        if (random) {
-            doAddDoubleJumps(name)
-        } else {
-            doApplySlowFalling(name)
+        when (random) {
+            0 -> doAddDoubleJumps(name)
+            1 -> doApplySlowFalling(name)
+            2 -> doApplyKingsBlindness(name)
         }
     }
 
