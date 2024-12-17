@@ -469,7 +469,9 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         announceDonationEvent(message.style())
 
         remainingPlayers().forEach {
-            it.addPotionEffect(PotionEffect(PotionEffectType.SLOW_FALLING, 5 * 20, 0))
+            val duration = it.getPotionEffect(PotionEffectType.SLOW_FALLING)?.duration ?: 0
+
+            it.addPotionEffect(PotionEffect(PotionEffectType.SLOW_FALLING, duration + 5 * 20, 0))
         }
     }
 
@@ -488,9 +490,11 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
         val king = Bukkit.getPlayer(kingUuid) ?: return
 
-        king.addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, 5 * 20, 0))
+        val duration = king.getPotionEffect(PotionEffectType.BLINDNESS)?.duration ?: 0
 
-        val message = "<green>ᴀᴘᴘʟɪᴇᴅ ʙʟɪɴᴅɴᴇss ᴛᴏ ᴛʜᴇ ᴋɪɴɢ ᴏꜰ ᴛʜᴇ ʜɪʟʟ! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+        king.addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, duration + 5 * 20, 0))
+
+        val message = "<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴋɪɴɢ's ʙʟɪɴᴅɴᴇss! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
         announceDonationEvent(message.style())
     }
 
@@ -499,7 +503,9 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         announceDonationEvent(message.style())
 
         remainingPlayers().forEach {
-            it.addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, 5 * 20, 1))
+            val duration = it.getPotionEffect(PotionEffectType.JUMP_BOOST)?.duration ?: 0
+
+            it.addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, duration + 5 * 20, 1))
         }
     }
 
