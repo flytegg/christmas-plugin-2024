@@ -9,9 +9,7 @@ import gg.flyte.christmas.minigame.world.MapRegion
 import gg.flyte.christmas.minigame.world.MapSinglePoint
 import gg.flyte.christmas.util.*
 import gg.flyte.twilight.event.event
-import gg.flyte.twilight.extension.hidePlayer
 import gg.flyte.twilight.extension.playSound
-import gg.flyte.twilight.extension.showPlayer
 import gg.flyte.twilight.scheduler.delay
 import gg.flyte.twilight.scheduler.repeatingTask
 import gg.flyte.twilight.time.TimeUnit
@@ -56,8 +54,6 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     private lateinit var delayedKbBossbar: BossBar
 
     private val doubleJumps = mutableMapOf<UUID, Int>()
-
-    private val invisibleTimeLeft = mutableMapOf<UUID, Int>()
 
     override fun startGameOverview() {
         super.startGameOverview()
@@ -470,18 +466,6 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                 it.sendMessage(message.style())
             }
         }
-
-        tasks += repeatingTask(1, TimeUnit.SECONDS) {
-            remainingPlayers().forEach {
-                val invisibleTimeRemaining = invisibleTimeLeft[it.uniqueId] ?: return@repeatingTask
-
-                if (invisibleTimeRemaining == 0) {
-                    it.showPlayer()
-                } else {
-                    invisibleTimeLeft[it.uniqueId] = invisibleTimeRemaining - 1
-                }
-            }
-        }
     }
 
     private fun doApplySlowFalling(name: String?) {
@@ -535,14 +519,6 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
         remainingPlayers()
             .filter { !hillRegion.contains(it.location) }
-            .forEach {
-                var timeLeft = invisibleTimeLeft.computeIfAbsent(it.uniqueId) { 0 }
-                timeLeft += 8 * 20
-
-                invisibleTimeLeft[it.uniqueId] = timeLeft
-
-                it.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, timeLeft, 0))
-                it.hidePlayer()
-            }
+            .forEach { it.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, 8 * 20, 0)) }
     }
 }
