@@ -391,7 +391,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             if (timeLeftSeconds == 0) cancel()
         }
 
-        tasks += delay(timeLeftSeconds, TimeUnit.SECONDS) {
+        tasks += delay(timeLeftSeconds + 1, TimeUnit.SECONDS) {
             val players = remainingPlayers()
             val positions = players.map { it.location }
 
