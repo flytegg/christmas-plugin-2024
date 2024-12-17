@@ -17,6 +17,7 @@ import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.attribute.Attribute
@@ -394,7 +395,12 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             val players = remainingPlayers()
             val positions = players.map { it.location }
 
-            positions.shuffled().forEachIndexed { index, position ->
+            var shuffled = positions.shuffled()
+            while (shuffled === positions) {
+                shuffled = positions.shuffled()
+            }
+
+            shuffled.forEachIndexed { index, position ->
                 val player = players[index]
 
                 player.teleport(position)
