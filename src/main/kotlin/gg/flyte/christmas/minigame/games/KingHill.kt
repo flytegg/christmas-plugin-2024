@@ -384,7 +384,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     private fun doShufflePositions(name: String?) {
         var timeLeftSeconds = 5
 
-        tasks += repeatingTask(1, TimeUnit.SECONDS) {
+        tasks += repeatingTask(0, 1, TimeUnit.SECONDS) {
             val message = "<green>sʜᴜꜰꜰʟɪɴɢ ᴘᴏsɪᴛɪᴏɴs ɪɴ <red>$timeLeftSeconds</red> sᴇᴄᴏɴᴅs! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
 
             announceDonationEvent(message.style())
@@ -394,7 +394,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             if (timeLeftSeconds == 0) cancel()
         }
 
-        tasks += delay(timeLeftSeconds + 1, TimeUnit.SECONDS) {
+        tasks += delay(timeLeftSeconds, TimeUnit.SECONDS) {
             val players = remainingPlayers()
             val positions = players.map { it.location }
 
