@@ -328,6 +328,21 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                 player.allowFlight = false
             }
         }
+
+        listeners += event<EntityDamageByEntityEvent> {
+            if (damager !is Player) {
+                return@event
+            }
+
+            val player = damager as Player
+
+            val isInvisible = player.hasPotionEffect(PotionEffectType.INVISIBILITY)
+
+            if (isInvisible) {
+                player.removePotionEffect(PotionEffectType.INVISIBILITY)
+                player.sendMessage("<red>ʏᴏᴜ ʜɪᴛ ᴀ ᴘʟᴀʏᴇʀ sᴏ ʏᴏᴜ ᴀʀᴇ ɴᴏ ʟᴏɴɢᴇʀ ɪɴᴠɪsɪʙʟᴇ!".style())
+            }
+        }
     }
 
     override fun handleDonation(tier: DonationTier, donorName: String?) {
@@ -350,10 +365,11 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     }
 
     private fun mediumTierDonation(name: String?) {
-        val random = (0..0).random()
+        val random = (0..1).random()
 
         when (random) {
             0 -> doDelayedKnockback(name)
+            1 -> doApplyInvisibility(name)
         }
     }
 
@@ -482,5 +498,14 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         remainingPlayers().forEach {
             it.addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, 5 * 20, 0))
         }
+    }
+
+    private fun doApplyInvisibility(name: String?) {
+        val message = "<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ɪɴᴠɪsɪʙɪʟɪᴛʏ! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+        announceDonationEvent(message.style())
+
+        remainingPlayers()
+            .filter { !hillRegion.contains(it.location) }
+            .forEach { it.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, 8 * 20, 0)) }
     }
 }
