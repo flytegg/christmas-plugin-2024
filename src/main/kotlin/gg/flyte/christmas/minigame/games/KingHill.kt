@@ -30,6 +30,7 @@ import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerToggleFlightEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
+import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.Vector
 import java.time.Duration
 import java.util.*
@@ -321,7 +322,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         when (tier) {
             DonationTier.LOW -> doAddDoubleJumps(donorName)
             DonationTier.MEDIUM -> doDelayedKnockback(donorName)
-            DonationTier.HIGH -> TODO()
+            DonationTier.HIGH -> doShufflePositions(donorName)
         }
     }
 
@@ -357,6 +358,35 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             it.allowFlight = true
 
             doubleJumps[it.uniqueId] = doubleJumpCount + 3
+        }
+    }
+
+    private fun doShufflePositions(name: String?) {
+        var timeLeftSeconds = 5
+
+        tasks += repeatingTask(1, TimeUnit.SECONDS) {
+            val message = "<green>sʜᴜꜰꜰʟɪɴɢ ᴘᴏsɪᴛɪᴏɴs ɪɴ <red>$timeLeftSeconds</red> sᴇᴄᴏɴᴅs! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+
+            announceDonationEvent(message.style())
+
+            timeLeftSeconds--
+
+            if (timeLeftSeconds == 0) cancel()
+        }
+
+        tasks += delay(timeLeftSeconds, TimeUnit.SECONDS) {
+            val players = remainingPlayers()
+            val positions = players.map { it.location }
+
+            positions.shuffled().forEachIndexed { index, position ->
+                val player = players[index]
+
+                player.teleport(position)
+                player.playSound(Sound.ENTITY_ENDERMAN_TELEPORT)
+            }
+
+            val message = "<green>ᴘᴏsɪᴛɪᴏɴs ʜᴀᴠᴇ ʙᴇᴇɴ sʜᴜꜰꜰʟᴇᴅ!"
+            announceDonationEvent(message.style())
         }
     }
 }
