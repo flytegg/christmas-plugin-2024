@@ -128,6 +128,8 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                         }
 
                         stick.editMeta { it.removeAttributeModifier(Attribute.KNOCKBACK_RESISTANCE) }
+
+                        player.playSound(Sound.ENTITY_WITHER_BREAK_BLOCK)
                     }
 
                     thrownAroundTicksLeft = delayedKbTicksTotal / 6
