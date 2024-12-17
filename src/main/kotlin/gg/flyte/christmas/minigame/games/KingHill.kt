@@ -15,11 +15,9 @@ import gg.flyte.twilight.scheduler.repeatingTask
 import gg.flyte.twilight.time.TimeUnit
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
-import org.bukkit.Bukkit
-import org.bukkit.GameMode
-import org.bukkit.Material
-import org.bukkit.Sound
+import org.bukkit.*
 import org.bukkit.attribute.Attribute
+import org.bukkit.attribute.AttributeModifier
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
@@ -121,8 +119,14 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
                     delayedKbTicksLeft = -1
 
-                    remainingPlayers().forEach {
-                        it.getAttribute(Attribute.KNOCKBACK_RESISTANCE)!!.baseValue = 0.0
+                    remainingPlayers().forEach { player ->
+                        val stick = player.inventory.find { it.type == Material.STICK }
+
+                        if (stick == null) {
+                            return@forEach
+                        }
+
+                        stick.itemMeta.removeAttributeModifier(Attribute.KNOCKBACK_RESISTANCE)
                     }
 
                     thrownAroundTicksLeft = delayedKbTicksTotal / 6
@@ -357,9 +361,22 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         delayedKbTicksLeft += 20 * 5
         delayedKbTicksTotal += 20 * 5
 
-        remainingPlayers().forEach {
-            it.getAttribute(Attribute.KNOCKBACK_RESISTANCE)!!.baseValue = 1.0
-            it.showBossBar(delayedKbBossbar)
+        remainingPlayers().forEach { player ->
+            player.showBossBar(delayedKbBossbar)
+
+            val stick = player.inventory.find { it.type == Material.STICK }
+
+            if (stick == null) {
+                return@forEach
+            }
+
+            val modifier = AttributeModifier(
+                NamespacedKey(ChristmasEventPlugin.instance, "kinghill_knockback_resistance"),
+                1.0,
+                AttributeModifier.Operation.ADD_NUMBER
+            )
+
+            stick.itemMeta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier)
         }
 
         val message =
