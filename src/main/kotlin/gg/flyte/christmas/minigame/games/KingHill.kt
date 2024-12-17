@@ -413,4 +413,24 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             it.addPotionEffect(PotionEffect(PotionEffectType.SLOW_FALLING, 5 * 20, 0))
         }
     }
+
+    private fun doApplyKingsBlindness(name: String?) {
+        val kingUuid = timeOnHill.entries
+            .filter { Bukkit.getPlayer(it.key) != null }
+            .filter {
+                hillRegion.contains(Bukkit.getPlayer(it.key)!!.location)
+            }
+            .minByOrNull { -it.value }?.key
+
+        if (kingUuid == null) {
+            return
+        }
+
+        val king = Bukkit.getPlayer(kingUuid) ?: return
+
+        king.addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, 5 * 20, 0))
+
+        val message = "<green>ᴀᴘᴘʟɪᴇᴅ ʙʟɪɴᴅɴᴇss ᴛᴏ ᴛʜᴇ ᴋɪɴɢ ᴏꜰ ᴛʜᴇ ʜɪʟʟ! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+        announceDonationEvent(message.style())
+    }
 }
