@@ -387,8 +387,9 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
         tasks += repeatingTask(0, 1, TimeUnit.SECONDS) {
             val message = "<green>sʜᴜꜰꜰʟɪɴɢ ᴘᴏsɪᴛɪᴏɴs ɪɴ <red>$timeLeftSeconds</red> sᴇᴄᴏɴᴅs! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
-
-            announceDonationEvent(message.style())
+            remainingPlayers().forEach {
+                it.sendMessage(message.style())
+            }
 
             timeLeftSeconds--
 
@@ -412,7 +413,9 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             }
 
             val message = "<green>ᴘᴏsɪᴛɪᴏɴs ʜᴀᴠᴇ ʙᴇᴇɴ sʜᴜꜰꜰʟᴇᴅ!"
-            announceDonationEvent(message.style())
+            remainingPlayers().forEach {
+                it.sendMessage(message.style())
+            }
         }
     }
 
