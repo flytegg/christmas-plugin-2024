@@ -389,7 +389,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             val message = "<green>sʜᴜꜰꜰʟɪɴɢ ᴘᴏsɪᴛɪᴏɴs ɪɴ <red>$timeLeftSeconds</red> sᴇᴄᴏɴᴅs! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
             remainingPlayers().forEach {
                 it.sendMessage(message.style())
-                it.playSound(Sound.UI_BUTTON_CLICK)
+                it.playSound(it, Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, if (timeLeftSeconds == 1) 2.0F else 1.0F)
             }
 
             timeLeftSeconds--
