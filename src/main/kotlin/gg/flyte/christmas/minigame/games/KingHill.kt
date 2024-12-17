@@ -127,7 +127,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                             return@forEach
                         }
 
-                        stick.itemMeta.removeAttributeModifier(Attribute.KNOCKBACK_RESISTANCE)
+                        stick.editMeta { it.removeAttributeModifier(Attribute.KNOCKBACK_RESISTANCE) }
                     }
 
                     thrownAroundTicksLeft = delayedKbTicksTotal / 6
@@ -403,7 +403,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                 EquipmentSlotGroup.ANY
             )
 
-            stick.itemMeta.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier)
+            stick.editMeta { it.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier) }
         }
 
         val message =
