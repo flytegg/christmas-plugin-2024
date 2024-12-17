@@ -396,7 +396,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             val positions = players.map { it.location }
 
             var shuffled = positions.shuffled()
-            while (shuffled === positions) {
+            while (shuffled === positions || positions.size < 2) {
                 shuffled = positions.shuffled()
             }
 
