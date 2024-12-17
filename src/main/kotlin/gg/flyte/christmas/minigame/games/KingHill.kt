@@ -333,7 +333,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     override fun handleDonation(tier: DonationTier, donorName: String?) {
         when (tier) {
             DonationTier.LOW -> lowTierDonation(donorName)
-            DonationTier.MEDIUM -> doDelayedKnockback(donorName)
+            DonationTier.MEDIUM -> mediumTierDonation(donorName)
             DonationTier.HIGH -> doShufflePositions(donorName)
         }
     }
@@ -346,6 +346,14 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             1 -> doApplySlowFalling(name)
             2 -> doApplyKingsBlindness(name)
             3 -> doApplyJumpBoost(name)
+        }
+    }
+
+    private fun mediumTierDonation(name: String?) {
+        val random = (0..0).random()
+
+        when (random) {
+            0 -> doDelayedKnockback(name)
         }
     }
 
