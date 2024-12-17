@@ -37,6 +37,7 @@ import org.bukkit.util.Vector
 import java.time.Duration
 import java.util.*
 import kotlin.math.floor
+import kotlin.random.Random
 
 class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     private var hillRegion = MapRegion(MapSinglePoint(824, 85, 633), MapSinglePoint(830, 88, 627))
@@ -322,9 +323,19 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
     override fun handleDonation(tier: DonationTier, donorName: String?) {
         when (tier) {
-            DonationTier.LOW -> doAddDoubleJumps(donorName)
+            DonationTier.LOW -> lowTierDonation(donorName)
             DonationTier.MEDIUM -> doDelayedKnockback(donorName)
             DonationTier.HIGH -> doShufflePositions(donorName)
+        }
+    }
+
+    private fun lowTierDonation(name: String?) {
+        val random = Random.nextBoolean()
+
+        if (random) {
+            doAddDoubleJumps(name)
+        } else {
+            doApplySlowFalling(name)
         }
     }
 
