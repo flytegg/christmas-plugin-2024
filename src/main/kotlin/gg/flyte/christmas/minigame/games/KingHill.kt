@@ -315,6 +315,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             if (doubleJumpCount > 0) {
                 performDoubleJump(player)
                 doubleJumps[player.uniqueId] = doubleJumpCount - 1
+                player.isFlying = false
             } else {
                 player.allowFlight = false
             }
