@@ -302,9 +302,15 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             val damagedLocation = entity.location.toVector()
             val damagerLocation = damager.location.toVector()
 
-            val direction = damagedLocation.subtract(damagerLocation).normalize()
+            val direction = damagedLocation.subtract(damagerLocation)
 
-            velocityList.add(direction.multiply(if (damager.inventory.itemInMainHand.type == Material.AIR) 0.5 else 1.5))
+            if (direction.lengthSquared() == 0.0) {
+                return@event
+            }
+
+            val normalized = direction.normalize()
+
+            velocityList.add(normalized.multiply(if (damager.inventory.itemInMainHand.type == Material.AIR) 0.5 else 1.5))
         }
 
         listeners += event<PlayerToggleFlightEvent> {
