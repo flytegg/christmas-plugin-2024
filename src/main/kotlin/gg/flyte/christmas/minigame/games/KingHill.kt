@@ -194,24 +194,10 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                 thrownAroundTicksLeft -= 1
             }
 
-
             manageActionBars()
         }
     }
 
-    private fun manageActionBars() {
-        tasks += repeatingTask(10) {
-            remainingPlayers().forEach {
-                val doubleJumpsCount = doubleJumps.computeIfAbsent(it.uniqueId) { 0 }
-
-                if (doubleJumpsCount > 0) {
-                    it.sendActionBar("<green><b>${doubleJumps[it.uniqueId]!!} <reset><game_colour>ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘs ʟᴇꜰᴛ!".style())
-                } else {
-                    it.sendActionBar("<red><b>0 <reset><game_colour>ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘs ʟᴇꜰᴛ!".style())
-                }
-            }
-        }
-    }
 
     override fun endGame() {
         donationEventsEnabled = false
@@ -264,6 +250,25 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     private fun updateScoreboard() {
         val timeLeft = "<aqua>ᴛɪᴍᴇ ʟᴇꜰᴛ: <red><b>${gameTime}".style()
         Bukkit.getOnlinePlayers().forEach { eventController().sidebarManager.updateLines(it, listOf(Component.empty(), timeLeft)) }
+    }
+
+    private fun manageActionBars() {
+        tasks += repeatingTask(10) {
+            remainingPlayers().forEach {
+                val doubleJumpsCount = doubleJumps.computeIfAbsent(it.uniqueId) { 0 }
+
+                if (doubleJumpsCount > 0) {
+                    it.sendActionBar("<green><b>${doubleJumps[it.uniqueId]!!} <reset><game_colour>ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘs ʟᴇꜰᴛ!".style())
+                } else {
+                    it.sendActionBar("<red><b>0 <reset><game_colour>ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘs ʟᴇꜰᴛ!".style())
+                }
+            }
+        }
+    }
+
+    private fun performDoubleJump(player: Player) {
+        player.velocity = player.location.direction.multiply(0.5).add(Vector(0.0, 1.25, 0.0))
+        player.playSound(Sound.ENTITY_BREEZE_SHOOT)
     }
 
     @Suppress("UnstableApiUsage")
@@ -363,6 +368,64 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     }
 
     private fun lowTierDonation(name: String?) {
+        fun doAddDoubleJumps(name: String?) {
+            val amount = (3..5).random()
+            remainingPlayers().forEach {
+                val doubleJumpCount = doubleJumps.computeIfAbsent(it.uniqueId) { 0 }
+                doubleJumps[it.uniqueId] = doubleJumpCount + amount
+                it.allowFlight = true
+            }
+
+            val message = "<green>+<red>$amount</red> ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘs! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+            announceDonationEvent(message.style())
+        }
+
+        fun doApplySlowFalling(name: String?) {
+            val message = "<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ sʟᴏᴡ ꜰᴀʟʟɪɴɢ! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+            announceDonationEvent(message.style())
+
+            remainingPlayers().forEach {
+                val duration = it.getPotionEffect(PotionEffectType.SLOW_FALLING)?.duration ?: 0
+
+                it.addPotionEffect(PotionEffect(PotionEffectType.SLOW_FALLING, duration + 5 * 20, 0))
+            }
+        }
+
+        fun doApplyKingsBlindness(name: String?) {
+            val kingUuid = timeOnHill.entries
+                .filter { Bukkit.getPlayer(it.key) != null }
+                .filter {
+                    hillRegion.contains(Bukkit.getPlayer(it.key)!!.location)
+                }
+                .minByOrNull { -it.value }?.key
+
+            if (kingUuid == null) {
+                lowTierDonation(name)
+                return
+            }
+
+            val king = Bukkit.getPlayer(kingUuid) ?: return
+
+            val duration = king.getPotionEffect(PotionEffectType.BLINDNESS)?.duration ?: 0
+
+            king.addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, duration + 5 * 20, 0))
+
+            val message = "<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴋɪɴɢ's ʙʟɪɴᴅɴᴇss! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+            announceDonationEvent(message.style())
+        }
+
+        fun doApplyJumpBoost(name: String?) {
+            val message = "<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴊᴜᴍᴘ ʙᴏᴏsᴛ! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+            announceDonationEvent(message.style())
+
+            remainingPlayers().forEach {
+                val duration = it.getPotionEffect(PotionEffectType.JUMP_BOOST)?.duration ?: 0
+
+                it.addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, duration + 5 * 20, 1))
+            }
+        }
+
+
         val random = (0..3).random()
 
         when (random) {
@@ -374,64 +437,53 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     }
 
     private fun mediumTierDonation(name: String?) {
-        if (Random.nextBoolean()) doDelayedKnockback(name)
-        else doApplyInvisibility(name)
-    }
+        fun doDelayedKnockback(name: String?) {
+            if (delayedKbTicksLeft == -1) delayedKbTicksLeft = 0
+            if (delayedKbTicksTotal == -1) delayedKbTicksTotal = 0
 
-    private fun performDoubleJump(player: Player) {
-        player.velocity = player.location.direction.multiply(0.5).add(Vector(0.0, 1.25, 0.0))
-        player.playSound(Sound.ENTITY_BREEZE_SHOOT)
-    }
+            delayedKbTicksLeft += 20 * 5
+            delayedKbTicksTotal += 20 * 5
 
-    private fun doDelayedKnockback(name: String?) {
-        if (delayedKbTicksLeft == -1) delayedKbTicksLeft = 0
-        if (delayedKbTicksTotal == -1) delayedKbTicksTotal = 0
+            remainingPlayers().forEach { player ->
+                player.showBossBar(delayedKnockbackBossBar)
 
-        delayedKbTicksLeft += 20 * 5
-        delayedKbTicksTotal += 20 * 5
+                val stick = player.inventory.find { it.type == Material.STICK }
 
-        remainingPlayers().forEach { player ->
-            player.showBossBar(delayedKnockbackBossBar)
+                if (stick == null) {
+                    return@forEach
+                }
 
-            val stick = player.inventory.find { it.type == Material.STICK }
+                @Suppress("UnstableApiUsage")
+                val modifier = AttributeModifier(
+                    NamespacedKey(ChristmasEventPlugin.instance, "kinghill_knockback_resistance"),
+                    1.0,
+                    AttributeModifier.Operation.ADD_NUMBER,
+                    EquipmentSlotGroup.ANY
+                )
 
-            if (stick == null) {
-                return@forEach
-            }
-
-            @Suppress("UnstableApiUsage")
-            val modifier = AttributeModifier(
-                NamespacedKey(ChristmasEventPlugin.instance, "kinghill_knockback_resistance"),
-                1.0,
-                AttributeModifier.Operation.ADD_NUMBER,
-                EquipmentSlotGroup.ANY
-            )
-
-            stick.editMeta {
-                if (it.getAttributeModifiers(Attribute.KNOCKBACK_RESISTANCE)?.isEmpty() != false) {
-                    it.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier)
+                stick.editMeta {
+                    if (it.getAttributeModifiers(Attribute.KNOCKBACK_RESISTANCE)?.isEmpty() != false) {
+                        it.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier)
+                    }
                 }
             }
+
+            val message =
+                "<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴅᴇʟᴀʏᴇᴅ ᴋɴᴏᴄᴋʙᴀᴄᴋ! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+            announceDonationEvent(message.style())
         }
 
-        val message =
-            "<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴅᴇʟᴀʏᴇᴅ ᴋɴᴏᴄᴋʙᴀᴄᴋ! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
-        announceDonationEvent(message.style())
-    }
+        fun doApplyInvisibility(name: String?) {
+            val message = "<green>+<red>8</red> sᴇᴄᴏɴᴅs ᴏꜰ ɪɴᴠɪsɪʙɪʟɪᴛʏ! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+            announceDonationEvent(message.style())
 
-    private fun doAddDoubleJumps(name: String?) {
-        val amount = (3..5).random()
-
-        val message = "<green>+<red>$amount</red> ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘs! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
-        announceDonationEvent(message.style())
-
-        remainingPlayers().forEach {
-            val doubleJumpCount = doubleJumps.computeIfAbsent(it.uniqueId) { 0 }
-
-            it.allowFlight = true
-
-            doubleJumps[it.uniqueId] = doubleJumpCount + amount
+            remainingPlayers()
+                .filter { !hillRegion.contains(it.location) }
+                .forEach { it.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, 8 * 20, 0)) }
         }
+
+        if (Random.nextBoolean()) doDelayedKnockback(name)
+        else doApplyInvisibility(name)
     }
 
     private fun doShufflePositions(name: String?) {
@@ -471,59 +523,5 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                 it.sendMessage(message.style())
             }
         }
-    }
-
-    private fun doApplySlowFalling(name: String?) {
-        val message = "<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ sʟᴏᴡ ꜰᴀʟʟɪɴɢ! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
-        announceDonationEvent(message.style())
-
-        remainingPlayers().forEach {
-            val duration = it.getPotionEffect(PotionEffectType.SLOW_FALLING)?.duration ?: 0
-
-            it.addPotionEffect(PotionEffect(PotionEffectType.SLOW_FALLING, duration + 5 * 20, 0))
-        }
-    }
-
-    private fun doApplyKingsBlindness(name: String?) {
-        val kingUuid = timeOnHill.entries
-            .filter { Bukkit.getPlayer(it.key) != null }
-            .filter {
-                hillRegion.contains(Bukkit.getPlayer(it.key)!!.location)
-            }
-            .minByOrNull { -it.value }?.key
-
-        if (kingUuid == null) {
-            lowTierDonation(name)
-            return
-        }
-
-        val king = Bukkit.getPlayer(kingUuid) ?: return
-
-        val duration = king.getPotionEffect(PotionEffectType.BLINDNESS)?.duration ?: 0
-
-        king.addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, duration + 5 * 20, 0))
-
-        val message = "<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴋɪɴɢ's ʙʟɪɴᴅɴᴇss! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
-        announceDonationEvent(message.style())
-    }
-
-    private fun doApplyJumpBoost(name: String?) {
-        val message = "<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴊᴜᴍᴘ ʙᴏᴏsᴛ! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
-        announceDonationEvent(message.style())
-
-        remainingPlayers().forEach {
-            val duration = it.getPotionEffect(PotionEffectType.JUMP_BOOST)?.duration ?: 0
-
-            it.addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, duration + 5 * 20, 1))
-        }
-    }
-
-    private fun doApplyInvisibility(name: String?) {
-        val message = "<green>+<red>8</red> sᴇᴄᴏɴᴅs ᴏꜰ ɪɴᴠɪsɪʙɪʟɪᴛʏ! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
-        announceDonationEvent(message.style())
-
-        remainingPlayers()
-            .filter { !hillRegion.contains(it.location) }
-            .forEach { it.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, 8 * 20, 0)) }
     }
 }
