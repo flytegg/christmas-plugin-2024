@@ -131,7 +131,7 @@ enum class GameConfig(
             MapSinglePoint(181, 128, 1252, -133.11133F, 8.586087F),
         ),
         listOf(MapSinglePoint(147, 200, 1270, -92.046814F, 49.535908F)),
-        listOf(MapSinglePoint(128, 146, 1288, -115.052185F, 22.471674F)),
+        listOf(MapSinglePoint(176, 142, 1235, -13.384574F, 23.072657F)), // TODO not working?!
     ),
     //endregion
 
@@ -346,7 +346,7 @@ enum class GameConfig(
                 " • ᴛᴏ ᴡɪɴ, ʜɪᴛ ᴛʜᴇ ᴍᴏѕᴛ ᴘʟᴀʏᴇʀѕ ᴀɴᴅ ɢᴇᴛ ᴛʜᴇ ᴍᴏѕᴛ ᴘᴏɪɴᴛѕ!",
         2,
         MapSinglePoint(181.5, 140.0, 300.5, -135, 90),
-        200 to 0.5,
+        200 to 0.6,
         listOf(
             MapRegion.single(MapSinglePoint(193, 80, 193, 0, 0)),
             MapRegion.single(MapSinglePoint(207, 82, 221, 0, 0)),
@@ -406,8 +406,7 @@ enum class GameConfig(
 
     //region PAINT_WARS
     PAINT_WARS(
-        PaintWars::
-        class,
+        PaintWars::class,
         "<colour:#75e01d>ᴘᴀɪɴᴛ ᴡᴀʀꜱ".style(),
         ItemStack(Material.BRUSH),
         TextColor.fromHexString("#75e01d")!!,
@@ -590,7 +589,7 @@ enum class GameConfig(
         TextColor.fromHexString("#c293db")!!,
         " • ᴛʜᴇ ʟᴀsᴛ ᴇᴠᴇɴᴛ! ᴅᴇᴄᴏʀᴀᴛᴇ ᴛʜᴇ ʟᴏʙʙʏ ᴄʜʀɪsᴛᴍᴀs ᴛʀᴇᴇ ᴡɪᴛʜ ᴀssᴏʀᴛᴇᴅ ᴅᴇᴄᴏʀᴀᴛɪᴏɴs.\n\n" +
                 " • ᴅᴇᴄᴏʀᴀᴛɪᴏɴs ᴡɪʟʟ ʙᴇ ᴀᴠᴀɪʟᴀʙʟᴇ ᴛʜʀᴏᴜɢʜ ʏᴏᴜʀ ʜᴏᴛʙᴀʀ. ᴍᴏʀᴇ ᴄᴀɴ ʙᴇ ʙʀᴏᴜɢʜᴛ ɪɴ ᴛʜʀᴏᴜɢʜ ᴛʜᴇ ᴄʀᴇᴀᴛɪᴠᴇ ɪɴᴠᴇɴᴛᴏʀʏ!\n\n" +
-                " • ᴛʜᴀɴᴋ ʏᴏᴜ ꜰᴏʀ ᴊᴏɪɴɪɴɢ ᴜs ꜰᴏʀ ᴛʜɪs ᴇᴠᴇɴᴛ",
+                " • ᴛʜᴀɴᴋ ʏᴏᴜ ꜰᴏʀ ᴊᴏɪɴɪɴɢ ᴜs ꜰᴏʀ ᴛʜɪs ᴇᴠᴇɴᴛ :]",
         1,
         MapSinglePoint(545, 115, 384, 0, -34),
         70 to 0.5,
@@ -650,3 +649,4 @@ enum class GameConfig(
     )
     //endregion
 }
+// TODO fix spleef specatte points

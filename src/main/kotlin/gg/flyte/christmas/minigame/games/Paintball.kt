@@ -4,6 +4,7 @@ import gg.flyte.christmas.donation.DonationTier
 import gg.flyte.christmas.minigame.engine.EventMiniGame
 import gg.flyte.christmas.minigame.engine.GameConfig
 import gg.flyte.christmas.minigame.engine.PlayerType
+import gg.flyte.christmas.minigame.world.MapSinglePoint
 import gg.flyte.christmas.util.*
 import gg.flyte.twilight.event.event
 import gg.flyte.twilight.extension.playSound
@@ -12,11 +13,13 @@ import gg.flyte.twilight.time.TimeUnit
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import org.bukkit.*
+import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.entity.Snowball
 import org.bukkit.entity.ThrowableProjectile
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
@@ -82,10 +85,12 @@ class Paintball : EventMiniGame(GameConfig.PAINTBALL) {
     // ticks left | total ticks
     private var glowingTickData: Pair<Int, Int> = 0 to 0
     private var nauseatedTickData: Pair<Int, Int> = 0 to 0
+    private var rapidFireTickData: Pair<Int, Int> = 0 to 0
 
     // lateinit since <game_colour> is not mapped yet at time of init
     private lateinit var glowingBossBar: BossBar
     private lateinit var nauseatedBossBar: BossBar
+    private lateinit var rapidFireBossBar: BossBar
 
     override fun preparePlayer(player: Player) {
         player.gameMode = GameMode.ADVENTURE
@@ -98,6 +103,7 @@ class Paintball : EventMiniGame(GameConfig.PAINTBALL) {
         ItemStack(Material.GOLDEN_HOE).apply {
             itemMeta = itemMeta.apply {
                 displayName("<!i><game_colour>ᴘᴀɪɴᴛʙᴀʟʟ <gold>ɢᴜɴ!".style())
+                addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE)
             }
         }.apply { player.inventory.setItem(0, this) }
     }
@@ -107,6 +113,10 @@ class Paintball : EventMiniGame(GameConfig.PAINTBALL) {
         simpleCountdown {
             started = true
             donationEventsEnabled = true
+            glowingBossBar = BossBar.bossBar("<game_colour><b>ɢʟᴏᴡɪɴɢ ᴇɴᴀʙʟᴇᴅ".style(), 1.0F, BossBar.Color.WHITE, BossBar.Overlay.PROGRESS)
+            nauseatedBossBar = BossBar.bossBar("<game_colour><b>ʏᴏᴜ ꜰᴇᴇʟ sɪᴄᴋ...".style(), 1.0F, BossBar.Color.GREEN, BossBar.Overlay.PROGRESS)
+            rapidFireBossBar = BossBar.bossBar("<game_colour><b>ʀᴀᴘɪᴅ ꜰɪʀᴇ".style(), 1.0F, BossBar.Color.RED, BossBar.Overlay.PROGRESS)
+
             Util.runAction(PlayerType.PARTICIPANT) {
                 it.title(
                     "<game_colour>ѕʜᴏᴏᴛ!".style(), Component.empty(),
@@ -140,7 +150,13 @@ class Paintball : EventMiniGame(GameConfig.PAINTBALL) {
                 }
             }
 
-        Util.runAction(PlayerType.PARTICIPANT) { it.walkSpeed = 0.2F }
+        Util.runAction(PlayerType.PARTICIPANT) {
+            it.walkSpeed = 0.2F
+            it.isGlowing = false
+            it.hideBossBar(glowingBossBar)
+            it.hideBossBar(nauseatedBossBar)
+            it.hideBossBar(rapidFireBossBar)
+        }
 
         super.endGame()
     }
@@ -154,6 +170,8 @@ class Paintball : EventMiniGame(GameConfig.PAINTBALL) {
 
     private fun nauseaEnabled() = nauseatedTickData.first > 0
 
+    private fun rapidFireEnabled() = rapidFireTickData.first > 0
+
     override fun handleGameEvents() {
         listeners += event<PlayerInteractEvent> {
             if (!started) return@event
@@ -162,7 +180,20 @@ class Paintball : EventMiniGame(GameConfig.PAINTBALL) {
             if (item!!.type != Material.GOLDEN_HOE) return@event
             if (!(action.name.lowercase().contains("right"))) return@event
 
-            player.launchProjectile(Snowball::class.java).apply { item = ItemStack(paintMaterials.random()) }
+            if (rapidFireEnabled()) {
+                var times = 0 // must reach 4
+                repeatingTask(1) {
+                    if (times == 4) {
+                        cancel()
+                        return@repeatingTask
+                    }
+                    player.launchProjectile(Snowball::class.java).apply { item = ItemStack(paintMaterials.random()) }
+                    times++
+                }
+            } else {
+                // singly shoot
+                player.launchProjectile(Snowball::class.java).apply { item = ItemStack(paintMaterials.random()) }
+            }
         }
 
         listeners += event<ProjectileHitEvent> {
@@ -210,18 +241,23 @@ class Paintball : EventMiniGame(GameConfig.PAINTBALL) {
                     } else {
                         // set initial duration
                         glowingTickData = 10 * 20 to 10 * 20
-                        tasks += repeatingTask(1, TimeUnit.SECONDS) {
+                        tasks += repeatingTask(1) {
                             val (ticksLeft, totalTicks) = glowingTickData
                             glowingBossBar.progress(Math.clamp(ticksLeft / totalTicks.toFloat(), 0.0F, 1.0F))
 
                             if (ticksLeft == 0) {
-                                remainingPlayers().forEach { it.isGlowing = false }
+                                remainingPlayers().forEach {
+                                    it.isGlowing = false
+                                    it.hideBossBar(glowingBossBar)
+                                }
                                 cancel()
                             } else {
                                 glowingTickData = ticksLeft - 1 to totalTicks
                             }
                         }
                     }
+
+                    announceDonationEvent("<game_colour>ᴀʟʟ ᴘʟᴀʏᴇʀs ᴀʀᴇ ɴᴏᴡ ɢʟᴏᴡɪɴɢ (${if (donorName != null) "<aqua>$donorName's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})".style())
 
                 } else {
                     remainingPlayers().forEach {
@@ -244,23 +280,66 @@ class Paintball : EventMiniGame(GameConfig.PAINTBALL) {
                     } else {
                         // set initial duration
                         nauseatedTickData = 10 * 20 to 10 * 20
-                        tasks += repeatingTask(1, TimeUnit.SECONDS) {
+                        tasks += repeatingTask(1) {
                             val (ticksLeft, totalTicks) = nauseatedTickData
                             nauseatedBossBar.progress(Math.clamp(ticksLeft / totalTicks.toFloat(), 0.0F, 1.0F))
 
                             if (ticksLeft == 0) {
-                                remainingPlayers().forEach { it.clearActivePotionEffects() }
+                                remainingPlayers().forEach {
+                                    it.clearActivePotionEffects()
+                                    it.hideBossBar(nauseatedBossBar)
+                                }
                                 cancel()
                             } else {
                                 nauseatedTickData = ticksLeft - 1 to totalTicks
                             }
                         }
                     }
+
+                    announceDonationEvent("<game_colour>ᴀʟʟ ᴘʟᴀʏᴇʀs ᴀʀᴇ ɴᴀᴜsᴇᴀᴛᴇᴅ (${if (donorName != null) "<aqua>$donorName's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})".style())
                 }
             }
 
-            DonationTier.MEDIUM -> TODO()
-            DonationTier.HIGH -> TODO()
+            DonationTier.MEDIUM -> {
+                announceDonationEvent("<game_colour>ᴀʟʟ ᴘʟᴀʏᴇʀs ʜᴀᴠᴇ ʙᴇᴇɴ ʀᴇɢʀᴏᴜᴘᴇᴅ (${if (donorName != null) "<aqua>$donorName's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})".style())
+                remainingPlayers().forEach { it.teleport(MapSinglePoint(207, 70, 315, 180, 0)) }
+            }
+
+            DonationTier.HIGH -> {
+                remainingPlayers().forEach {
+                    // find the golden hoe in the player's inventory
+                    val goldenHoe = it.inventory.contents.firstOrNull { item -> item?.type == Material.GOLDEN_HOE }
+                    goldenHoe?.addUnsafeEnchantment(Enchantment.UNBREAKING, 1)
+                    goldenHoe?.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE)
+
+                    it.showBossBar(rapidFireBossBar)
+                }
+
+                if (rapidFireEnabled()) {
+                    // extend duration if already active
+                    rapidFireTickData = rapidFireTickData.let { it.first + (20 * 20) to it.second + (20 * 20) }
+                } else {
+                    // set initial duration
+                    rapidFireTickData = 20 * 20 to 20 * 20
+                    tasks += repeatingTask(1) {
+                        val (ticksLeft, totalTicks) = rapidFireTickData
+                        rapidFireBossBar.progress(Math.clamp(ticksLeft / totalTicks.toFloat(), 0.0F, 1.0F))
+
+                        if (ticksLeft == 0) {
+                            cancel()
+                            remainingPlayers().forEach {
+                                val goldenHoe = it.inventory.contents.firstOrNull { item -> item?.type == Material.GOLDEN_HOE }
+                                goldenHoe?.removeEnchantment(Enchantment.UNBREAKING)
+                                it.hideBossBar(rapidFireBossBar)
+                            }
+                        } else {
+                            rapidFireTickData = ticksLeft - 1 to totalTicks
+                        }
+                    }
+                }
+
+                announceDonationEvent("<game_colour>ʀᴀᴘɪᴅ ꜰɪʀᴇ ɪs ᴏɴ! (${if (donorName != null) "<aqua>$donorName's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})".style())
+            }
         }
     }
 }

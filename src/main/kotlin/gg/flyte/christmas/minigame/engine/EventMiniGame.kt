@@ -16,9 +16,7 @@ import gg.flyte.christmas.visual.CameraSequence
 import gg.flyte.christmas.visual.CameraSlide
 import gg.flyte.twilight.event.TwilightListener
 import gg.flyte.twilight.extension.playSound
-import gg.flyte.twilight.scheduler.TwilightRunnable
-import gg.flyte.twilight.scheduler.delay
-import gg.flyte.twilight.scheduler.repeatingTask
+import gg.flyte.twilight.scheduler.*
 import gg.flyte.twilight.time.TimeUnit
 import net.kyori.adventure.text.Component
 import org.bukkit.*
@@ -73,7 +71,7 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
             // send BEFORE textDisplay has rendered in.
             Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) {
                 it.title(
-                    gameConfig.displayName, "<game_colour>Instructions:".style(),
+                    gameConfig.displayName, "<game_colour>ɪɴsᴛʀᴜᴄᴛɪᴏɴs:".style(),
                     titleTimes(Duration.ofMillis(1250), Duration.ofMillis(3500), Duration.ofMillis(750))
                 )
             }
@@ -95,12 +93,24 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
 
                     preparePlayer(it)
                     it.sendMessage(
-                        "<game_colour>\n------------------[INSTRUCTIONS]------------------\n".style()
+                        "<game_colour>\n------------------[ɪɴsᴛʀᴜᴄᴛɪᴏɴs]------------------\n".style()
                             .append("<white>${gameConfig.instructions}".style())
                             .append("<game_colour>\n-------------------------------------------------\n".style())
                     )
                 }
-                Util.runAction(PlayerType.OPTED_OUT) { it.teleport(gameConfig.spectatorSpawnLocations.random()) }
+                Util.runAction(PlayerType.OPTED_OUT) {
+                    it.teleport(gameConfig.spectatorSpawnLocations.random())
+                    it.gameMode = GameMode.ADVENTURE
+                    it.formatInventory()
+                    ItemStack(Material.RECOVERY_COMPASS).apply {
+                        itemMeta = itemMeta.apply {
+                            displayName("<!i><white>ѕᴘᴇᴄᴛᴀᴛᴇ".style())
+                            editMeta {
+                                lore(listOf("<grey>ᴄʟɪᴄᴋ ᴛᴏ ѕᴘᴇᴄᴛᴀᴛᴇ!".style()))
+                            }
+                        }
+                    }.also { item -> it.inventory.setItem(8, item) }
+                }
 
                 eventController().sidebarManager.update() // enable again after sequence ended.
                 startGame()
@@ -275,45 +285,42 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
             eventController().sidebarManager.remove(it) // hide for now
         }
 
-        CameraSlide(MapSinglePoint(527, 202, 562, 20.373718F, 7.030075F)) {
-            // create podium NPCs
-            val npcs = mutableListOf<WorldNPC>()
-            val displays = mutableListOf<TextDisplay>()
-            val descendingColour = listOf(
-                "<colour:#ffcb1a>➊ ",
-                "<colour:#d0d0d0>➋ ",
-                "<colour:#a39341>➌ "
-            )
+        // create mini-podium NPCs
+        val npcs = mutableListOf<WorldNPC>()
+        val displays = mutableListOf<TextDisplay>()
+        val descendingColour = listOf(
+            "<colour:#ffcb1a>➊ ",
+            "<colour:#d0d0d0>➋ ",
+            "<colour:#a39341>➌ "
+        )
+        val animationTasks = mutableListOf<TwilightRunnable>()
 
-            formattedWinners.entries.take(3).forEachIndexed { index, keyValuePair ->
-                val uniqueId = keyValuePair.key
-                val value = keyValuePair.value
-                val displayName = "${descendingColour[index]}${Bukkit.getOfflinePlayer(uniqueId).name}"
-                val placeLocation = Util.getNPCSummaryLocation(index)
-                val animationTasks = mutableListOf<TwilightRunnable>()
+        formattedWinners.entries.take(3).forEachIndexed { index, keyValuePair ->
+            val uniqueId = keyValuePair.key
+            val value = keyValuePair.value
+            val displayName = "${descendingColour[index]}${Bukkit.getOfflinePlayer(uniqueId).name}"
+            val placeLocation = Util.getNPCSummaryLocation(index)
 
-                WorldNPC.createFromUniqueId(displayName.style(), uniqueId, placeLocation).also { npc ->
-                    npc.spawnForAll()
-
-                    placeLocation.world.spawn(placeLocation.add(0.0, 2.5, 0.0), TextDisplay::class.java).apply {
+            async {
+                var npc = WorldNPC.createFromUniqueId(displayName.style(), uniqueId, placeLocation)
+                sync {
+                    placeLocation.world.spawn(placeLocation.clone().add(0.0, 2.5, 0.0), TextDisplay::class.java).apply {
                         text("<colour:#ffc4ff>$value".style())
                         backgroundColor = Color.fromRGB(84, 72, 84)
                         billboard = Display.Billboard.CENTER
+                        isVisibleByDefault = false
 
                         displays.add(this)
                     }
 
                     animationTasks += repeatingTask(1) {
                         val nearestItem = placeLocation.getNearbyEntitiesByType(Player::class.java, 200.0).firstOrNull()
-                        if (nearestItem == null) {
-                            cancel()
-                            return@repeatingTask
-                        }
+                        if (nearestItem == null) return@repeatingTask
 
                         val playersLocation = nearestItem.location.clone().subtract(0.0, 1.0, 0.0)
 
                         val npcLocation = npc.npc.location.bukkit()
-                        if (npcLocation.distance(playersLocation) <= 25) {
+                        if (npcLocation.distanceSquared(playersLocation) <= 900) {
                             val lookVector = npcLocation.apply { setDirection(playersLocation.toVector().subtract(toVector())) }
 
                             Bukkit.getOnlinePlayers().forEach {
@@ -326,7 +333,10 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
                         delay((0..5).random()) {
                             val packetToSend = when (Random.nextBoolean()) {
                                 true -> {
-                                    WrapperPlayServerEntityAnimation(npc.npc.id, WrapperPlayServerEntityAnimation.EntityAnimationType.SWING_MAIN_ARM)
+                                    WrapperPlayServerEntityAnimation(
+                                        npc.npc.id,
+                                        WrapperPlayServerEntityAnimation.EntityAnimationType.SWING_MAIN_ARM
+                                    )
                                 }
 
                                 false -> {
@@ -345,11 +355,20 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
                             Bukkit.getOnlinePlayers().forEach { packetToSend.sendPacket(it) }
                         }
                     } // NPC Animation
-
                     npcs.add(npc)
                 }
-            } // Spawn NPCs
-            formattedWinners.clear()
+            }
+        } // 'Spawn' NPCs
+        formattedWinners.clear()
+
+        CameraSlide(
+            MapSinglePoint(527, 202, 562, 20.373718F, 7.030075F),
+            gameConfig.cameraSlideParameters.first,
+            gameConfig.cameraSlideParameters.second
+        ) {
+            // only make NPCs visible once camera sequence is ready to being
+            npcs.forEach { it.spawnForAll() }
+            displays.forEach { it.isVisibleByDefault = true }
 
             // cinematic camera sequence
             val summaryLocations = listOf(
@@ -371,7 +390,6 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
                 MapSinglePoint(521, 217, 552, -132.44006F, 30.58016F),
                 MapSinglePoint(519, 214, 554, -132.2782F, 8.243982F),
             )
-
             CameraSequence(summaryLocations, Bukkit.getOnlinePlayers(), null, 8) {
                 Bukkit.getOnlinePlayers().forEach { loopedPlayer ->
                     loopedPlayer.gameMode = GameMode.ADVENTURE
@@ -380,8 +398,10 @@ abstract class EventMiniGame(val gameConfig: GameConfig) {
                     loopedPlayer.clearActivePotionEffects()
                     loopedPlayer.showBossBar(eventController().donationBossBar)
                     npcs.forEach { it.despawnFor(loopedPlayer) }
-                    displays.forEach { it.remove() }
                 }
+
+                displays.forEach { it.remove() }
+                animationTasks.forEach { it.cancel() }
 
                 WorldNPC.refreshPodium()
                 eventController().sidebarManager.update()

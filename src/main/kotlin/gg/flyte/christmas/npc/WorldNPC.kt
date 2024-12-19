@@ -35,7 +35,6 @@ import java.util.*
  */
 class WorldNPC private constructor(displayName: Component, textureProperties: List<TextureProperty?>?, val location: Location) {
     private var id: Int = SpigotReflectionUtil.generateEntityId()
-
     val npc: NPC
     var scale = 0.5
 
@@ -61,13 +60,12 @@ class WorldNPC private constructor(displayName: Component, textureProperties: Li
 
         // scale packet (if needed)
         val modifier = WrapperPlayServerUpdateAttributes.PropertyModifier(
-            Attributes.GENERIC_SCALE.name,
+            Attributes.SCALE.name,
             scale,
             WrapperPlayServerUpdateAttributes.PropertyModifier.Operation.ADDITION
         )
         val property = WrapperPlayServerUpdateAttributes.Property(Attributes.GENERIC_SCALE, scale, listOf(modifier))
         WrapperPlayServerUpdateAttributes(id, listOf(property)).sendPacket(player)
-
     }
 
     /**
@@ -93,9 +91,9 @@ class WorldNPC private constructor(displayName: Component, textureProperties: Li
     companion object {
         private val leaderBoardNPCs = HashMap<Int, WorldNPC>()
         private val leaderboardPositionToLocation = mapOf(
-            0 to MapSinglePoint(535.5, 108.3, 503.5, -90, 0), // 2.5
-            1 to MapSinglePoint(535.5, 106.55, 507.5, -90, 0), // 2.0
-            2 to MapSinglePoint(535.5, 105, 499.5, -90, 0) // 1.5
+            0 to MapSinglePoint(535.5, 108.3, 503.5, -90, 0),
+            1 to MapSinglePoint(535.5, 106.55, 507.5, -90, 0),
+            2 to MapSinglePoint(535.5, 105, 499.5, -90, 0)
         )
         private val leaderboardPositionToNamePlateLocation = mapOf(
             0 to MapSinglePoint(537.3, 107.48, 503.55, -90, 0),
@@ -122,14 +120,12 @@ class WorldNPC private constructor(displayName: Component, textureProperties: Li
             leaderBoardNPCs.forEach { (_, npc) ->
                 ChristmasEventPlugin.instance.worldNPCs.remove(npc)
                 npc.despawnForAll()
-            }
+            }.also { leaderBoardNPCs.clear() }
 
             eventController().points.entries
                 .sortedByDescending { it.value }
                 .take(3)
                 .forEachIndexed { index, (uniqueId, points) ->
-                    ChristmasEventPlugin.instance.worldNPCs.remove(leaderBoardNPCs[index])
-
                     async {
                         leaderBoardNPCs[index] = createFromUniqueId(Component.empty(), uniqueId, leaderboardPositionToLocation[index]!!).apply {
                             this.scale = when (index) {
@@ -177,6 +173,6 @@ class WorldNPC private constructor(displayName: Component, textureProperties: Li
             // fetch texture properties from Mojang using player name
             val textureProperty = MojangAPIUtil.requestPlayerTextureProperties(modelAfter)
             return WorldNPC(displayName, textureProperty, location)
-        }
+        } // TODO document here that this is an expensive function
     }
 }

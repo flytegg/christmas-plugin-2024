@@ -24,7 +24,7 @@ object Util {
         val config = ChristmasEventPlugin.instance.config
 
         return config.getStringList("contributors").map { contributor ->
-            val (ign, contribution, coords, colour) = contributor.substring(1, contributor.length - 1).split("><")
+            val (ign, contribution, coords, colour) = contributor.substring(1, contributor.length - 1).split("][")
             val (x, y, z) = coords.split(",").map { it.trim().toDouble() }
             Contributor(UUID.fromString(ign), contribution, MapSinglePoint(x, y, z), colour)
         }

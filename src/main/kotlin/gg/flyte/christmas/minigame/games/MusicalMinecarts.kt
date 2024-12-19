@@ -92,8 +92,31 @@ class MusicalMinecarts : EventMiniGame(GameConfig.MUSICAL_MINECARTS) {
 
         simpleCountdown {
             newRound()
-            Util.runAction(PlayerType.PARTICIPANT) { it.sendMessage("<game_colour>ʀᴇᴍᴇᴍʙᴇʀ, <b>ᴅᴏ</b> ɴᴏᴛ ᴄʟɪᴄᴋ ᴛʜᴇ ᴍɪɴᴇᴄᴀʀᴛѕ ʙᴇꜰᴏʀᴇ ᴛʜᴇ ᴍᴜѕɪᴄ ʜᴀѕ ѕᴛᴏᴘᴘᴇᴅ... ʏᴏᴜ ᴡɪʟʟ ʙᴇ ѕᴛᴜɴɴᴇᴅ!".style()) }
+            Util.runAction(PlayerType.PARTICIPANT) { it.sendMessage("<game_colour>ʀᴇᴍᴇᴍʙᴇʀ, <b>ᴅᴏ ɴᴏᴛ ᴄʟɪᴄᴋ ᴛʜᴇ ᴍɪɴᴇᴄᴀʀᴛѕ</b> ʙᴇꜰᴏʀᴇ ᴛʜᴇ ᴍᴜѕɪᴄ ʜᴀѕ ѕᴛᴏᴘᴘᴇᴅ... ʏᴏᴜ ᴡɪʟʟ ʙᴇ ѕᴛᴜɴɴᴇᴅ!".style()) }
             donationEventsEnabled = true
+
+            tasks += repeatingTask(40) {
+                remainingPlayers().forEach {
+                    if (it.allowFlight) {
+                        it.sendActionBar("<game_colour>ʏᴏᴜ ʜᴀᴠᴇ ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘs ᴀᴠᴀɪʟᴀʙʟᴇ!".style())
+                    }
+                }
+            }
+
+            tasks += repeatingTask((0..8).random(), (4..8).random()) {
+                delay((0..8).random()) {
+                    minecarts.forEach {
+                        if (it.passengers.isNotEmpty()) return@forEach
+                        it.velocity = it.velocity.add(
+                            Vector(
+                                Random.nextDouble(-7.5, 7.5),
+                                0.1,
+                                Random.nextDouble(-7.5, 7.5),
+                            )
+                        )
+                    }
+                }
+            } // move minecarts aroundz
         }
     }
 
@@ -271,20 +294,6 @@ class MusicalMinecarts : EventMiniGame(GameConfig.MUSICAL_MINECARTS) {
         repeat(numCarts) { summonMinecart() }
 
         Util.runAction(PlayerType.PARTICIPANT, PlayerType.OPTED_OUT) { it.playSound(Sound.ENTITY_ITEM_PICKUP) }
-        repeatingTask((0..8).random(), (4..8).random()) {
-            delay((0..8).random()) {
-                minecarts.forEach {
-                    if (it.passengers.isNotEmpty()) return@forEach
-                    it.velocity = it.velocity.add(
-                        Vector(
-                            Random.nextDouble(-7.5, 7.5),
-                            0.1,
-                            Random.nextDouble(-7.5, 7.5),
-                        )
-                    )
-                }
-            }
-        }
     }
 
     private fun powerUp() {
@@ -421,15 +430,17 @@ class MusicalMinecarts : EventMiniGame(GameConfig.MUSICAL_MINECARTS) {
                         val passengerPacket = WrapperPlayServerSetPassengers(minecart.entityId, intArrayOf(npc.npc.id))
                         delay(1) { passengerPacket.sendPacket(loopedPlayer) }
 
-                        animationTasks += repeatingTask((2..10).random(), 25) {
-                            WrapperPlayServerEntityAnimation(
-                                npc.npc.id,
-                                WrapperPlayServerEntityAnimation.EntityAnimationType.SWING_MAIN_ARM
-                            ).sendPacket(loopedPlayer)
+                        animationTasks += repeatingTask(30) {
+                            delay((0..15).random()) {
+                                WrapperPlayServerEntityAnimation(
+                                    npc.npc.id,
+                                    WrapperPlayServerEntityAnimation.EntityAnimationType.SWING_MAIN_ARM
+                                ).sendPacket(loopedPlayer)
 
-                            minecart.world.dropItemNaturally(minecart.location.add(0.0, 1.0, 0.0), ItemStack(Material.MINECART)) {
-                                it.velocity = Vector(Random.nextDouble(-1.0, 1.0), Random.nextDouble(0.0, 0.5), Random.nextDouble(-1.0, 1.0))
-                                droppedItems.add(it)
+                                minecart.world.dropItemNaturally(minecart.location.add(0.0, 1.0, 0.0), ItemStack(Material.MINECART)) {
+                                    it.velocity = Vector(Random.nextDouble(-1.0, 1.0), Random.nextDouble(0.0, 0.5), Random.nextDouble(-1.0, 1.0))
+                                    droppedItems.add(it)
+                                }
                             }
                         } // NPC swing
 
@@ -489,12 +500,10 @@ class MusicalMinecarts : EventMiniGame(GameConfig.MUSICAL_MINECARTS) {
                     if (it == player) {
                         it.sendMessage("<green><b>ʏᴏᴜ'ᴠᴇ ꜰᴏᴜɴᴅ ᴀ ${randomPowerUp.displayName} ᴘᴏᴡᴇʀ-ᴜᴘ!".style())
                     } else {
-                        it.sendMessage("<green><b>« ${player.name} ʜᴀѕ ꜰᴏᴜɴᴅ ᴀ {${randomPowerUp.displayName} ᴘᴏᴡᴇʀ-ᴜᴘ! »")
+                        it.sendMessage("<green><b>« ${player.name} ʜᴀѕ ꜰᴏᴜɴᴅ ᴀ ${randomPowerUp.displayName} ᴘᴏᴡᴇʀ-ᴜᴘ! »".style())
                     }
                 }
-                Util.runAction(PlayerType.OPTED_OUT) {
-                    it.sendMessage("<green><b>« ${player.name} ʜᴀѕ ꜰᴏᴜɴᴅ ᴀ {${randomPowerUp.displayName} ᴘᴏᴡᴇʀ-ᴜᴘ! »")
-                }
+                Util.runAction(PlayerType.OPTED_OUT) { it.sendMessage("<green><b>« ${player.name} ʜᴀѕ ꜰᴏᴜɴᴅ ᴀ ${randomPowerUp.displayName} ᴘᴏᴡᴇʀ-ᴜᴘ! »".style()) }
 
                 when (randomPowerUp) {
                     PowerUp.BLINDNESS -> player.addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2, false, false, false))

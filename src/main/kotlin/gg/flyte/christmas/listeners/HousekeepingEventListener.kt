@@ -210,13 +210,14 @@ class HousekeepingEventListener : Listener, PacketListener {
             val npcLocations = worldNPCs.map { it.npc.location.bukkit() }
 
             // hide player if near any NPC (they obstruct view)
-            if (npcLocations.any { it.distance(playerLocation) < 3 }) player.isVisibleByDefault =
-                false else if (!player.isVisibleByDefault) player.isVisibleByDefault = true
+            if (npcLocations.any { it.distanceSquared(playerLocation) < 9 }) {
+                player.isVisibleByDefault = false
+            } else if (!player.isVisibleByDefault) player.isVisibleByDefault = true
 
             // make NPCs look at player if within range
             worldNPCs.forEach { npc ->
                 val npcLocation = npc.npc.location.bukkit()
-                if (npcLocation.distance(playerLocation) <= 25) {
+                if (npcLocation.distanceSquared(playerLocation) <= 900) {
                     val location = player.location.apply {
 
                         // since the NPCs are scaled, the look vector is not exact at eye level; this corrects it
@@ -343,7 +344,7 @@ class HousekeepingEventListener : Listener, PacketListener {
         for (i in 0 until options) {
 
             val menuItem = MenuItem(Material.PLAYER_HEAD)
-                .setName("ѕᴘᴇᴄᴛᴀᴛᴇ ᴘᴏɪɴᴛ $i")
+                .setName("ѕᴘᴇᴄᴛᴀᴛᴇ ᴘᴏɪɴᴛ ${i + 1}")
                 .setSkullTexture("66f88107041ff1ad84b0a4ae97298bd3d6b59d0402cbc679bd2f77356d454bc4")
                 .onClick { whoClicked, _, _, _ ->
                     val requestedCameraEntity = eventController().currentGame!!.spectateEntities[i]

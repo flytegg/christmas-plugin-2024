@@ -110,6 +110,14 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
         simpleCountdown {
             newRound()
             donationEventsEnabled = true
+
+            tasks += repeatingTask(40) {
+                remainingPlayers().forEach {
+                    if (it.allowFlight) {
+                        it.sendActionBar("<game_colour>ʏᴏᴜ ʜᴀᴠᴇ ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘs ᴀᴠᴀɪʟᴀʙʟᴇ!".style())
+                    }
+                }
+            }
         }
     }
 
@@ -456,12 +464,10 @@ class BlockParty() : EventMiniGame(GameConfig.BLOCK_PARTY) {
                     if (it == player) {
                         it.sendMessage("<green><b>ʏᴏᴜ'ᴠᴇ ꜰᴏᴜɴᴅ ᴀ ${randomPowerUp.displayName} ᴘᴏᴡᴇʀ-ᴜᴘ!".style())
                     } else {
-                        it.sendMessage("<green><b>« ${player.name} ʜᴀѕ ꜰᴏᴜɴᴅ ᴀ {${randomPowerUp.displayName} ᴘᴏᴡᴇʀ-ᴜᴘ! »".style())
+                        it.sendMessage("<green><b>« ${player.name} ʜᴀѕ ꜰᴏᴜɴᴅ ᴀ ${randomPowerUp.displayName} ᴘᴏᴡᴇʀ-ᴜᴘ! »".style())
                     }
                 }
-                Util.runAction(PlayerType.OPTED_OUT) {
-                    it.sendMessage("<green><b>« ${player.name} ʜᴀѕ ꜰᴏᴜɴᴅ ᴀ {${randomPowerUp.displayName} ᴘᴏᴡᴇʀ-ᴜᴘ! »".style())
-                }
+                Util.runAction(PlayerType.OPTED_OUT) { it.sendMessage("<green><b>« ${player.name} ʜᴀѕ ꜰᴏᴜɴᴅ ᴀ ${randomPowerUp.displayName} ᴘᴏᴡᴇʀ-ᴜᴘ! »".style()) }
 
                 when (randomPowerUp) {
                     PowerUp.BLINDNESS -> player.addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, 20 * 10, 2, false, false, false))

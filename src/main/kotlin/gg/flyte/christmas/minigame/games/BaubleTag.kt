@@ -153,7 +153,6 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
             it.isGlowing = false
         }
 
-
         super.endGame()
     }
 
@@ -338,7 +337,7 @@ class BaubleTag : EventMiniGame(GameConfig.BAUBLE_TAG) {
                     if (tagged.isNotEmpty() && runner.isNotEmpty()) {
                         tagPlayer(runner.random(), tagged.random())
                         val message =
-                            "<game_colour>ᴛᴀɢɢᴇᴅ ᴘʟᴀʏᴇʀ'ѕ ʜᴀᴠᴇ ʙᴇᴇɴ <red>ꜱᴡᴀᴘᴘᴇᴅ! (${if (donorName != null) "<aqua>$donorName's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+                            "<game_colour>ᴛᴀɢɢᴇᴅ ᴘʟᴀʏᴇʀ'ѕ ʜᴀᴠᴇ ʙᴇᴇɴ <red>ꜱᴡᴀᴘᴘᴇᴅ! <game_colour>(${if (donorName != null) "<aqua>$donorName's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
                         announceDonationEvent(message.style())
                     }
                 }

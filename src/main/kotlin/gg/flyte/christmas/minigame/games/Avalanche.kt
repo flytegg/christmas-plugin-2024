@@ -368,6 +368,8 @@ class Avalanche : EventMiniGame(GameConfig.AVALANCHE) {
                 return@event
             }
 
+            if (!(remainingPlayers().contains(damager))) return@event
+
             if (harder) isCancelled = false
             damage = 0.0
         }

@@ -147,7 +147,7 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
                 snowmen.forEach {
                     val target = remainingPlayers().minByOrNull { player ->
-                        player.location.distance(it.location)
+                        player.location.distanceSquared(it.location)
                     }
 
                     if (target != null) {

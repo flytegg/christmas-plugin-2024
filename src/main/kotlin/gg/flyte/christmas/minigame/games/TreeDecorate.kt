@@ -110,7 +110,7 @@ class TreeDecorate : EventMiniGame(GameConfig.TREE_DECORATE) {
                     -> {
                     if (!booleanCanDesecrate) {
                         isCancelled = true
-                        player.sendMessage("<red>You cannot do that! At least not yet...".style())
+                        player.sendMessage("<red>ʏᴏᴜ ᴄᴀɴɴᴏᴛ ᴅᴏ ᴛʜᴀᴛ! ᴀᴛ ʟᴇᴀsᴛ ɴᴏᴛ ʏᴇᴛ...".style())
                         player.playSound(Sound.BLOCK_NOTE_BLOCK_BASS)
                     }
                 }
@@ -119,7 +119,7 @@ class TreeDecorate : EventMiniGame(GameConfig.TREE_DECORATE) {
                     if (material.name.lowercase().contains("spawn")) {
                         if (!booleanCanDesecrate) {
                             isCancelled = true
-                            player.sendMessage("<red>You cannot do that! At least not yet...".style())
+                            player.sendMessage("<red>ʏᴏᴜ ᴄᴀɴɴᴏᴛ ᴅᴏ ᴛʜᴀᴛ! ᴀᴛ ʟᴇᴀsᴛ ɴᴏᴛ ʏᴇᴛ...".style())
                             player.playSound(Sound.BLOCK_NOTE_BLOCK_BASS)
                         }
                     }
@@ -133,7 +133,7 @@ class TreeDecorate : EventMiniGame(GameConfig.TREE_DECORATE) {
                     -> {
                     if (!booleanCanDesecrate) {
                         isCancelled = true
-                        player.sendMessage("<red>You cannot do that! At least not yet...".style())
+                        player.sendMessage("<red>ʏᴏᴜ ᴄᴀɴɴᴏᴛ ᴅᴏ ᴛʜᴀᴛ! ᴀᴛ ʟᴇᴀsᴛ ɴᴏᴛ ʏᴇᴛ...".style())
                         player.playSound(Sound.BLOCK_NOTE_BLOCK_BASS)
                     }
                 }

@@ -41,7 +41,8 @@ class EventController {
         1 to "<dark_red>➊".style()
     )
     val optOut = mutableSetOf<UUID>()
-    val points = mutableMapOf<UUID, Int>()
+    @Volatile
+    var points = mutableMapOf<UUID, Int>()
     var songPlayer: RadioSongPlayer? = null
     val sidebarManager = SidebarManager().also { it.dataSupplier = points }
     val donors = mutableSetOf<UUID>()
@@ -220,11 +221,8 @@ class EventController {
      */
     fun serialisePoints() {
         async {
-            ChristmasEventPlugin.instance.config.set("points", 0)
-            delay(5) {
-                points.forEach { (uuid, points) -> ChristmasEventPlugin.instance.config.set("points.$uuid", points) }
-            }
-
+            ChristmasEventPlugin.instance.config.set("points", null)
+            points.forEach { (uuid, points) -> ChristmasEventPlugin.instance.config.set("points.$uuid", points) }
             ChristmasEventPlugin.instance.saveConfig()
         }
     }

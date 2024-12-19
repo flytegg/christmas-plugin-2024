@@ -5,6 +5,7 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import gg.flyte.christmas.ChristmasEventPlugin
+import gg.flyte.christmas.util.style
 import gg.flyte.twilight.scheduler.sync
 import kotlinx.coroutines.*
 import kotlinx.io.IOException
@@ -45,6 +46,14 @@ class DonationListener {
                     submitDataToEventFactory(data.getAsJsonArray("donations"))
                 } catch (e: Exception) {
                     ChristmasEventPlugin.instance.logger.severe("Failed to fetch donations: ${e.message}")
+                    Bukkit.getOnlinePlayers().forEach {
+                        if (it.isOp) {
+                            it.sendMessage("<red>——————————————————————————————————".style())
+                            it.sendMessage("<red>Plugin failed to fetch donations: <#FF7474>${e.message}".style())
+                            it.sendMessage("<red>If this persists over the next <b><white>5</white></b> minutes, please repair.".style())
+                            it.sendMessage("<red>——————————————————————————————————".style())
+                        }
+                    }
                 }
                 delay(5_000) // 5 secs
             }
@@ -84,13 +93,11 @@ class DonationListener {
                 val donorName = donation.get("name")?.asString
                 val comment = donation.get("comment")?.asString
                 val amount = donation.get("amount").asString
-                val finalAmount = donation.get("finalAmount").asString
+                val finalAmount = String.format("%.2f", donation.get("finalAmount").asDouble)
                 val timestamp = donation.get("timestamp").asLong
 
                 sync {
-                    Bukkit.getPluginManager().callEvent(
-                        DonateEvent(donationId, donorName, comment, amount, finalAmount, timestamp)
-                    )
+                    Bukkit.getPluginManager().callEvent(DonateEvent(donationId, donorName, comment, amount, finalAmount, timestamp))
                 }
             }
         }
