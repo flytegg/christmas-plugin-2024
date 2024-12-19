@@ -483,7 +483,10 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
             remainingPlayers()
                 .filter { !hillRegion.contains(it.location) }
-                .forEach { it.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, 8 * 20, 0)) }
+                .forEach {
+                    val duration = it.getPotionEffect(PotionEffectType.INVISIBILITY)?.duration ?: 0
+                    it.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, duration + 8 * 20, 0))
+                }
         }
 
         if (Random.nextBoolean()) doDelayedKnockback(name)
