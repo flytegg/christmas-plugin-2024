@@ -117,10 +117,6 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                 val (ticksLeft, totalTicks) = thrownAroundTickData
 
                 if (ticksLeft == 0) {
-                    println("Thrown around period ended")
-                    println("Thrown around tick data: $thrownAroundTickData")
-                    println("Delayed KB tick data: $delayedKnockbackTickData")
-
                     velocityMap.clear()
                     thrownAroundTickData = -1 to -1
                     return@repeatingTask
@@ -128,16 +124,11 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
                 if (ticksLeft == -1) return@repeatingTask
 
-                println("Velocity map: $velocityMap")
-                println("Entry count: ${velocityMap.entries.size}")
-
                 velocityMap.entries.forEach {
                     val player = Bukkit.getPlayer(it.key) ?: return@forEach
 
                     val vectors = it.value
                     val vectorCount = vectors.size
-
-                    println("vectors: $vectors")
 
                     // If a player has not been hit during the delayed KB period,
                     // continue to the next player.
@@ -157,14 +148,9 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                     val floor = floor(index)
                     val previousFloor = floor(previousIndex)
 
-                    println("floor $floor")
-                    println("previous floor $previousFloor")
-
                     // If the current and previous positions are the same, that means
                     // it is not yet time to apply the next velocity vector to the player's velocity.
                     if (floor == previousFloor) return@forEach
-
-                    println("Throwing player $player...")
 
                     // If they are different, that means we are at a new position in the list,
                     // and it is time to apply it.
@@ -281,12 +267,6 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         }
 
         listeners += event<EntityDamageByEntityEvent>(priority = EventPriority.HIGHEST) {
-            println("Entity hit! Delayed knockback active: ")
-            println(delayedKnockback())
-
-            println("Thrown around tick data: $thrownAroundTickData")
-            println("Delayed KB tick data: $delayedKnockbackTickData")
-
             if (!delayedKnockback()) return@event
             if (entity !is Player) return@event
 
@@ -301,8 +281,6 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             if (direction.lengthSquared() == 0.0) return@event
 
             val normalized = direction.normalize()
-
-            println("Adding velocity vector!")
 
             val velocityList = velocityMap.computeIfAbsent(entity.uniqueId) { mutableListOf() }
             velocityList.add(normalized.multiply(if (damager.inventory.itemInMainHand.type == Material.AIR) 0.5 else 1.5))
@@ -453,19 +431,8 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                             player.playSound(Sound.ENTITY_WITHER_BREAK_BLOCK)
                         }
 
-                        println("Setting data...")
-                        println("Before:")
-
-                        println("Thrown around tick data: $thrownAroundTickData")
-                        println("Delayed KB tick data: $delayedKnockbackTickData")
-
                         thrownAroundTickData = delayedKnockbackTickData.let { it.second / 6 to it.second / 6 }
                         delayedKnockbackTickData = -1 to -1
-
-                        println("After...")
-
-                        println("Thrown around tick data: $thrownAroundTickData")
-                        println("Delayed KB tick data: $delayedKnockbackTickData")
                     } else {
                         delayedKnockbackTickData = ticksLeft - 1 to totalTicks
                     }
