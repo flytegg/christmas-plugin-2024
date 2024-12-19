@@ -152,6 +152,9 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                     val floor = floor(index)
                     val previousFloor = floor(previousIndex)
 
+                    println("floor $floor")
+                    println("previous floor $previousFloor")
+
                     // If the current and previous positions are the same, that means
                     // it is not yet time to apply the next velocity vector to the player's velocity.
                     if (floor == previousFloor) return@forEach
