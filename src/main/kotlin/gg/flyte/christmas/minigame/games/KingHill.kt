@@ -430,6 +430,8 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                     val (ticksLeft, totalTicks) = delayedKnockbackTickData
                     delayedKnockbackBossBar.progress(Math.clamp(ticksLeft / totalTicks.toFloat(), 0.0F, 1.0F))
 
+                    if (ticksLeft == -1) return@repeatingTask
+
                     if (ticksLeft == 0) {
                         remainingPlayers().forEach { player ->
                             player.hideBossBar(delayedKnockbackBossBar)
@@ -442,7 +444,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                         }
 
                         thrownAroundTickData = delayedKnockbackTickData.let { it.first / 6 to it.second / 6 }
-                        delayedKnockbackTickData = -1 to 0
+                        delayedKnockbackTickData = -1 to -1
                     } else {
                         delayedKnockbackTickData = ticksLeft - 1 to totalTicks
                     }
