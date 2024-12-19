@@ -63,6 +63,23 @@
     - Placeholder
     - Placeholder
 
+### King of the Hill:
+  - Low-tier
+    - Add 3-5 double jumps
+    - 5 seconds of slow falling
+    - King's blindness
+    - 5 seconds of jump boost
+  - Medium-tier
+    - 5 seconds of stacked kb
+    - 8 seconds of invisibility
+  - High-tier
+    - Swap locations of everyone
+    - Inversed knockback for 8 seconds  
+
+## Stream:
+
+- Drumroll while rolling giveaway?
+
 # PlayTest Notes:
 
 ### PLAYTEST BUGS:
