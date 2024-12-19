@@ -455,7 +455,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     private fun doShufflePositions(name: String?) {
         var timeLeftSeconds = 5
 
-        tasks += repeatingTask(1, TimeUnit.SECONDS) {
+        tasks += repeatingTask(0, 1, TimeUnit.SECONDS) {
             val message =
                 "<green>sʜᴜꜰꜰʟɪɴɢ ᴘᴏsɪᴛɪᴏɴs ɪɴ <red>$timeLeftSeconds</red> sᴇᴄᴏɴᴅs! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
             remainingPlayers().forEach {
