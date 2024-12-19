@@ -13,11 +13,11 @@ import gg.flyte.twilight.extension.playSound
 import gg.flyte.twilight.scheduler.delay
 import gg.flyte.twilight.scheduler.repeatingTask
 import gg.flyte.twilight.time.TimeUnit
+import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
-import org.bukkit.Bukkit
-import org.bukkit.GameMode
-import org.bukkit.Material
-import org.bukkit.Sound
+import org.bukkit.*
+import org.bukkit.attribute.Attribute
+import org.bukkit.attribute.AttributeModifier
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.ItemDisplay
 import org.bukkit.entity.Player
@@ -25,17 +25,35 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.player.PlayerMoveEvent
+import org.bukkit.event.player.PlayerToggleFlightEvent
+import org.bukkit.inventory.EquipmentSlotGroup
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
+import org.bukkit.util.Vector
 import java.time.Duration
 import java.util.*
+import kotlin.math.floor
 
 class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     private var hillRegion = MapRegion(MapSinglePoint(824, 85, 633), MapSinglePoint(830, 88, 627))
     private var pvpEnabled = false
-    private var gameTime = 90
-    private val respawnBelow = 71
+    private var gameTime = 150
+    private val respawnBelow = 60
     private val timeOnHill = mutableMapOf<UUID, Int>()
+
+    private var delayedKbTicksTotal = 0
+    private var delayedKbTicksLeft = -1
+
+    private var thrownAroundTicksTotal = 0
+    private var thrownAroundTicksLeft = -1
+
+    private val velocityMap = mutableMapOf<UUID, MutableList<Vector>>()
+
+    private lateinit var delayedKbBossbar: BossBar
+
+    private val doubleJumps = mutableMapOf<UUID, Int>()
 
     override fun startGameOverview() {
         super.startGameOverview()
@@ -90,6 +108,101 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                 }
 
                 updateScoreboard()
+            }
+
+            tasks += repeatingTask(1, TimeUnit.TICKS) {
+                if (delayedKbTicksLeft == -1) {
+                    return@repeatingTask
+                }
+
+                if (delayedKbTicksLeft == 0) {
+                    remainingPlayers().forEach { it.hideBossBar(delayedKbBossbar) }
+
+                    delayedKbTicksLeft = -1
+
+                    remainingPlayers().forEach { player ->
+                        val stick = player.inventory.find { it.type == Material.STICK }
+
+                        if (stick == null) {
+                            return@forEach
+                        }
+
+                        stick.editMeta { it.removeAttributeModifier(Attribute.KNOCKBACK_RESISTANCE) }
+
+                        player.playSound(Sound.ENTITY_WITHER_BREAK_BLOCK)
+                    }
+
+                    thrownAroundTicksLeft = delayedKbTicksTotal / 6
+                    thrownAroundTicksTotal = delayedKbTicksTotal / 6
+                    delayedKbTicksTotal = 0
+                } else {
+                    delayedKbBossbar.progress(delayedKbTicksLeft.toFloat() / delayedKbTicksTotal)
+                    delayedKbTicksLeft -= 1
+                }
+            }
+
+            tasks += repeatingTask(1, TimeUnit.TICKS) {
+                if (thrownAroundTicksLeft == 0) {
+                    thrownAroundTicksLeft = -1
+
+                    velocityMap.entries.clear()
+                    return@repeatingTask
+                }
+
+                if (thrownAroundTicksLeft == -1) {
+                    return@repeatingTask
+                }
+
+                velocityMap.entries.forEach {
+                    val player = Bukkit.getPlayer(it.key)!!
+                    val vectors = it.value
+
+                    val vectorCount = vectors.size
+
+                    if (vectorCount == 0) {
+                        return@forEach
+                    }
+
+                    val ticksPassed = thrownAroundTicksTotal - thrownAroundTicksLeft
+                    val previousTicksPassed = thrownAroundTicksTotal - (thrownAroundTicksLeft + 1)
+
+                    val ratio = ticksPassed.toDouble() / thrownAroundTicksTotal.toDouble()
+                    val previousRatio = previousTicksPassed.toDouble() / thrownAroundTicksTotal.toDouble()
+
+                    val index = ratio * vectorCount
+                    val previousIndex = previousRatio * vectorCount
+
+                    val floor = floor(index)
+                    val previousFloor = floor(previousIndex)
+
+                    if (floor == previousFloor) {
+                        return@forEach
+                    }
+
+                    val value = vectors[floor.toInt()]
+
+                    player.velocity = value
+                }
+
+                thrownAroundTicksLeft -= 1
+            }
+
+            delayedKbBossbar = BossBar.bossBar("<game_colour><b>ᴅᴇʟᴀʏᴇᴅ ᴋɴᴏᴄᴋʙᴀᴄᴋ".style(), 1.0F, BossBar.Color.WHITE, BossBar.Overlay.PROGRESS)
+
+            manageActionBars()
+        }
+    }
+
+    private fun manageActionBars() {
+        tasks += repeatingTask(10) {
+            remainingPlayers().forEach {
+                val doubleJumpsCount = doubleJumps.computeIfAbsent(it.uniqueId) { 0 }
+
+                if (doubleJumpsCount > 0) {
+                    it.sendActionBar("<green><b>${doubleJumps[it.uniqueId]!!} <reset><game_colour>ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘs ʟᴇꜰᴛ!".style())
+                } else {
+                    it.sendActionBar("<red><b>0 <reset><game_colour>ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘs ʟᴇꜰᴛ!".style())
+                }
             }
         }
     }
@@ -147,6 +260,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         Bukkit.getOnlinePlayers().forEach { eventController().sidebarManager.updateLines(it, listOf(Component.empty(), timeLeft)) }
     }
 
+    @Suppress("UnstableApiUsage")
     override fun handleGameEvents() {
         listeners += event<EntityDamageEvent>(priority = EventPriority.HIGHEST) {
             // return@event -> already cancelled by lower priority [HousekeepingEventListener]
@@ -171,13 +285,242 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                 player.playSound(Sound.ENTITY_PLAYER_TELEPORT)
             }
         }
+
+        listeners += event<EntityDamageByEntityEvent>(priority = EventPriority.HIGHEST) {
+            if (delayedKbTicksLeft <= 0) {
+                return@event
+            }
+
+            if (entity !is Player) {
+                return@event
+            }
+
+            val velocityList = velocityMap.computeIfAbsent(entity.uniqueId) { mutableListOf() }
+
+            val damager = damageSource.causingEntity ?: damageSource.directEntity
+
+            if (damager !is Player) {
+                return@event
+            }
+
+            val damagedLocation = entity.location.toVector()
+            val damagerLocation = damager.location.toVector()
+
+            val direction = damagedLocation.subtract(damagerLocation)
+
+            if (direction.lengthSquared() == 0.0) {
+                return@event
+            }
+
+            val normalized = direction.normalize()
+
+            velocityList.add(normalized.multiply(if (damager.inventory.itemInMainHand.type == Material.AIR) 0.5 else 1.5))
+        }
+
+        listeners += event<PlayerToggleFlightEvent> {
+            if (player.gameMode != GameMode.ADVENTURE) return@event
+            isCancelled = true
+
+            val doubleJumpCount = doubleJumps.computeIfAbsent(player.uniqueId) { 0 }
+
+            if (doubleJumpCount > 0) {
+                performDoubleJump(player)
+                doubleJumps[player.uniqueId] = doubleJumpCount - 1
+                player.isFlying = false
+            } else {
+                player.allowFlight = false
+            }
+        }
+
+        listeners += event<EntityDamageByEntityEvent> {
+            if (damager !is Player) {
+                return@event
+            }
+
+            val player = damager as Player
+
+            val isInvisible = player.hasPotionEffect(PotionEffectType.INVISIBILITY)
+
+            if (isInvisible) {
+                player.removePotionEffect(PotionEffectType.INVISIBILITY)
+                player.sendMessage("<red>ʏᴏᴜ ʜɪᴛ ᴀ ᴘʟᴀʏᴇʀ sᴏ ʏᴏᴜ ᴀʀᴇ ɴᴏ ʟᴏɴɢᴇʀ ɪɴᴠɪsɪʙʟᴇ!".style())
+            }
+        }
     }
 
     override fun handleDonation(tier: DonationTier, donorName: String?) {
         when (tier) {
-            DonationTier.LOW -> TODO()
-            DonationTier.MEDIUM -> TODO()
-            DonationTier.HIGH -> TODO()
+            DonationTier.LOW -> lowTierDonation(donorName)
+            DonationTier.MEDIUM -> mediumTierDonation(donorName)
+            DonationTier.HIGH -> doShufflePositions(donorName)
         }
+    }
+
+    private fun lowTierDonation(name: String?) {
+        val random = (0..3).random()
+
+        when (random) {
+            0 -> doAddDoubleJumps(name)
+            1 -> doApplySlowFalling(name)
+            2 -> doApplyKingsBlindness(name)
+            3 -> doApplyJumpBoost(name)
+        }
+    }
+
+    private fun mediumTierDonation(name: String?) {
+        val random = (0..1).random()
+
+        when (random) {
+            0 -> doDelayedKnockback(name)
+            1 -> doApplyInvisibility(name)
+        }
+    }
+
+    private fun performDoubleJump(player: Player) {
+        player.velocity = player.location.direction.multiply(0.5).add(Vector(0.0, 1.25, 0.0))
+        player.playSound(Sound.ENTITY_BREEZE_SHOOT)
+    }
+
+    private fun doDelayedKnockback(name: String?) {
+        if (delayedKbTicksLeft == -1) delayedKbTicksLeft = 0
+        if (delayedKbTicksTotal == -1) delayedKbTicksTotal = 0
+
+        delayedKbTicksLeft += 20 * 5
+        delayedKbTicksTotal += 20 * 5
+
+        remainingPlayers().forEach { player ->
+            player.showBossBar(delayedKbBossbar)
+
+            val stick = player.inventory.find { it.type == Material.STICK }
+
+            if (stick == null) {
+                return@forEach
+            }
+
+            @Suppress("UnstableApiUsage")
+            val modifier = AttributeModifier(
+                NamespacedKey(ChristmasEventPlugin.instance, "kinghill_knockback_resistance"),
+                1.0,
+                AttributeModifier.Operation.ADD_NUMBER,
+                EquipmentSlotGroup.ANY
+            )
+
+            stick.editMeta {
+                if (it.getAttributeModifiers(Attribute.KNOCKBACK_RESISTANCE)?.isEmpty() != false) {
+                    it.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier)
+                }
+            }
+        }
+
+        val message =
+            "<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴅᴇʟᴀʏᴇᴅ ᴋɴᴏᴄᴋʙᴀᴄᴋ! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+        announceDonationEvent(message.style())
+    }
+
+    private fun doAddDoubleJumps(name: String?) {
+        val amount = (3..5).random()
+
+        val message = "<green>+<red>$amount</red> ᴅᴏᴜʙʟᴇ ᴊᴜᴍᴘs! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+        announceDonationEvent(message.style())
+
+        remainingPlayers().forEach {
+            val doubleJumpCount = doubleJumps.computeIfAbsent(it.uniqueId) { 0 }
+
+            it.allowFlight = true
+
+            doubleJumps[it.uniqueId] = doubleJumpCount + amount
+        }
+    }
+
+    private fun doShufflePositions(name: String?) {
+        var timeLeftSeconds = 5
+
+        tasks += repeatingTask(0, 1, TimeUnit.SECONDS) {
+            val message = "<green>sʜᴜꜰꜰʟɪɴɢ ᴘᴏsɪᴛɪᴏɴs ɪɴ <red>$timeLeftSeconds</red> sᴇᴄᴏɴᴅs! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+            remainingPlayers().forEach {
+                it.sendMessage(message.style())
+                it.playSound(it, Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, if (timeLeftSeconds == 0) 2.0F else 1.0F)
+            }
+
+            timeLeftSeconds--
+
+            if (timeLeftSeconds == 0) cancel()
+        }
+
+        tasks += delay(timeLeftSeconds, TimeUnit.SECONDS) {
+            val players = remainingPlayers()
+            val positions = players.map { it.location }
+
+            var shuffled = positions.shuffled()
+            while (shuffled == positions || positions.size < 2) {
+                shuffled = positions.shuffled()
+            }
+
+            shuffled.forEachIndexed { index, position ->
+                val player = players[index]
+
+                player.teleport(position)
+                player.playSound(Sound.ENTITY_ENDERMAN_TELEPORT)
+            }
+
+            val message = "<green>ᴘᴏsɪᴛɪᴏɴs ʜᴀᴠᴇ ʙᴇᴇɴ sʜᴜꜰꜰʟᴇᴅ!"
+            remainingPlayers().forEach {
+                it.sendMessage(message.style())
+            }
+        }
+    }
+
+    private fun doApplySlowFalling(name: String?) {
+        val message = "<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ sʟᴏᴡ ꜰᴀʟʟɪɴɢ! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+        announceDonationEvent(message.style())
+
+        remainingPlayers().forEach {
+            val duration = it.getPotionEffect(PotionEffectType.SLOW_FALLING)?.duration ?: 0
+
+            it.addPotionEffect(PotionEffect(PotionEffectType.SLOW_FALLING, duration + 5 * 20, 0))
+        }
+    }
+
+    private fun doApplyKingsBlindness(name: String?) {
+        val kingUuid = timeOnHill.entries
+            .filter { Bukkit.getPlayer(it.key) != null }
+            .filter {
+                hillRegion.contains(Bukkit.getPlayer(it.key)!!.location)
+            }
+            .minByOrNull { -it.value }?.key
+
+        if (kingUuid == null) {
+            lowTierDonation(name)
+            return
+        }
+
+        val king = Bukkit.getPlayer(kingUuid) ?: return
+
+        val duration = king.getPotionEffect(PotionEffectType.BLINDNESS)?.duration ?: 0
+
+        king.addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, duration + 5 * 20, 0))
+
+        val message = "<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴋɪɴɢ's ʙʟɪɴᴅɴᴇss! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+        announceDonationEvent(message.style())
+    }
+
+    private fun doApplyJumpBoost(name: String?) {
+        val message = "<green>+<red>5</red> sᴇᴄᴏɴᴅs ᴏꜰ ᴊᴜᴍᴘ ʙᴏᴏsᴛ! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+        announceDonationEvent(message.style())
+
+        remainingPlayers().forEach {
+            val duration = it.getPotionEffect(PotionEffectType.JUMP_BOOST)?.duration ?: 0
+
+            it.addPotionEffect(PotionEffect(PotionEffectType.JUMP_BOOST, duration + 5 * 20, 1))
+        }
+    }
+
+    private fun doApplyInvisibility(name: String?) {
+        val message = "<green>+<red>8</red> sᴇᴄᴏɴᴅs ᴏꜰ ɪɴᴠɪsɪʙɪʟɪᴛʏ! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+        announceDonationEvent(message.style())
+
+        remainingPlayers()
+            .filter { !hillRegion.contains(it.location) }
+            .forEach { it.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY, 8 * 20, 0)) }
     }
 }
