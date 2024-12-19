@@ -459,7 +459,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                         println("Thrown around tick data: $thrownAroundTickData")
                         println("Delayed KB tick data: $delayedKnockbackTickData")
 
-                        thrownAroundTickData = delayedKnockbackTickData.let { it.first / 6 to it.second / 6 }
+                        thrownAroundTickData = delayedKnockbackTickData.let { it.second / 6 to it.second / 6 }
                         delayedKnockbackTickData = -1 to -1
 
                         println("After...")
