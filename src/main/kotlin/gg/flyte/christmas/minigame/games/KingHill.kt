@@ -43,21 +43,16 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     private var gameTime = 150
     private val respawnBelow = 60
     private val timeOnHill = mutableMapOf<UUID, Int>()
+    private val velocityMap = mutableMapOf<UUID, MutableList<Vector>>()
+    private val doubleJumps = mutableMapOf<UUID, Int>()
 
+    // ticks left | total ticks
     private var delayedKnockbackTickData: Pair<Int, Int> = 0 to 0
     private var thrownAroundTickData: Pair<Int, Int> = 0 to 0
 
+    // lateinit since <game_colour> is not mapped yet at time of init
     private lateinit var delayedKnockbackBossBar: BossBar
     private lateinit var thrownAroundBossBar: BossBar
-
-    private var delayedKbTicksTotal = 0
-    private var delayedKbTicksLeft = -1
-
-    private var thrownAroundTicksTotal = 0
-    private var thrownAroundTicksLeft = -1
-
-    private val velocityMap = mutableMapOf<UUID, MutableList<Vector>>()
-    private val doubleJumps = mutableMapOf<UUID, Int>()
 
     override fun startGameOverview() {
         super.startGameOverview()
@@ -118,64 +113,27 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                 updateScoreboard()
             }
 
-            tasks += repeatingTask(1, TimeUnit.TICKS) {
-                if (delayedKbTicksLeft == -1) {
-                    return@repeatingTask
-                }
+            tasks += repeatingTask(1) {
+                val (ticksLeft, totalTicks) = thrownAroundTickData
 
-                if (delayedKbTicksLeft == 0) {
-                    remainingPlayers().forEach { it.hideBossBar(delayedKnockbackBossBar) }
-
-                    delayedKbTicksLeft = -1
-
-                    remainingPlayers().forEach { player ->
-                        val stick = player.inventory.find { it.type == Material.STICK }
-
-                        if (stick == null) {
-                            return@forEach
-                        }
-
-                        stick.editMeta { it.removeAttributeModifier(Attribute.KNOCKBACK_RESISTANCE) }
-
-                        player.playSound(Sound.ENTITY_WITHER_BREAK_BLOCK)
-                    }
-
-                    thrownAroundTicksLeft = delayedKbTicksTotal / 6
-                    thrownAroundTicksTotal = delayedKbTicksTotal / 6
-                    delayedKbTicksTotal = 0
-                } else {
-                    delayedKnockbackBossBar.progress(delayedKbTicksLeft.toFloat() / delayedKbTicksTotal)
-                    delayedKbTicksLeft -= 1
-                }
-            }
-
-            tasks += repeatingTask(1, TimeUnit.TICKS) {
-                if (thrownAroundTicksLeft == 0) {
-                    thrownAroundTicksLeft = -1
-
-                    velocityMap.entries.clear()
-                    return@repeatingTask
-                }
-
-                if (thrownAroundTicksLeft == -1) {
+                if (ticksLeft == 0) {
+                    velocityMap.clear()
+                    thrownAroundTickData = 0 to 0
                     return@repeatingTask
                 }
 
                 velocityMap.entries.forEach {
                     val player = Bukkit.getPlayer(it.key)!!
                     val vectors = it.value
-
                     val vectorCount = vectors.size
 
-                    if (vectorCount == 0) {
-                        return@forEach
-                    }
+                    if (vectorCount == 0) return@forEach
 
-                    val ticksPassed = thrownAroundTicksTotal - thrownAroundTicksLeft
-                    val previousTicksPassed = thrownAroundTicksTotal - (thrownAroundTicksLeft + 1)
+                    val ticksPassed = totalTicks - ticksLeft
+                    val previousTicksPassed = totalTicks - (ticksLeft + 1)
 
-                    val ratio = ticksPassed.toDouble() / thrownAroundTicksTotal.toDouble()
-                    val previousRatio = previousTicksPassed.toDouble() / thrownAroundTicksTotal.toDouble()
+                    val ratio = ticksPassed.toDouble() / totalTicks.toDouble()
+                    val previousRatio = previousTicksPassed.toDouble() / totalTicks.toDouble()
 
                     val index = ratio * vectorCount
                     val previousIndex = previousRatio * vectorCount
@@ -183,16 +141,11 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                     val floor = floor(index)
                     val previousFloor = floor(previousIndex)
 
-                    if (floor == previousFloor) {
-                        return@forEach
-                    }
-
-                    val value = vectors[floor.toInt()]
-
-                    player.velocity = value
+                    if (floor == previousFloor) return@forEach
+                    player.velocity = vectors[floor.toInt()]
                 }
 
-                thrownAroundTicksLeft -= 1
+                thrownAroundTickData = ticksLeft - 1 to totalTicks
             }
 
             manageActionBars()
@@ -272,6 +225,10 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         player.playSound(Sound.ENTITY_BREEZE_SHOOT)
     }
 
+    private fun delayedKnockback() = delayedKnockbackTickData.first > 0
+
+    private fun thrownAround() = thrownAroundTickData.first > 0
+
     @Suppress("UnstableApiUsage")
     override fun handleGameEvents() {
         listeners += event<EntityDamageEvent>(priority = EventPriority.HIGHEST) {
@@ -299,33 +256,21 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         }
 
         listeners += event<EntityDamageByEntityEvent>(priority = EventPriority.HIGHEST) {
-            if (delayedKbTicksLeft <= 0) {
-                return@event
-            }
-
-            if (entity !is Player) {
-                return@event
-            }
-
-            val velocityList = velocityMap.computeIfAbsent(entity.uniqueId) { mutableListOf() }
+            if (!delayedKnockback()) return@event
+            if (entity !is Player) return@event
 
             val damager = damageSource.causingEntity ?: damageSource.directEntity
-
-            if (damager !is Player) {
-                return@event
-            }
+            if (damager !is Player) return@event
 
             val damagedLocation = entity.location.toVector()
             val damagerLocation = damager.location.toVector()
 
             val direction = damagedLocation.subtract(damagerLocation)
-
-            if (direction.lengthSquared() == 0.0) {
-                return@event
-            }
+            if (direction.lengthSquared() == 0.0) return@event
 
             val normalized = direction.normalize()
 
+            val velocityList = velocityMap.computeIfAbsent(entity.uniqueId) { mutableListOf() }
             velocityList.add(normalized.multiply(if (damager.inventory.itemInMainHand.type == Material.AIR) 0.5 else 1.5))
         }
 
@@ -345,15 +290,10 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         }
 
         listeners += event<EntityDamageByEntityEvent> {
-            if (damager !is Player) {
-                return@event
-            }
+            if (damager !is Player) return@event
 
             val player = damager as Player
-
-            val isInvisible = player.hasPotionEffect(PotionEffectType.INVISIBILITY)
-
-            if (isInvisible) {
+            if (player.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                 player.removePotionEffect(PotionEffectType.INVISIBILITY)
                 player.sendMessage("<red>ʏᴏᴜ ʜɪᴛ ᴀ ᴘʟᴀʏᴇʀ sᴏ ʏᴏᴜ ᴀʀᴇ ɴᴏ ʟᴏɴɢᴇʀ ɪɴᴠɪsɪʙʟᴇ!".style())
             }
@@ -434,20 +374,11 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
     private fun mediumTierDonation(name: String?) {
         fun doDelayedKnockback(name: String?) {
-            if (delayedKbTicksLeft == -1) delayedKbTicksLeft = 0
-            if (delayedKbTicksTotal == -1) delayedKbTicksTotal = 0
+            remainingPlayers().forEach {
+                it.showBossBar(delayedKnockbackBossBar)
 
-            delayedKbTicksLeft += 20 * 5
-            delayedKbTicksTotal += 20 * 5
-
-            remainingPlayers().forEach { player ->
-                player.showBossBar(delayedKnockbackBossBar)
-
-                val stick = player.inventory.find { it.type == Material.STICK }
-
-                if (stick == null) {
-                    return@forEach
-                }
+                val stick = it.inventory.find { it.type == Material.STICK }
+                if (stick == null) return@forEach
 
                 @Suppress("UnstableApiUsage")
                 val modifier = AttributeModifier(
@@ -460,6 +391,36 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                 stick.editMeta {
                     if (it.getAttributeModifiers(Attribute.KNOCKBACK_RESISTANCE)?.isEmpty() != false) {
                         it.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier)
+                    }
+                }
+            }
+
+            if (delayedKnockback()) {
+                // extend duration if already active
+                delayedKnockbackTickData = delayedKnockbackTickData.let { it.first + (5 * 20) to it.second + (5 * 20) }
+            } else {
+                // set initial duration
+                delayedKnockbackTickData = 5 * 20 to 5 * 20
+
+                tasks += repeatingTask(1) {
+                    val (ticksLeft, totalTicks) = delayedKnockbackTickData
+                    delayedKnockbackBossBar.progress(Math.clamp(ticksLeft / totalTicks.toFloat(), 0.0F, 1.0F))
+
+                    if (ticksLeft == 0) {
+                        remainingPlayers().forEach {
+                            it.hideBossBar(delayedKnockbackBossBar)
+
+                            val stick = it.inventory.find { it.type == Material.STICK }
+                            if (stick == null) return@forEach
+
+                            stick.editMeta { it.removeAttributeModifier(Attribute.KNOCKBACK_RESISTANCE) }
+                            it.playSound(Sound.ENTITY_WITHER_BREAK_BLOCK)
+                        }
+
+                        thrownAroundTickData = delayedKnockbackTickData.let { it.first / 6 to it.second / 6 }
+                        delayedKnockbackTickData = 0 to 0
+                    } else {
+                        delayedKnockbackTickData = ticksLeft - 1 to totalTicks
                     }
                 }
             }
