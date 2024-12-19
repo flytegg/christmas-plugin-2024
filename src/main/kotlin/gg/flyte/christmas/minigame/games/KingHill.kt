@@ -128,6 +128,9 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
                 if (ticksLeft == -1) return@repeatingTask
 
+                println("Velocity map: $velocityMap")
+                println("Entry count: ${velocityMap.entries.size}")
+
                 velocityMap.entries.forEach {
                     val player = Bukkit.getPlayer(it.key) ?: return@forEach
 
