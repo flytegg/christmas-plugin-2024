@@ -134,6 +134,8 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                     val vectors = it.value
                     val vectorCount = vectors.size
 
+                    println("vectors: $vectors")
+
                     // If a player has not been hit during the delayed KB period,
                     // continue to the next player.
                     if (vectorCount == 0) return@forEach
