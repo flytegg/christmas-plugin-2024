@@ -389,16 +389,16 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                 val stick = it.inventory.find { it.type == Material.STICK }
                 if (stick == null) return@forEach
 
-                @Suppress("UnstableApiUsage")
-                val modifier = AttributeModifier(
-                    NamespacedKey(ChristmasEventPlugin.instance, "kinghill_knockback_resistance"),
-                    1.0,
-                    AttributeModifier.Operation.ADD_NUMBER,
-                    EquipmentSlotGroup.ANY
-                )
-
                 stick.editMeta {
                     if (it.getAttributeModifiers(Attribute.KNOCKBACK_RESISTANCE)?.isEmpty() != false) {
+                        @Suppress("UnstableApiUsage")
+                        val modifier = AttributeModifier(
+                            NamespacedKey(ChristmasEventPlugin.instance, "kinghill_knockback_resistance"),
+                            1.0,
+                            AttributeModifier.Operation.ADD_NUMBER,
+                            EquipmentSlotGroup.ANY
+                        )
+
                         it.addAttributeModifier(Attribute.KNOCKBACK_RESISTANCE, modifier)
                     }
                 }
