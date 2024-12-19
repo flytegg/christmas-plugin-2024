@@ -416,14 +416,14 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                     delayedKnockbackBossBar.progress(Math.clamp(ticksLeft / totalTicks.toFloat(), 0.0F, 1.0F))
 
                     if (ticksLeft == 0) {
-                        remainingPlayers().forEach {
-                            it.hideBossBar(delayedKnockbackBossBar)
+                        remainingPlayers().forEach { player ->
+                            player.hideBossBar(delayedKnockbackBossBar)
 
-                            val stick = it.inventory.find { it.type == Material.STICK }
+                            val stick = player.inventory.find { it.type == Material.STICK }
                             if (stick == null) return@forEach
 
                             stick.editMeta { it.removeAttributeModifier(Attribute.KNOCKBACK_RESISTANCE) }
-                            it.playSound(Sound.ENTITY_WITHER_BREAK_BLOCK)
+                            player.playSound(Sound.ENTITY_WITHER_BREAK_BLOCK)
                         }
 
                         thrownAroundTickData = delayedKnockbackTickData.let { it.first / 6 to it.second / 6 }
