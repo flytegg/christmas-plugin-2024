@@ -427,7 +427,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                         }
 
                         thrownAroundTickData = delayedKnockbackTickData.let { it.first / 6 to it.second / 6 }
-                        delayedKnockbackTickData = 0 to 0
+                        delayedKnockbackTickData = -1 to 0
                     } else {
                         delayedKnockbackTickData = ticksLeft - 1 to totalTicks
                     }
