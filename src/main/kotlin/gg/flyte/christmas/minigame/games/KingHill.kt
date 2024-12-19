@@ -117,6 +117,10 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                 val (ticksLeft, totalTicks) = thrownAroundTickData
 
                 if (ticksLeft == 0) {
+                    println("Thrown around period ended")
+                    println("Thrown around tick data: $thrownAroundTickData")
+                    println("Delayed KB tick data: $delayedKnockbackTickData")
+
                     velocityMap.clear()
                     thrownAroundTickData = 0 to 0
                     return@repeatingTask
@@ -149,6 +153,8 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                     // If the current and previous positions are the same, that means
                     // it is not yet time to apply the next velocity vector to the player's velocity.
                     if (floor == previousFloor) return@forEach
+
+                    println("Throwing player $player...")
 
                     // If they are different, that means we are at a new position in the list,
                     // and it is time to apply it.
@@ -265,6 +271,12 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         }
 
         listeners += event<EntityDamageByEntityEvent>(priority = EventPriority.HIGHEST) {
+            println("Entity hit! Delayed knockback active: ")
+            println(delayedKnockback())
+
+            println("Thrown around tick data: $thrownAroundTickData")
+            println("Delayed KB tick data: $delayedKnockbackTickData")
+
             if (!delayedKnockback()) return@event
             if (entity !is Player) return@event
 
