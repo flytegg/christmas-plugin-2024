@@ -393,17 +393,17 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         }
 
         fun doApplyKingsBlindness(name: String?) {
-            val kingUuid = timeOnHill.entries
+            val kingUniqueId = timeOnHill.entries
                 .filter { Bukkit.getPlayer(it.key) != null }
                 .filter { hillRegion.contains(Bukkit.getPlayer(it.key)!!.location) }
                 .maxByOrNull { -it.value }?.key
 
-            if (kingUuid == null) {
+            if (kingUniqueId == null) {
                 lowTierDonation(name) // couldn't run this donation: divert to another one
                 return
             }
 
-            val king = Bukkit.getPlayer(kingUuid) ?: return
+            val king = Bukkit.getPlayer(kingUniqueId) ?: return
             val duration = king.getPotionEffect(PotionEffectType.BLINDNESS)?.duration ?: 0
 
             king.addPotionEffect(PotionEffect(PotionEffectType.BLINDNESS, duration + (5 * 20), 0))
