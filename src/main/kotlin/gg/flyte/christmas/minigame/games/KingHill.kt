@@ -127,21 +127,30 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                     val vectors = it.value
                     val vectorCount = vectors.size
 
+                    // If a player has not been hit during the delayed KB period,
+                    // continue to the next player.
                     if (vectorCount == 0) return@forEach
 
                     val ticksPassed = totalTicks - ticksLeft
-                    val previousTicksPassed = totalTicks - (ticksLeft + 1)
+                    val previousTicksPassed = ticksPassed - 1
 
+                    // We calculate how much of the thrown around period has passed (as a ratio).
                     val ratio = ticksPassed.toDouble() / totalTicks.toDouble()
                     val previousRatio = previousTicksPassed.toDouble() / totalTicks.toDouble()
 
+                    // We then get our current and previous positions in the vectors list.
                     val index = ratio * vectorCount
                     val previousIndex = previousRatio * vectorCount
 
                     val floor = floor(index)
                     val previousFloor = floor(previousIndex)
 
+                    // If the current and previous positions are the same, that means
+                    // it is not yet time to apply the next velocity vector to the player's velocity.
                     if (floor == previousFloor) return@forEach
+
+                    // If they are different, that means we are at a new position in the list,
+                    // and it is time to apply it.
                     player.velocity = vectors[floor.toInt()]
                 }
 
