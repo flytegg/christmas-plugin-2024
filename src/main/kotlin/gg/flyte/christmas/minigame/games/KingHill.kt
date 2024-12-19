@@ -47,8 +47,8 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     private val doubleJumps = mutableMapOf<UUID, Int>()
 
     // ticks left | total ticks
-    private var delayedKnockbackTickData: Pair<Int, Int> = -1 to 0
-    private var thrownAroundTickData: Pair<Int, Int> = -1 to 0
+    private var delayedKnockbackTickData: Pair<Int, Int> = -1 to -1
+    private var thrownAroundTickData: Pair<Int, Int> = -1 to -1
 
     // lateinit since <game_colour> is not mapped yet at time of init
     private lateinit var delayedKnockbackBossBar: BossBar
