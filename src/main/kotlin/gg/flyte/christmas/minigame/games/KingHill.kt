@@ -122,7 +122,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                     println("Delayed KB tick data: $delayedKnockbackTickData")
 
                     velocityMap.clear()
-                    thrownAroundTickData = -1 to 0
+                    thrownAroundTickData = -1 to -1
                     return@repeatingTask
                 }
 
