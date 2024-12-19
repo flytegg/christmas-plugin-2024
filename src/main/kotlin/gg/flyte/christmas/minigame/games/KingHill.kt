@@ -453,8 +453,17 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                             player.playSound(Sound.ENTITY_WITHER_BREAK_BLOCK)
                         }
 
+                        println("Setting data...")
+                        println("Before:")
+
+                        println("Thrown around tick data: $thrownAroundTickData")
+                        println("Delayed KB tick data: $delayedKnockbackTickData")
+
                         thrownAroundTickData = delayedKnockbackTickData.let { it.first / 6 to it.second / 6 }
                         delayedKnockbackTickData = -1 to -1
+
+                        println("Thrown around tick data: $thrownAroundTickData")
+                        println("Delayed KB tick data: $delayedKnockbackTickData")
                     } else {
                         delayedKnockbackTickData = ticksLeft - 1 to totalTicks
                     }
