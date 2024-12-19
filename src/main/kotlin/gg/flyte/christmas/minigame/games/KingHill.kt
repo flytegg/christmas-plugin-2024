@@ -383,10 +383,10 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
     private fun mediumTierDonation(name: String?) {
         fun doDelayedKnockback(name: String?) {
-            remainingPlayers().forEach {
-                it.showBossBar(delayedKnockbackBossBar)
+            remainingPlayers().forEach { player ->
+                player.showBossBar(delayedKnockbackBossBar)
 
-                val stick = it.inventory.find { it.type == Material.STICK }
+                val stick = player.inventory.find { it.type == Material.STICK }
                 if (stick == null) return@forEach
 
                 stick.editMeta {
