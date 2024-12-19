@@ -123,7 +123,8 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                 }
 
                 velocityMap.entries.forEach {
-                    val player = Bukkit.getPlayer(it.key)!!
+                    val player = Bukkit.getPlayer(it.key) ?: return@forEach
+
                     val vectors = it.value
                     val vectorCount = vectors.size
 
