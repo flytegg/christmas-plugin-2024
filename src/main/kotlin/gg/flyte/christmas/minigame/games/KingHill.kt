@@ -299,6 +299,8 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
             val normalized = direction.normalize()
 
+            println("Adding velocity vector!")
+
             val velocityList = velocityMap.computeIfAbsent(entity.uniqueId) { mutableListOf() }
             velocityList.add(normalized.multiply(if (damager.inventory.itemInMainHand.type == Material.AIR) 0.5 else 1.5))
         }
