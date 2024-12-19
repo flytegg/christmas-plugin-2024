@@ -43,6 +43,12 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     private val respawnBelow = 60
     private val timeOnHill = mutableMapOf<UUID, Int>()
 
+    private var delayedKnockbackTickData: Pair<Int, Int> = 0 to 0
+    private var thrownAroundTickData: Pair<Int, Int> = 0 to 0
+
+    private lateinit var delayedKnockbackBossBar: BossBar
+    private lateinit var thrownAroundBossBar: BossBar
+
     private var delayedKbTicksTotal = 0
     private var delayedKbTicksLeft = -1
 
@@ -50,9 +56,6 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     private var thrownAroundTicksLeft = -1
 
     private val velocityMap = mutableMapOf<UUID, MutableList<Vector>>()
-
-    private lateinit var delayedKbBossbar: BossBar
-
     private val doubleJumps = mutableMapOf<UUID, Int>()
 
     override fun startGameOverview() {
@@ -79,8 +82,11 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     override fun startGame() {
         simpleCountdown {
             donationEventsEnabled = true
-
             pvpEnabled = true
+
+            delayedKnockbackBossBar = BossBar.bossBar("<game_colour><b>ᴅᴇʟᴀʏᴇᴅ ᴋɴᴏᴄᴋʙᴀᴄᴋ".style(), 1.0F, BossBar.Color.WHITE, BossBar.Overlay.PROGRESS)
+            thrownAroundBossBar = BossBar.bossBar("<game_colour><b>ᴛʜʀᴏᴡɴ ᴀʀᴏᴜɴᴅ".style(), 1.0F, BossBar.Color.WHITE, BossBar.Overlay.PROGRESS)
+
             Util.runAction(PlayerType.PARTICIPANT) {
                 preparePlayer(it)
                 it.title(
@@ -116,7 +122,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                 }
 
                 if (delayedKbTicksLeft == 0) {
-                    remainingPlayers().forEach { it.hideBossBar(delayedKbBossbar) }
+                    remainingPlayers().forEach { it.hideBossBar(delayedKnockbackBossBar) }
 
                     delayedKbTicksLeft = -1
 
@@ -136,7 +142,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                     thrownAroundTicksTotal = delayedKbTicksTotal / 6
                     delayedKbTicksTotal = 0
                 } else {
-                    delayedKbBossbar.progress(delayedKbTicksLeft.toFloat() / delayedKbTicksTotal)
+                    delayedKnockbackBossBar.progress(delayedKbTicksLeft.toFloat() / delayedKbTicksTotal)
                     delayedKbTicksLeft -= 1
                 }
             }
@@ -187,7 +193,6 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                 thrownAroundTicksLeft -= 1
             }
 
-            delayedKbBossbar = BossBar.bossBar("<game_colour><b>ᴅᴇʟᴀʏᴇᴅ ᴋɴᴏᴄᴋʙᴀᴄᴋ".style(), 1.0F, BossBar.Color.WHITE, BossBar.Overlay.PROGRESS)
 
             manageActionBars()
         }
@@ -389,7 +394,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         delayedKbTicksTotal += 20 * 5
 
         remainingPlayers().forEach { player ->
-            player.showBossBar(delayedKbBossbar)
+            player.showBossBar(delayedKnockbackBossBar)
 
             val stick = player.inventory.find { it.type == Material.STICK }
 
@@ -436,7 +441,8 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
         var timeLeftSeconds = 5
 
         tasks += repeatingTask(0, 1, TimeUnit.SECONDS) {
-            val message = "<green>sʜᴜꜰꜰʟɪɴɢ ᴘᴏsɪᴛɪᴏɴs ɪɴ <red>$timeLeftSeconds</red> sᴇᴄᴏɴᴅs! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
+            val message =
+                "<green>sʜᴜꜰꜰʟɪɴɢ ᴘᴏsɪᴛɪᴏɴs ɪɴ <red>$timeLeftSeconds</red> sᴇᴄᴏɴᴅs! (${if (name != null) "<aqua>$name's</aqua> ᴅᴏɴᴀᴛɪᴏɴ" else "ᴅᴏɴᴀᴛɪᴏɴ"})"
             remainingPlayers().forEach {
                 it.sendMessage(message.style())
                 it.playSound(it, Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, if (timeLeftSeconds == 0) 2.0F else 1.0F)
