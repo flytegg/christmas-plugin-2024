@@ -227,9 +227,8 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
 
     private fun delayedKnockback() = delayedKnockbackTickData.first > 0
 
-    private fun thrownAround() = thrownAroundTickData.first > 0
+    private fun thrownAround() = thrownAroundTickData.first > 0 // unused?
 
-    @Suppress("UnstableApiUsage")
     override fun handleGameEvents() {
         listeners += event<EntityDamageEvent>(priority = EventPriority.HIGHEST) {
             // return@event -> already cancelled by lower priority [HousekeepingEventListener]
@@ -259,6 +258,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             if (!delayedKnockback()) return@event
             if (entity !is Player) return@event
 
+            @Suppress("UnstableApiUsage")
             val damager = damageSource.causingEntity ?: damageSource.directEntity
             if (damager !is Player) return@event
 
