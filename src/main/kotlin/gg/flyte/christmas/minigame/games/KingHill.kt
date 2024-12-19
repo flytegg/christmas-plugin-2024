@@ -396,7 +396,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             val kingUuid = timeOnHill.entries
                 .filter { Bukkit.getPlayer(it.key) != null }
                 .filter { hillRegion.contains(Bukkit.getPlayer(it.key)!!.location) }
-                .minByOrNull { -it.value }?.key
+                .maxByOrNull { -it.value }?.key
 
             if (kingUuid == null) {
                 lowTierDonation(name) // couldn't run this donation: divert to another one
