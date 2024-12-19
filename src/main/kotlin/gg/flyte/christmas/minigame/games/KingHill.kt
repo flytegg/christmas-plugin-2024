@@ -85,7 +85,8 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             donationEventsEnabled = true
             pvpEnabled = true
 
-            delayedKnockbackBossBar = BossBar.bossBar("<game_colour><b>ᴅᴇʟᴀʏᴇᴅ ᴋɴᴏᴄᴋʙᴀᴄᴋ".style(), 1.0F, BossBar.Color.WHITE, BossBar.Overlay.PROGRESS)
+            delayedKnockbackBossBar =
+                BossBar.bossBar("<game_colour><b>ᴅᴇʟᴀʏᴇᴅ ᴋɴᴏᴄᴋʙᴀᴄᴋ".style(), 1.0F, BossBar.Color.WHITE, BossBar.Overlay.PROGRESS)
             thrownAroundBossBar = BossBar.bossBar("<game_colour><b>ᴛʜʀᴏᴡɴ ᴀʀᴏᴜɴᴅ".style(), 1.0F, BossBar.Color.WHITE, BossBar.Overlay.PROGRESS)
 
             Util.runAction(PlayerType.PARTICIPANT) {
@@ -387,7 +388,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             remainingPlayers().forEach {
                 val duration = it.getPotionEffect(PotionEffectType.SLOW_FALLING)?.duration ?: 0
 
-                it.addPotionEffect(PotionEffect(PotionEffectType.SLOW_FALLING, duration + 5 * 20, 0))
+                it.addPotionEffect(PotionEffect(PotionEffectType.SLOW_FALLING, duration + (5 * 20), 0))
             }
         }
 
@@ -425,9 +426,7 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
             }
         }
 
-
         val random = (0..3).random()
-
         when (random) {
             0 -> doAddDoubleJumps(name)
             1 -> doApplySlowFalling(name)
