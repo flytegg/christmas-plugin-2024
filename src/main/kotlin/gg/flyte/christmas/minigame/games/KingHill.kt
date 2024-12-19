@@ -47,8 +47,8 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
     private val doubleJumps = mutableMapOf<UUID, Int>()
 
     // ticks left | total ticks
-    private var delayedKnockbackTickData: Pair<Int, Int> = 0 to 0
-    private var thrownAroundTickData: Pair<Int, Int> = 0 to 0
+    private var delayedKnockbackTickData: Pair<Int, Int> = -1 to 0
+    private var thrownAroundTickData: Pair<Int, Int> = -1 to 0
 
     // lateinit since <game_colour> is not mapped yet at time of init
     private lateinit var delayedKnockbackBossBar: BossBar
@@ -125,6 +125,8 @@ class KingHill : EventMiniGame(GameConfig.KING_OF_THE_HILL) {
                     thrownAroundTickData = -1 to 0
                     return@repeatingTask
                 }
+
+                if (ticksLeft == -1) return@repeatingTask
 
                 velocityMap.entries.forEach {
                     val player = Bukkit.getPlayer(it.key) ?: return@forEach
