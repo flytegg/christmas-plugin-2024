@@ -40,6 +40,7 @@ import org.bukkit.craftbukkit.CraftWorld
 import org.bukkit.entity.*
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.CreatureSpawnEvent
+import org.bukkit.event.entity.ItemSpawnEvent
 import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.event.entity.ProjectileLaunchEvent
 import org.bukkit.event.player.PlayerToggleFlightEvent
@@ -158,8 +159,8 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
             tasks += repeatingTask(5) {
                 delay((1..15).random()) {
-                    floorLevelBlocks.any { it.block.type != Material.AIR }.let {
-                        wearDownSnowBlock(floorLevelBlocks.filter { it.block.type != Material.AIR }.random().block)
+                    floorLevelBlocks.filter { it.block.type != Material.AIR }.randomOrNull()?.block?.let { block ->
+                        wearDownSnowBlock(block)
                     }
                 }
             } // gradual snow block wear down
@@ -224,6 +225,12 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             1 -> {
                 formattedWinners[player.uniqueId] = value
                 formattedWinners[remainingPlayers().first().uniqueId] = "$value (1ѕᴛ ᴘʟᴀᴄᴇ!)"
+
+                // formattedWinners currently have keys in order of elimination, reverse it to get actual winners.
+                LinkedHashMap(formattedWinners.toList().asReversed().toMap()).apply {
+                    formattedWinners.clear()
+                    formattedWinners.putAll(this)
+                }
                 endGame()
             }
 
@@ -246,6 +253,22 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
 
         snowmen.forEach { it.remove() }
         bees.forEach { it.remove() }
+
+        // reset game state
+        overviewTasks.clear()
+        floorLevelBlocks = listOf(
+            Util.fillArena(110, Material.SNOW_BLOCK),
+            Util.fillArena(98, Material.SNOW_BLOCK),
+            Util.fillArena(86, Material.SNOW_BLOCK)
+        ).flatten()
+        gameTime = 0
+        doubleJumps.clear()
+        snowmen.clear()
+        bees.clear()
+        bottomLayerMelted = false
+        unlimitedJumpTickData = 0 to 0
+        powerfulSnowballTickData = 0 to 0
+        donationEventsEnabled = false
 
         super.endGame()
     }
@@ -381,6 +404,12 @@ class Spleef : EventMiniGame(GameConfig.SPLEEF) {
             if (entity.shooter == null) {
                 isCancelled = true // make snowball rain destroy multiple blocks
                 entity.location.y -= 1
+            }
+        }
+
+        listeners += event<ItemSpawnEvent> {
+            if (entity.itemStack.type == Material.SNOWBALL) {
+                isCancelled = true
             }
         }
     }
